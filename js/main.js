@@ -93,12 +93,28 @@
      ============================================================ */
   var readout = document.getElementById("readout");
   var caption = document.getElementById("caption");
+  var progressCur = document.getElementById("progressCur");
+  var progressTotal = document.getElementById("progressTotal");
+  var progressTrack = document.getElementById("progressTrack");
+  var progressFill = document.getElementById("progressFill");
+  var progressKnob = document.getElementById("progressKnob");
 
   function update() {
     var idx = pageFlip.getCurrentPageIndex();
     var total = pageFlip.getPageCount();
     readout.textContent = String(idx + 1).padStart(2, "0") + " — " + String(total).padStart(2, "0");
     caption.textContent = idx === 0 ? "Cover" : (idx === total - 1 ? "Back cover" : "Page " + (idx + 1));
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var idx = pageFlip.getCurrentPageIndex();
+    var total = pageFlip.getPageCount();
+    var pct = total > 1 ? (idx / (total - 1)) * 100 : 0;
+    progressFill.style.width = pct + "%";
+    progressKnob.style.left = pct + "%";
+    progressCur.textContent = idx + 1;
+    progressTotal.textContent = total;
   }
 
   pageFlip.on("flip", update);
@@ -227,6 +243,35 @@
   document.getElementById("viewport").addEventListener("dblclick", function () {
     setZoom(1);
   });
+
+  /* ============================================================
+     PROGRESS BAR (drag / scrub untuk lompat halaman)
+     ============================================================ */
+  var scrubbing = false;
+
+  function scrubTo(clientX) {
+    var rect = progressTrack.getBoundingClientRect();
+    if (!rect.width) return;
+    var frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    var total = pageFlip.getPageCount();
+    var idx = Math.round(frac * (total - 1));
+    pageFlip.turnToPage(idx);
+    update();
+  }
+
+  progressTrack.addEventListener("pointerdown", function (e) {
+    scrubbing = true;
+    progressTrack.setPointerCapture(e.pointerId);
+    scrubTo(e.clientX);
+  });
+  progressTrack.addEventListener("pointermove", function (e) {
+    if (scrubbing) scrubTo(e.clientX);
+  });
+  function endScrub() {
+    scrubbing = false;
+  }
+  progressTrack.addEventListener("pointerup", endScrub);
+  progressTrack.addEventListener("pointercancel", endScrub);
 
   /* ============================================================
      KONTROL NAVIGASI

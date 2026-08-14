@@ -102,6 +102,7 @@
     readout.textContent = String(idx + 1).padStart(2, "0") + " — " + String(total).padStart(2, "0");
     caption.textContent = idx === 0 ? "Cover" : (idx === total - 1 ? "Back cover" : "Page " + (idx + 1));
     updateProgress();
+    applyBookTransform();
   }
 
   function updateProgress() {
@@ -239,17 +240,39 @@
   });
 
   /* ============================================================
-     ZOOM
+     ZOOM + COVER CENTERING
      ============================================================ */
   var zoomLevel = 1;
   var zoomReadout = document.getElementById("zoomReadout");
 
+  function applyBookTransform() {
+    var idx = pageFlip.getCurrentPageIndex();
+    var total = pageFlip.getPageCount();
+    var parts = [];
+
+    // Center the single cover / back cover so it looks like a closed book
+    // (only in landscape spread mode, where the single page is offset)
+    var isSingle = (idx === 0) || (idx === total - 1);
+    if (isSingle && pageFlip.getOrientation() === "landscape") {
+      var offset = bookEl.offsetWidth / 4;
+      var dir = (idx === 0) ? -1 : 1;
+      parts.push("translateX(" + (dir * offset) + "px)");
+    }
+
+    if (zoomLevel !== 1) {
+      parts.push("scale(" + zoomLevel + ")");
+    }
+
+    bookEl.style.transform = parts.join(" ");
+    bookEl.classList.toggle("book--single", isSingle);
+  }
+
   function setZoom(z) {
     zoomLevel = Math.max(0.6, Math.min(2.5, z));
-    bookEl.style.transform = zoomLevel === 1 ? "" : "scale(" + zoomLevel + ")";
     zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
     document.getElementById("zoomOut").disabled = zoomLevel <= 0.61;
     document.getElementById("zoomIn").disabled = zoomLevel >= 2.49;
+    applyBookTransform();
   }
 
   document.getElementById("zoomIn").addEventListener("click", function () {

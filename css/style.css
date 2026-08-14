@@ -183,6 +183,11 @@ header {
   flex-shrink: 0;
 }
 
+/* closed book (cover / back cover shown alone) — no drop shadow on the empty half */
+#book.book--single {
+  box-shadow: none;
+}
+
 .page {
   width: 100%;
   height: 100%;

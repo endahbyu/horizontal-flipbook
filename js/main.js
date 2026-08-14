@@ -2,21 +2,22 @@
   "use strict";
 
   /* ============================================================
-     KONFIGURASI — EDIT DI SINI
+     CONFIG — EDIT HERE
      ============================================================
 
-     - PAGE_COUNT : total halaman (ubah jadi 213 saat buku final).
-     - Nama file gambar harus berurutan:
-         assets/img/page-001.webp, page-002.webp, ... page-213.webp
+     - PAGE_COUNT : total number of pages (change to 213 when the
+       final book is ready).
+     - Image files must be named sequentially:
+         assets/img/page-001.webp, page-002.webp, … page-213.webp
 
-     - CHAPTERS : daftar isi. Ubah `title` (judul) & `page` (nomor halaman,
-       mulai dari 1). Ini yang tampil di menu "Daftar Isi".
+     - CHAPTERS : table of contents. Edit `title` and `page` (1-based
+       page number). This is what appears in the "Table of contents" menu.
   */
   var PAGE_COUNT = 10;
 
   var CHAPTERS = [
     { title: "Cover", page: 1 },
-    { title: "Daftar Isi", page: 2 },
+    { title: "Table of Contents", page: 2 },
     { title: "Chapter 1 — Licensing", page: 3 },
     { title: "Chapter 2 — Framework", page: 5 },
     { title: "Chapter 3 — Data & Analysis", page: 7 },
@@ -24,7 +25,7 @@
   ];
 
   /* ============================================================
-     BANGUN DAFTAR GAMBAR (otomatis dari PAGE_COUNT)
+     BUILD IMAGE LIST (auto-generated from PAGE_COUNT)
      ============================================================ */
   function pad3(n) {
     return String(n).padStart(3, "0");
@@ -37,12 +38,12 @@
 
   var bookEl = document.getElementById("book");
 
-  // Elemen halaman (HTML mode → mendukung hard cover)
+  // Page elements (HTML mode → supports hard covers)
   var pages = IMAGES.map(function (src, i) {
     var p = document.createElement("div");
     p.className = "page";
     if (i === 0 || i === IMAGES.length - 1) {
-      p.setAttribute("data-density", "hard"); // cover & back cover otomatis
+      p.setAttribute("data-density", "hard"); // cover & back cover (by position)
     }
     var img = document.createElement("img");
     img.src = src;
@@ -54,7 +55,7 @@
   });
 
   /* ============================================================
-     INISIALISASI StPageFlip
+     INITIALIZE StPageFlip
      ============================================================ */
   var settings = {
     width: 550,
@@ -65,8 +66,8 @@
     minHeight: 396,
     maxHeight: 1273,
     maxShadowOpacity: 0.5,
-    showCover: true,      // cover & back cover tampil single page
-    usePortrait: true,    // otomatis 1 halaman di layar sempit
+    showCover: true,      // cover & back cover shown as single pages
+    usePortrait: true,    // auto-switch to 1 page on narrow screens
     drawShadow: true,
     flippingTime: 900,
     mobileScrollSupport: false,
@@ -89,15 +90,11 @@
   pageFlip.loadFromHTML(pages);
 
   /* ============================================================
-     READOUT & CAPTION
+     READOUT, CAPTION & PROGRESS
      ============================================================ */
   var readout = document.getElementById("readout");
   var caption = document.getElementById("caption");
-  var progressCur = document.getElementById("progressCur");
-  var progressTotal = document.getElementById("progressTotal");
-  var progressTrack = document.getElementById("progressTrack");
   var progressFill = document.getElementById("progressFill");
-  var progressKnob = document.getElementById("progressKnob");
 
   function update() {
     var idx = pageFlip.getCurrentPageIndex();
@@ -112,16 +109,13 @@
     var total = pageFlip.getPageCount();
     var pct = total > 1 ? (idx / (total - 1)) * 100 : 0;
     progressFill.style.width = pct + "%";
-    progressKnob.style.left = pct + "%";
-    progressCur.textContent = idx + 1;
-    progressTotal.textContent = total;
   }
 
   pageFlip.on("flip", update);
   pageFlip.on("changeOrientation", update);
 
   /* ============================================================
-     DAFTAR ISI (TOC)
+     TABLE OF CONTENTS
      ============================================================ */
   var tocList = document.getElementById("tocList");
 
@@ -146,7 +140,7 @@
   });
 
   /* ============================================================
-     THUMBNAIL
+     THUMBNAILS
      ============================================================ */
   var thumbGrid = document.getElementById("thumbGrid");
 
@@ -170,7 +164,7 @@
   });
 
   /* ============================================================
-     PANEL (buka / tutup)
+     PANELS (open / close)
      ============================================================ */
   var overlay = document.getElementById("overlay");
   var tocPanel = document.getElementById("tocPanel");
@@ -239,42 +233,13 @@
     setZoom(zoomLevel / 1.2);
   });
 
-  // Reset zoom dengan double-click di area buku
+  // Reset zoom by double-clicking the book area
   document.getElementById("viewport").addEventListener("dblclick", function () {
     setZoom(1);
   });
 
   /* ============================================================
-     PROGRESS BAR (drag / scrub untuk lompat halaman)
-     ============================================================ */
-  var scrubbing = false;
-
-  function scrubTo(clientX) {
-    var rect = progressTrack.getBoundingClientRect();
-    if (!rect.width) return;
-    var frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    var total = pageFlip.getPageCount();
-    var idx = Math.round(frac * (total - 1));
-    pageFlip.turnToPage(idx);
-    update();
-  }
-
-  progressTrack.addEventListener("pointerdown", function (e) {
-    scrubbing = true;
-    progressTrack.setPointerCapture(e.pointerId);
-    scrubTo(e.clientX);
-  });
-  progressTrack.addEventListener("pointermove", function (e) {
-    if (scrubbing) scrubTo(e.clientX);
-  });
-  function endScrub() {
-    scrubbing = false;
-  }
-  progressTrack.addEventListener("pointerup", endScrub);
-  progressTrack.addEventListener("pointercancel", endScrub);
-
-  /* ============================================================
-     KONTROL NAVIGASI
+     NAVIGATION CONTROLS
      ============================================================ */
   document.getElementById("next").addEventListener("click", function () {
     pageFlip.flipNext("top");

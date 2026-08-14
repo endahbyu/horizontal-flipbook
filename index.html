@@ -10,30 +10,15 @@
   </head>
   <body>
     <header>
-      <span class="brand">Licensing <em>2025</em></span>
+      <span class="brand">Industry Performance Report<em>2025</em></span>
       <span class="tag">MCMC · Industry Performance Report</span>
     </header>
 
-    <!-- Toolbar -->
-    <div class="toolbar" role="toolbar" aria-label="Book controls">
-      <button class="tb-btn" id="tocBtn" aria-label="Table of contents" title="Daftar isi">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-      </button>
-      <button class="tb-btn" id="thumbBtn" aria-label="Thumbnails" title="Thumbnail">
-        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>
-      </button>
-
-      <span class="tb-sep"></span>
-
-      <button class="tb-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-      <output class="tb-readout" id="zoomReadout">100%</output>
-      <button class="tb-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-
-      <span class="tb-sep"></span>
-
-      <button class="tb-btn" id="fullscreenBtn" aria-label="Toggle fullscreen" title="Fullscreen">
-        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
-      </button>
+    <!-- Progress bar (top) — visibility of status, not interactive -->
+    <div class="progress" id="progress" aria-label="Reading progress">
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
     </div>
 
     <div class="book-stage" id="stage">
@@ -50,16 +35,30 @@
       </button>
     </div>
 
-    <div class="progress" id="progress" aria-label="Reading progress">
-      <span class="progress-page" id="progressCur">1</span>
-      <div class="progress-track" id="progressTrack">
-        <div class="progress-fill" id="progressFill"></div>
-        <div class="progress-knob" id="progressKnob"></div>
-      </div>
-      <span class="progress-page" id="progressTotal">10</span>
+    <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
+
+    <!-- Navigation icons (bottom) -->
+    <div class="toolbar" role="toolbar" aria-label="Book controls">
+      <button class="tb-btn" id="tocBtn" aria-label="Table of contents" title="Table of contents">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <button class="tb-btn" id="thumbBtn" aria-label="Thumbnails" title="Thumbnails">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>
+      </button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+      <output class="tb-readout" id="zoomReadout">100%</output>
+      <button class="tb-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="fullscreenBtn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      </button>
     </div>
 
-    <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
     <p class="hint">Drag a page corner to turn · ← → keys · +/− zoom · F fullscreen</p>
 
     <!-- Overlay + panels -->
@@ -67,7 +66,7 @@
 
     <aside class="panel" id="tocPanel" aria-label="Table of contents">
       <div class="panel-head">
-        <span>Daftar Isi</span>
+        <span>Table of Contents</span>
         <button class="panel-close" data-close>✕</button>
       </div>
       <ul class="toc-list" id="tocList"></ul>
@@ -75,7 +74,7 @@
 
     <aside class="panel panel-wide" id="thumbPanel" aria-label="Thumbnails">
       <div class="panel-head">
-        <span>Semua Halaman</span>
+        <span>All Pages</span>
         <button class="panel-close" data-close>✕</button>
       </div>
       <div class="thumb-grid" id="thumbGrid"></div>

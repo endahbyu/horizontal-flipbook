@@ -13,7 +13,7 @@
      - CHAPTERS : table of contents. Edit `title` and `page` (1-based
        page number). This is what appears in the "Table of contents" menu.
   */
-  var PAGE_COUNT = 10;
+  var PAGE_COUNT = 11;
 
   var CHAPTERS = [
     { title: "Cover", page: 1 },
@@ -21,7 +21,7 @@
     { title: "Chapter 1 — Licensing", page: 3 },
     { title: "Chapter 2 — Framework", page: 5 },
     { title: "Chapter 3 — Data & Analysis", page: 7 },
-    { title: "Back Cover", page: 10 }
+    { title: "Back Cover", page: 11 }
   ];
 
   /* ============================================================
@@ -147,7 +147,11 @@
   // Build spreads: [0] cover, [1,2], [3,4], ... , [N-1] back cover
   var spreads = [[0]];
   for (var s = 1; s < IMAGES.length - 1; s += 2) {
-    spreads.push([s, s + 1]);
+    if (s + 1 < IMAGES.length - 1) {
+      spreads.push([s, s + 1]);
+    } else {
+      spreads.push([s]); // leftover single page before the back cover
+    }
   }
   spreads.push([IMAGES.length - 1]);
 

@@ -13,7 +13,8 @@ mcmc-flipbook/
 │   └── vendor/
 │       └── page-flip.browser.js   # StPageFlip library (v2.0.7, MIT)
 └── assets/
-    └── img/                   # page images (page-001.webp … page-NNN.webp)
+    ├── img/                   # page images (page-001.webp … page-NNN.webp)
+    └── fonts/                 # Montserrat (variable font, self-hosted)
 ```
 
 ## Features

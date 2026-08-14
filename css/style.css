@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/montserrat.woff2') format('woff2');
+}
+
 :root {
   --paper: #e9e5dc;
   --ink: #24231f;
@@ -21,7 +29,7 @@ body {
   min-height: 100svh;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   background-image:
     radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.6), transparent 34%),

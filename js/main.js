@@ -140,26 +140,48 @@
   });
 
   /* ============================================================
-     THUMBNAILS
+     THUMBNAILS (spread view — 2 pages merged per thumbnail)
      ============================================================ */
   var thumbGrid = document.getElementById("thumbGrid");
 
-  IMAGES.forEach(function (src, i) {
-    var cell = document.createElement("button");
-    cell.type = "button";
-    cell.className = "thumb";
-    var img = document.createElement("img");
-    img.src = src;
-    img.loading = "lazy";
-    img.alt = "Page " + (i + 1);
-    var num = document.createElement("span");
-    num.textContent = String(i + 1).padStart(2, "0");
-    cell.appendChild(img);
-    cell.appendChild(num);
+  // Build spreads: [0] cover, [1,2], [3,4], ... , [N-1] back cover
+  var spreads = [[0]];
+  for (var s = 1; s < IMAGES.length - 1; s += 2) {
+    spreads.push([s, s + 1]);
+  }
+  spreads.push([IMAGES.length - 1]);
+
+  spreads.forEach(function (spread) {
+    var cell = document.createElement("div");
+    cell.setAttribute("role", "button");
+    cell.setAttribute("tabindex", "0");
+    cell.className = "thumb" + (spread.length === 1 ? " thumb--single" : "");
+
+    spread.forEach(function (pageIdx) {
+      var img = document.createElement("img");
+      img.src = IMAGES[pageIdx];
+      img.loading = "lazy";
+      img.alt = "Page " + (pageIdx + 1);
+      cell.appendChild(img);
+    });
+
+    var label = document.createElement("span");
+    label.textContent = spread.length === 1
+      ? String(spread[0] + 1).padStart(2, "0")
+      : String(spread[0] + 1).padStart(2, "0") + "\u2013" + String(spread[1] + 1).padStart(2, "0");
+    cell.appendChild(label);
+
     cell.addEventListener("click", function () {
-      pageFlip.flip(i);
+      pageFlip.flip(spread[0]);
       closePanels();
     });
+    cell.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        cell.click();
+      }
+    });
+
     thumbGrid.appendChild(cell);
   });
 

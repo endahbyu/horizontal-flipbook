@@ -13,7 +13,7 @@
      - CHAPTERS : table of contents. Edit `title` and `page` (1-based
        page number). This is what appears in the "Table of contents" menu.
   */
-  var PAGE_COUNT = 11;
+  var PAGE_COUNT = 12;
 
   var CHAPTERS = [
     { title: "Cover", page: 1 },
@@ -21,7 +21,7 @@
     { title: "Chapter 1 — Licensing", page: 3 },
     { title: "Chapter 2 — Framework", page: 5 },
     { title: "Chapter 3 — Data & Analysis", page: 7 },
-    { title: "Back Cover", page: 11 }
+    { title: "Back Cover", page: 12 }
   ];
 
   /* ============================================================

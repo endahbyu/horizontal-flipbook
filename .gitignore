@@ -9,6 +9,7 @@ Thumbs.db
 
 # Editor / IDE
 .idea/
+.vscode/
 *.swp
 
 # Node (kalau nanti ada tooling)

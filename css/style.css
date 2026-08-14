@@ -49,9 +49,10 @@ header {
 }
 
 .brand {
-  font-size: clamp(20px, 2vw, 26px);
+  font-size: clamp(14px, 1.7vw, 22px);
   font-weight: 600;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .brand em {
@@ -61,9 +62,10 @@ header {
 
 .tag {
   color: var(--ink-soft);
-  font-size: 12px;
-  letter-spacing: 0.16em;
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ===== Toolbar (bottom nav) ===== */
@@ -361,8 +363,8 @@ header {
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 16px;
+  gap: 8px;
+  padding: 12px;
 }
 
 .thumb {
@@ -405,10 +407,6 @@ header {
 @media (max-width: 640px) {
   header {
     padding: 14px 14px 4px;
-  }
-
-  .tag {
-    display: none;
   }
 
   .toolbar {

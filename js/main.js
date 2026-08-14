@@ -65,7 +65,7 @@
     maxWidth: 1000,
     minHeight: 396,
     maxHeight: 1273,
-    maxShadowOpacity: 0.5,
+    maxShadowOpacity: 0.25,
     showCover: true,      // cover & back cover shown as single pages
     usePortrait: true,    // auto-switch to 1 page on narrow screens
     drawShadow: true,

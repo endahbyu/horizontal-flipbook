@@ -174,11 +174,11 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
+  padding: 24px 18px;
 }
 
 #book {
-  box-shadow: 0 30px 60px -18px rgba(36, 35, 31, 0.45), 0 6px 16px rgba(36, 35, 31, 0.12);
+  box-shadow: 0 14px 30px -12px rgba(36, 35, 31, 0.18), 0 3px 8px rgba(36, 35, 31, 0.08);
   transform-origin: center center;
   transition: transform 220ms ease;
   flex-shrink: 0;

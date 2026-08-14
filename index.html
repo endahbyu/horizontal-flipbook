@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e9e5dc" />
+    <meta name="description" content="Interactive licensing report — turn, inspect, and browse every page." />
+    <title>Licensing 2025 — Interactive Report</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <span class="brand">Licensing <em>2025</em></span>
+      <span class="tag">MCMC · Industry Performance Report</span>
+    </header>
+
+    <div class="book-stage">
+      <button class="arrow" id="prev" aria-label="Previous page">
+        <svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" /></svg>
+      </button>
+      <div id="book"></div>
+      <button class="arrow" id="next" aria-label="Next page">
+        <svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" /></svg>
+      </button>
+    </div>
+
+    <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
+    <p class="hint">Drag / swipe a page corner to turn · use ← → keys · tap the arrows</p>
+
+    <script src="js/vendor/page-flip.browser.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

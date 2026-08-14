@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Thumbs
+Thumbs.db
+
+# Logs
+*.log
+
+# Editor / IDE
+.idea/
+*.swp
+
+# Node (kalau nanti ada tooling)
+node_modules/

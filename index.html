@@ -14,18 +14,63 @@
       <span class="tag">MCMC · Industry Performance Report</span>
     </header>
 
-    <div class="book-stage">
+    <!-- Toolbar -->
+    <div class="toolbar" role="toolbar" aria-label="Book controls">
+      <button class="tb-btn" id="tocBtn" aria-label="Table of contents" title="Daftar isi">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <button class="tb-btn" id="thumbBtn" aria-label="Thumbnails" title="Thumbnail">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>
+      </button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+      <output class="tb-readout" id="zoomReadout">100%</output>
+      <button class="tb-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="fullscreenBtn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      </button>
+    </div>
+
+    <div class="book-stage" id="stage">
       <button class="arrow" id="prev" aria-label="Previous page">
         <svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" /></svg>
       </button>
-      <div id="book"></div>
+
+      <div class="book-viewport" id="viewport">
+        <div id="book"></div>
+      </div>
+
       <button class="arrow" id="next" aria-label="Next page">
         <svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" /></svg>
       </button>
     </div>
 
     <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
-    <p class="hint">Drag / swipe a page corner to turn · use ← → keys · tap the arrows</p>
+    <p class="hint">Drag a page corner to turn · ← → keys · +/− zoom · F fullscreen</p>
+
+    <!-- Overlay + panels -->
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="panel" id="tocPanel" aria-label="Table of contents">
+      <div class="panel-head">
+        <span>Daftar Isi</span>
+        <button class="panel-close" data-close>✕</button>
+      </div>
+      <ul class="toc-list" id="tocList"></ul>
+    </aside>
+
+    <aside class="panel panel-wide" id="thumbPanel" aria-label="Thumbnails">
+      <div class="panel-head">
+        <span>Semua Halaman</span>
+        <button class="panel-close" data-close>✕</button>
+      </div>
+      <div class="thumb-grid" id="thumbGrid"></div>
+    </aside>
 
     <script src="js/vendor/page-flip.browser.js"></script>
     <script src="js/main.js"></script>

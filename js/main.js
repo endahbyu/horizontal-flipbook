@@ -60,10 +60,10 @@
   var settings = {
     width: 550,
     height: 778,
-    size: "stretch",
-    minWidth: 280,
+    size: "fixed",
+    minWidth: 220,
     maxWidth: 1000,
-    minHeight: 396,
+    minHeight: 240,
     maxHeight: 1273,
     maxShadowOpacity: 0.25,
     showCover: true,      // cover & back cover shown as single pages
@@ -74,20 +74,39 @@
     disableFlipByClick: false
   };
 
-  function fitLimits() {
+  var RESERVED_H = 280;           // header + progress + meta + toolbar + hint
+  var PAGE_RATIO = 2481 / 3508;   // portrait page aspect ratio
+
+  function computePageSize() {
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var availH = Math.max(320, vh - 240);
-    var wByHeight = Math.floor(availH * 0.707);
-    var wByWidth = Math.floor(vw - 140);
-    settings.maxWidth = Math.max(240, Math.min(1000, wByHeight, wByWidth));
-    settings.maxHeight = availH;
+    var availH = Math.max(260, vh - RESERVED_H);
+    var availW = Math.max(240, vw - 80);
+    var pageH = availH;
+    var pageW = Math.floor(pageH * PAGE_RATIO);
+    if (2 * pageW > availW) { // spread too wide → fit by width
+      pageW = Math.floor(availW / 2);
+      pageH = Math.floor(pageW / PAGE_RATIO);
+    }
+    return { width: pageW, height: pageH };
   }
-  fitLimits();
-  window.addEventListener("resize", fitLimits);
+
+  (function initSize() {
+    var s = computePageSize();
+    settings.width = settings.minWidth = settings.maxWidth = s.width;
+    settings.height = settings.minHeight = settings.maxHeight = s.height;
+  })();
 
   var pageFlip = new St.PageFlip(bookEl, settings);
   pageFlip.loadFromHTML(pages);
+
+  window.addEventListener("resize", function () {
+    var s = computePageSize();
+    var is = pageFlip.getSettings();
+    is.width = is.minWidth = is.maxWidth = s.width;
+    is.height = is.minHeight = is.maxHeight = s.height;
+    pageFlip.update();
+  });
 
   /* ============================================================
      READOUT, CAPTION & PROGRESS

@@ -116,9 +116,8 @@
   });
 
   /* ============================================================
-     CAPTION, READOUT + COVER CENTERING
+     READOUT + COVER CENTERING
      ============================================================ */
-  var caption = document.getElementById("caption");
   var pageReadout = document.getElementById("pageReadout");
   var hint = document.getElementById("hint");
 
@@ -145,7 +144,6 @@
   function updateMeta() {
     var idx = pageFlip.getCurrentPageIndex();
     var total = pageFlip.getPageCount();
-    caption.textContent = PAGES[idx].title;
     pageReadout.textContent = String(idx + 1).padStart(2, "0") + " / " + String(total).padStart(2, "0");
 
     // highlight current item in TOC + contents grid

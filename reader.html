@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e9e5dc" />
+    <meta name="description" content="Interactive licensing report — turn, inspect, and browse every page." />
+    <title>Licensing 2025 — Interactive Report</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <section class="landing" id="landing" aria-labelledby="landingTitle">
+      <div class="landing-masthead">
+        <div>
+          <p class="landing-kicker">Working Volumes</p>
+          <p class="landing-subtitle">Seven field guides for making</p>
+        </div>
+        <div class="landing-edition">
+          <span>Edition 02 · 2026</span>
+          <span>Ultramarine · Bone · Copper</span>
+        </div>
+      </div>
+
+      <div class="landing-grid">
+        <div class="landing-visual" aria-label="Industry Performance Report 2025 book preview">
+          <button class="book-trigger" id="bookTrigger" type="button" aria-label="Open Industry Performance Report 2025">
+            <canvas class="book3d-canvas" id="book3dCanvas" aria-hidden="true"></canvas>
+            <span class="landing-book" aria-hidden="true">
+              <span class="book-face book-back"><img src="assets/landing/back-cover.png" alt="" /></span>
+              <span class="book-face book-spine"><img src="assets/landing/spine.webp" alt="" /></span>
+              <span class="book-face book-pages"></span>
+              <span class="book-face book-pages-top"></span>
+              <span class="book-face book-pages-bottom"></span>
+              <span class="book-sheet book-sheet-final"><img src="assets/img/page-007.webp" alt="" /></span>
+              <span class="preview-leaf preview-leaf-6" data-preview-page="6">
+                <span class="leaf-face leaf-front"><img src="assets/img/page-006.webp" alt="" /></span>
+                <span class="leaf-face leaf-back"><img src="assets/img/page-006.webp" alt="" /></span>
+              </span>
+              <span class="preview-leaf preview-leaf-5" data-preview-page="5">
+                <span class="leaf-face leaf-front"><img src="assets/img/page-005.webp" alt="" /></span>
+                <span class="leaf-face leaf-back"><img src="assets/img/page-005.webp" alt="" /></span>
+              </span>
+              <span class="preview-leaf preview-leaf-4" data-preview-page="4">
+                <span class="leaf-face leaf-front"><img src="assets/img/page-004.webp" alt="" /></span>
+                <span class="leaf-face leaf-back"><img src="assets/img/page-004.webp" alt="" /></span>
+              </span>
+              <span class="preview-leaf preview-leaf-3" data-preview-page="3">
+                <span class="leaf-face leaf-front"><img src="assets/img/page-003.webp" alt="" /></span>
+                <span class="leaf-face leaf-back"><img src="assets/img/page-003.webp" alt="" /></span>
+              </span>
+              <span class="book-cover-hinge">
+                <span class="book-cover-side book-front"><img src="assets/landing/front-cover.png" alt="" /></span>
+                <span class="book-cover-side book-cover-inside"></span>
+              </span>
+            </span>
+          </button>
+        </div>
+
+        <div class="landing-copy">
+          <p class="volume-label">Volume I · Agentic Craft</p>
+          <h1 id="landingTitle">Codex</h1>
+          <p class="landing-deck">A field manual for delegating repository work to Codex: state the intent, let the agent trace the system, and treat tests and browser proof as part of the craft.</p>
+
+          <dl class="book-facts">
+            <div><dt>Binding</dt><dd>Ultramarine cloth · copper foil</dd></div>
+            <div><dt>Format</dt><dd>148 × 216 mm · imagined edition</dd></div>
+            <div><dt>Theme</dt><dd>Codex · intent into implementation</dd></div>
+            <div><dt>Motif</dt><dd>Nested brackets</dd></div>
+          </dl>
+
+          <div class="landing-status">
+            <div class="status-copy"><strong id="bookStatus">Closed</strong><span id="bookStatusHint">Click book to open</span></div>
+          </div>
+
+          <div class="landing-actions">
+            <p>Drag cover or click once to open · background to orbit</p>
+            <button class="open-book" id="openBook" type="button">Open Book</button>
+            <button class="reset-view" id="resetView" type="button">Reset View</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="reader-shell" id="readerShell" aria-hidden="true">
+    <header>
+      <span class="brand">Industry Performance Report <em>2025</em></span>
+      <!-- <span class="tag">Malaysian Communications and Multimedia Commission</span> -->
+    </header>
+
+    <!-- Progress bar (top) — visibility of status, not interactive -->
+    <div class="progress" id="progress" aria-label="Reading progress">
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="book-stage" id="stage">
+      <button class="arrow" id="prev" aria-label="Previous page">
+        <svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" /></svg>
+      </button>
+
+      <div class="book-viewport" id="viewport">
+        <div id="book"></div>
+      </div>
+
+      <button class="arrow" id="next" aria-label="Next page">
+        <svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" /></svg>
+      </button>
+    </div>
+
+    <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
+
+    <!-- Navigation icons (bottom) -->
+    <div class="toolbar" role="toolbar" aria-label="Book controls">
+      <button class="tb-btn" id="tocBtn" aria-label="Table of contents" title="Table of contents">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      <button class="tb-btn" id="thumbBtn" aria-label="Thumbnails" title="Thumbnails">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>
+      </button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+      <output class="tb-readout" id="zoomReadout">100%</output>
+      <button class="tb-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+
+      <span class="tb-sep"></span>
+
+      <button class="tb-btn" id="fullscreenBtn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      </button>
+    </div>
+
+    <p class="hint">Drag a page corner to turn · ← → keys · +/− zoom · F fullscreen</p>
+
+    <!-- Overlay + panels -->
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="panel" id="tocPanel" aria-label="Table of contents">
+      <div class="panel-head">
+        <span>Table of Contents</span>
+        <button class="panel-close" data-close>✕</button>
+      </div>
+      <ul class="toc-list" id="tocList"></ul>
+    </aside>
+
+    <aside class="panel panel-wide" id="thumbPanel" aria-label="Thumbnails">
+      <div class="panel-head">
+        <span>All Pages</span>
+        <button class="panel-close" data-close>✕</button>
+      </div>
+      <div class="thumb-grid" id="thumbGrid"></div>
+    </aside>
+    </main>
+
+    <script src="js/vendor/page-flip.browser.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

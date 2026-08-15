@@ -2,6 +2,99 @@
   "use strict";
 
   /* ============================================================
+     LANDING EXPERIENCE
+     ============================================================ */
+  var landing = document.getElementById("landing");
+  var readerShell = document.getElementById("readerShell");
+  var openBookButton = document.getElementById("openBook");
+  var bookTrigger = document.getElementById("bookTrigger");
+  var landingBook = document.querySelector(".landing-book");
+  var resetViewButton = document.getElementById("resetView");
+  var bookStatus = document.getElementById("bookStatus");
+  var bookStatusHint = document.getElementById("bookStatusHint");
+  var isLandingBookOpen = false;
+  var previewPages = [3, 4, 5, 6, 7];
+  var previewPageIndex = -1;
+  var previewLeaves = Array.prototype.slice.call(document.querySelectorAll(".preview-leaf"));
+
+  function updateLandingBookState() {
+    isLandingBookOpen = previewPageIndex >= 0;
+    landing.scrollTop = 0;
+    landingBook.classList.toggle("is-open", isLandingBookOpen);
+    landingBook.style.transform = "";
+
+    previewLeaves.forEach(function (leaf) {
+      var page = Number(leaf.getAttribute("data-preview-page"));
+      var currentPage = isLandingBookOpen ? previewPages[previewPageIndex] : 0;
+      leaf.classList.toggle("is-turned", page < currentPage);
+    });
+
+    if (!isLandingBookOpen) {
+      bookStatus.textContent = "Closed";
+      bookStatusHint.textContent = "Click book to open";
+      openBookButton.textContent = "Open Book";
+      bookTrigger.setAttribute("aria-label", "Open Industry Performance Report 2025 cover");
+      window.dispatchEvent(new CustomEvent("landingpreviewchange", {
+        detail: { open: false, page: 0 }
+      }));
+      return;
+    }
+
+    var currentPage = previewPages[previewPageIndex];
+    bookStatus.textContent = "Open";
+    bookStatusHint.textContent = "Preview " + String(currentPage).padStart(2, "0") + " / 07";
+    openBookButton.textContent = currentPage < 7 ? "Next Page" : "Read Report";
+    bookTrigger.setAttribute("aria-label", currentPage < 7 ? "Turn to preview page " + (currentPage + 1) : "Read the full Industry Performance Report 2025");
+
+    window.dispatchEvent(new CustomEvent("landingpreviewchange", {
+      detail: { open: isLandingBookOpen, page: currentPage }
+    }));
+  }
+
+  function resetLandingBook() {
+    landingBook.style.transform = "";
+    previewPageIndex = -1;
+    updateLandingBookState();
+  }
+
+  function enterReader() {
+    if (!document.body.classList.contains("landing-active")) return;
+    landing.classList.add("is-opening");
+    readerShell.setAttribute("aria-hidden", "false");
+    window.setTimeout(function () {
+      document.body.classList.remove("landing-active");
+      landing.classList.remove("is-opening");
+      document.getElementById("next").focus({ preventScroll: true });
+    }, 460);
+  }
+
+  function activateLandingBook() {
+    if (bookTrigger.dataset.dragging === "true") return;
+    if (previewPageIndex < 0) previewPageIndex = 0;
+    else if (previewPages[previewPageIndex] < 7) previewPageIndex += 1;
+    else return enterReader();
+    updateLandingBookState();
+  }
+
+  openBookButton.addEventListener("click", activateLandingBook);
+  bookTrigger.addEventListener("click", activateLandingBook);
+  resetViewButton.addEventListener("click", resetLandingBook);
+
+  bookTrigger.addEventListener("pointermove", function (event) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var rect = bookTrigger.getBoundingClientRect();
+    var px = (event.clientX - rect.left) / rect.width - 0.5;
+    var py = (event.clientY - rect.top) / rect.height - 0.5;
+    var rotateY = (isLandingBookOpen ? -7 : -24) + px * 10;
+    var rotateX = -3 - py * 7;
+    landingBook.style.transform = "rotateX(" + rotateX + "deg) rotateY(" + rotateY + "deg) rotateZ(-1deg) translateY(1.5vh)";
+  });
+
+  bookTrigger.addEventListener("pointerleave", function () {
+    landingBook.style.transform = "";
+  });
+
+  /* ============================================================
      CONFIG — EDIT HERE
      ============================================================
 

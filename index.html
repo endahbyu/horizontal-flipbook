@@ -1,86 +1,353 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#e9e5dc" />
-    <meta name="description" content="Interactive licensing report — turn, inspect, and browse every page." />
-    <title>Licensing 2025 — Interactive Report</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header>
-      <span class="brand">Industry Performance Report <em>2025</em></span>
-      <!-- <span class="tag">Malaysian Communications and Multimedia Commission</span> -->
-    </header>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MCMC Industry Performance Report 2025">
+  <title>Industry Performance Report 2025 — MCMC</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #242429;
+      --foreground: #f4f1ec;
+      --muted: #aaa6a2;
+      --rule: rgba(244, 241, 236, 0.22);
+      --purple: #593792;
+      --page: #f4f1ea;
+    }
 
-    <!-- Progress bar (top) — visibility of status, not interactive -->
-    <div class="progress" id="progress" aria-label="Reading progress">
-      <div class="progress-track" id="progressTrack">
-        <div class="progress-fill" id="progressFill"></div>
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .page {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+      position: relative;
+    }
+
+    .brand {
+      position: fixed;
+      z-index: 10;
+      top: 32px;
+      left: 42px;
+      display: grid;
+      gap: 3px;
+      pointer-events: none;
+    }
+
+    .brand strong {
+      font: 400 clamp(22px, 2.1vw, 34px)/1 Georgia, "Times New Roman", serif;
+    }
+
+    .brand span,
+    .edition,
+    .eyebrow,
+    dt {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.19em;
+      text-transform: uppercase;
+    }
+
+    .edition {
+      position: fixed;
+      z-index: 10;
+      top: 38px;
+      right: 42px;
+    }
+
+    .visual-column {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 110px 5vw 70px;
+      perspective: 1500px;
+      overflow: hidden;
+    }
+
+    .book-stage {
+      width: min(42vw, 460px);
+      aspect-ratio: 1 / 1.2;
+      display: grid;
+      place-items: center;
+      transform-style: preserve-3d;
+    }
+
+    .book {
+      --book-width: min(29vw, 330px);
+      width: var(--book-width);
+      aspect-ratio: 2480 / 3508;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--rotate-x, -4deg)) rotateY(var(--rotate-y, -16deg));
+      transition: transform 180ms cubic-bezier(.2,.8,.2,1);
+      will-change: transform;
+    }
+
+    .book.is-resting {
+      transition-duration: 600ms;
+    }
+
+    .book__cover,
+    .book__back,
+    .book__pages,
+    .book__spine {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+    }
+
+    .book__cover {
+      z-index: 4;
+      transform: translateZ(9px);
+      overflow: hidden;
+      background: var(--purple);
+    }
+
+    .book__cover img,
+    .book__back img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .book__back {
+      z-index: 1;
+      transform: translateZ(-9px) rotateY(180deg);
+      background: var(--purple);
+    }
+
+    .book__pages {
+      inset: 3px 0 3px 6px;
+      z-index: 2;
+      background: var(--page);
+      transform: translateZ(-8px);
+    }
+
+    .book__pages::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -18px;
+      width: 18px;
+      height: 100%;
+      background: var(--page);
+      transform-origin: left;
+      transform: rotateY(90deg);
+    }
+
+    .book__spine {
+      left: 0;
+      right: auto;
+      width: 18px;
+      z-index: 3;
+      background: var(--purple) url("assets/landing/spine.webp") center / cover no-repeat;
+      transform-origin: right;
+      transform: translateX(-18px) translateZ(-9px) rotateY(-90deg);
+    }
+
+    .book-shadow {
+      width: calc(var(--book-width) * 0.92);
+      height: 34px;
+      position: absolute;
+      left: 50%;
+      bottom: -52px;
+      translate: -50% 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.28);
+      filter: blur(18px);
+      transform: rotateX(78deg);
+      pointer-events: none;
+    }
+
+    .content-column {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px clamp(42px, 6vw, 100px) 72px clamp(36px, 5vw, 82px);
+      border-left: 1px solid rgba(244, 241, 236, 0.07);
+    }
+
+    .eyebrow { margin: 0 0 24px; }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font: 400 clamp(58px, 6.4vw, 112px)/0.9 Georgia, "Times New Roman", serif;
+      letter-spacing: -0.045em;
+    }
+
+    .deck {
+      max-width: 720px;
+      margin: 40px 0 0;
+      color: #e6e2dc;
+      font: 400 clamp(20px, 2vw, 31px)/1.45 Georgia, "Times New Roman", serif;
+    }
+
+    .meta {
+      max-width: 760px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 52px;
+      margin: 46px 0 0;
+      padding: 30px 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .meta div { display: grid; gap: 10px; }
+    .meta dd { margin: 0; color: #e8e4df; font-size: 15px; line-height: 1.5; }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 38px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 2px 10px;
+      border-bottom: 1px solid var(--foreground);
+      color: var(--foreground);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.17em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .button:hover { opacity: 0.66; transform: translateY(-2px); }
+    .button:focus-visible { outline: 2px solid var(--foreground); outline-offset: 8px; }
+
+    .hint {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .page { grid-template-columns: 1fr; }
+      .brand { position: absolute; top: 22px; left: 22px; }
+      .edition { position: absolute; top: 28px; right: 22px; }
+      .visual-column { min-height: 58svh; padding: 100px 20px 24px; }
+      .book-stage { width: min(86vw, 420px); }
+      .book { --book-width: min(58vw, 290px); }
+      .content-column {
+        min-height: auto;
+        padding: 54px 24px 70px;
+        border-left: 0;
+        border-top: 1px solid rgba(244, 241, 236, 0.1);
+      }
+      h1 { font-size: clamp(54px, 16vw, 84px); }
+      .deck { margin-top: 28px; font-size: 21px; }
+    }
+
+    @media (max-width: 520px) {
+      .edition { display: none; }
+      .meta { grid-template-columns: 1fr; gap: 22px; }
+      .actions { align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (min-width: 901px) and (max-height: 820px) {
+      .content-column { padding-top: 82px; padding-bottom: 38px; }
+      h1 { font-size: clamp(54px, 5.35vw, 82px); }
+      .deck { margin-top: 24px; font-size: clamp(18px, 1.65vw, 25px); }
+      .meta { margin-top: 26px; padding: 20px 0; gap: 18px 42px; }
+      .actions { margin-top: 22px; }
+      .visual-column { padding-top: 82px; padding-bottom: 32px; }
+      .book { --book-width: min(25vw, 295px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .book, .button { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="brand" aria-label="MCMC report">
+    <strong>MCMC Report</strong>
+    <span>Industry Performance Report 2025</span>
+  </header>
+  <div class="edition">MCMC · 2025</div>
+
+  <main class="page">
+    <section class="visual-column" id="book-area" aria-label="Interactive view of the report cover">
+      <div class="book-stage">
+        <div class="book is-resting" id="book" aria-hidden="true">
+          <div class="book__back"><img src="assets/landing/back-cover.png" alt=""></div>
+          <div class="book__pages"></div>
+          <div class="book__spine"></div>
+          <div class="book__cover"><img src="assets/landing/front-cover.png" alt=""></div>
+          <div class="book-shadow"></div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="book-stage" id="stage">
-      <button class="arrow" id="prev" aria-label="Previous page">
-        <svg viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" /></svg>
-      </button>
+    <section class="content-column" aria-labelledby="report-title">
+      <p class="eyebrow">Malaysian Communications and Multimedia Commission</p>
+      <h1 id="report-title">Industry Performance Report 2025</h1>
+      <p class="deck">Explore the Malaysian communications and multimedia industry through the complete interactive report.</p>
 
-      <div class="book-viewport" id="viewport">
-        <div id="book"></div>
+      <dl class="meta">
+        <div><dt>Format</dt><dd>Digital report · 2025 edition</dd></div>
+        <div><dt>Publisher</dt><dd>Malaysian Communications and Multimedia Commission</dd></div>
+        <div><dt>Theme</dt><dd>Industry performance and market development</dd></div>
+        <div><dt>Experience</dt><dd>Interactive page-turning reader</dd></div>
+      </dl>
+
+      <div class="actions">
+        <a class="button" href="reader.html">Open flipbook</a>
+        <span class="hint">Move your pointer over the book</span>
       </div>
+    </section>
+  </main>
 
-      <button class="arrow" id="next" aria-label="Next page">
-        <svg viewBox="0 0 24 24"><path d="M9 4l8 8-8 8" /></svg>
-      </button>
-    </div>
+  <script>
+    (() => {
+      const area = document.querySelector("#book-area");
+      const book = document.querySelector("#book");
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!area || !book || reduceMotion) return;
 
-    <p class="meta"><b id="readout">01 — 10</b><span id="caption">Cover</span></p>
+      let frame = 0;
+      const setTilt = (clientX, clientY) => {
+        const rect = area.getBoundingClientRect();
+        const x = Math.max(-1, Math.min(1, ((clientX - rect.left) / rect.width) * 2 - 1));
+        const y = Math.max(-1, Math.min(1, ((clientY - rect.top) / rect.height) * 2 - 1));
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          book.classList.remove("is-resting");
+          book.style.setProperty("--rotate-x", `${(-4 - y * 7).toFixed(2)}deg`);
+          book.style.setProperty("--rotate-y", `${(-12 + x * 16).toFixed(2)}deg`);
+        });
+      };
 
-    <!-- Navigation icons (bottom) -->
-    <div class="toolbar" role="toolbar" aria-label="Book controls">
-      <button class="tb-btn" id="tocBtn" aria-label="Table of contents" title="Table of contents">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-      </button>
-      <button class="tb-btn" id="thumbBtn" aria-label="Thumbnails" title="Thumbnails">
-        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>
-      </button>
-
-      <span class="tb-sep"></span>
-
-      <button class="tb-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-      <output class="tb-readout" id="zoomReadout">100%</output>
-      <button class="tb-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-
-      <span class="tb-sep"></span>
-
-      <button class="tb-btn" id="fullscreenBtn" aria-label="Toggle fullscreen" title="Fullscreen">
-        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
-      </button>
-    </div>
-
-    <p class="hint">Drag a page corner to turn · ← → keys · +/− zoom · F fullscreen</p>
-
-    <!-- Overlay + panels -->
-    <div class="overlay" id="overlay"></div>
-
-    <aside class="panel" id="tocPanel" aria-label="Table of contents">
-      <div class="panel-head">
-        <span>Table of Contents</span>
-        <button class="panel-close" data-close>✕</button>
-      </div>
-      <ul class="toc-list" id="tocList"></ul>
-    </aside>
-
-    <aside class="panel panel-wide" id="thumbPanel" aria-label="Thumbnails">
-      <div class="panel-head">
-        <span>All Pages</span>
-        <button class="panel-close" data-close>✕</button>
-      </div>
-      <div class="thumb-grid" id="thumbGrid"></div>
-    </aside>
-
-    <script src="js/vendor/page-flip.browser.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+      area.addEventListener("pointermove", (event) => setTilt(event.clientX, event.clientY), { passive: true });
+      area.addEventListener("pointerleave", () => {
+        book.classList.add("is-resting");
+        book.style.setProperty("--rotate-x", "-4deg");
+        book.style.setProperty("--rotate-y", "-16deg");
+      });
+    })();
+  </script>
+</body>
 </html>

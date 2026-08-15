@@ -130,18 +130,11 @@
   function applyBookTransform() {
     var idx = pageFlip.getCurrentPageIndex();
     var total = pageFlip.getPageCount();
-    var parts = [];
-
     var isSingle = (idx === 0) || (idx === total - 1);
-    if (isSingle && pageFlip.getOrientation() === "landscape") {
-      var offset = bookEl.offsetWidth / 4;
-      var dir = (idx === 0) ? -1 : 1;
-      parts.push("translateX(" + (dir * offset) + "px)");
-    }
-    if (zoomLevel !== 1) {
-      parts.push("scale(" + zoomLevel + ")");
-    }
-    bookEl.style.transform = parts.join(" ");
+
+    // no horizontal shifting of the book — the cover sits on the right half
+    // of the spread (like turn.js), so flipping is a clean rotation with no jump.
+    bookEl.style.transform = (zoomLevel !== 1) ? ("scale(" + zoomLevel + ")") : "";
     bookEl.classList.toggle("book--single", isSingle);
   }
 

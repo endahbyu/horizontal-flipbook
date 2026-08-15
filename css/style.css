@@ -268,7 +268,11 @@ a{
   z-index: 3;
   filter: saturate(0.98) contrast(1.01);
   transform-origin: center center;
-  transition: transform 220ms ease;
+}
+
+/* flatten the 3D flip so the cover does not appear to lift upward while turning */
+.stf__block{
+  perspective: 4000px !important;
 }
 
 /* StPageFlip pages (HTML mode) */

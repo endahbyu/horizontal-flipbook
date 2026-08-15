@@ -57,7 +57,7 @@
     minHeight: 240,
     maxHeight: 1273,
     maxShadowOpacity: 0.3,
-    showCover: false,
+    showCover: true,
     usePortrait: true,
     drawShadow: false,
     flippingTime: 900,
@@ -125,9 +125,21 @@
   var zoomLevel = 1;
 
   function applyBookTransform() {
-    // covers are treated like any other page — no centering, no shifting.
-    // only the zoom scale is applied to the book.
-    bookEl.style.transform = (zoomLevel !== 1) ? ("scale(" + zoomLevel + ")") : "";
+    var idx = pageFlip.getCurrentPageIndex();
+    var total = pageFlip.getPageCount();
+    var parts = [];
+
+    // center the front / back cover when it is shown alone (single page)
+    var isSingle = (idx === 0) || (idx === total - 1);
+    if (isSingle && pageFlip.getOrientation() === "landscape") {
+      var offset = bookEl.offsetWidth / 4;
+      var dir = (idx === 0) ? -1 : 1;
+      parts.push("translateX(" + (dir * offset) + "px)");
+    }
+    if (zoomLevel !== 1) {
+      parts.push("scale(" + zoomLevel + ")");
+    }
+    bookEl.style.transform = parts.join(" ");
   }
 
   function updateMeta() {

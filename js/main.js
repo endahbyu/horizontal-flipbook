@@ -74,7 +74,7 @@
     disableFlipByClick: false
   };
 
-  var RESERVED_H = 200;           // meta + toolbar + hint + padding
+  var RESERVED_H = 280;           // header + meta + toolbar + hint + padding
   var PAGE_RATIO = 2481 / 3508;   // portrait page aspect ratio
 
   function computePageSize() {

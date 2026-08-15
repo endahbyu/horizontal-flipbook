@@ -40,6 +40,15 @@ body {
   overflow: hidden;
 }
 
+header {
+  flex: 0 0 auto;
+  height: 52px;
+  width: min(1200px, 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(18px, 4vw, 44px);
+}
+
 /* ===== Toolbar (bottom nav) ===== */
 .toolbar {
   display: flex;

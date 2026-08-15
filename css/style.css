@@ -40,34 +40,6 @@ body {
   overflow: hidden;
 }
 
-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  width: min(1200px, 100%);
-  padding: 18px clamp(18px, 4vw, 44px) 6px;
-}
-
-.brand {
-  font-size: clamp(14px, 1.7vw, 22px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
-.brand em {
-  color: var(--accent);
-  font-style: normal;
-}
-
-.tag {
-  color: var(--ink-soft);
-  font-size: clamp(9px, 1vw, 11px);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
 /* ===== Toolbar (bottom nav) ===== */
 .toolbar {
   display: flex;
@@ -215,10 +187,9 @@ header {
   letter-spacing: 0.06em;
 }
 
-/* ===== Progress bar (top) — visibility of status, non-interactive ===== */
+/* ===== Progress bar — mobile only, non-interactive ===== */
 .progress {
-  width: min(90vw, 880px);
-  padding: 10px 0 6px;
+  display: none;
 }
 
 .progress-track {
@@ -429,8 +400,15 @@ header {
 }
 
 @media (max-width: 640px) {
-  header {
-    padding: 14px 14px 4px;
+  .progress {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 0;
+    z-index: 30;
   }
 
   .toolbar {

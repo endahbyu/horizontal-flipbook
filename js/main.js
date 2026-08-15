@@ -62,12 +62,15 @@
     maxShadowOpacity: 0.3,
     showCover: true,
     usePortrait: true,
-    drawShadow: true,
+    drawShadow: false,
     flippingTime: 900,
     mobileScrollSupport: false,
     disableFlipByClick: false,
     showPageCorners: false   // disable the corner "peel" hint on hover
   };
+
+  // CSS clamp() equivalent — keeps the book fluid with min/max bounds
+  function clamp(v, min, max) { return Math.max(min, Math.min(v, max)); }
 
   function computePageSize() {
     var vw = window.innerWidth;
@@ -75,23 +78,26 @@
     var isMobile = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 
     if (isMobile) {
-      // single page should fill the width (portrait mode)
-      var pageW = Math.floor(Math.min(vw * 0.86, 640));
-      var pageH = Math.floor(pageW / PAGE_RATIO);
-      var maxH = vh - 400; // reserve hero copy + meta + toolbar + hint + padding
+      // single page fills the width fluidly (clamped); 82vw leaves room for the side arrows
+      var pageW = clamp(vw * 0.82, 220, 620);
+      var pageH = pageW / PAGE_RATIO;
+      var maxH = clamp(vh - 400, 300, 900);
       if (pageH > maxH) {
         pageH = maxH;
-        pageW = Math.floor(pageH * PAGE_RATIO);
+        pageW = pageH * PAGE_RATIO;
       }
-      return { width: pageW, height: pageH };
+      return { width: Math.round(pageW), height: Math.round(pageH) };
     }
 
-    var availW = Math.min(vw * 0.88, 1040);
-    var availH = vh - RESERVED_H;
-    var pageH = Math.min(availH, availW / 1.414);
-    pageH = Math.max(220, pageH);
-    var pageW = Math.floor(pageH * PAGE_RATIO);
-    return { width: pageW, height: pageH };
+    // desktop spread: fluid page width, clamped by width + height
+    var pageW = clamp(vw * 0.30, 240, 520);
+    var pageH = pageW / PAGE_RATIO;
+    var availH = clamp(vh - RESERVED_H, 300, 900);
+    if (pageH > availH) {
+      pageH = availH;
+      pageW = pageH * PAGE_RATIO;
+    }
+    return { width: Math.round(pageW), height: Math.round(pageH) };
   }
 
   (function initSize() {

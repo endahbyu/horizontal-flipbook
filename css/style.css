@@ -709,6 +709,12 @@ footer{
   .instruction-grid span  margin: 5px 0 0; 
 }
 
+/* tablet + mobile (< desktop): hide nav links, drop the book shadow */
+@media (max-width: 1023px){
+  .masthead nav  display: none; 
+  #book  box-shadow: none; 
+}
+
 @media (max-width: 760px), (pointer: coarse){
   .hint  font-size: 0; 
   .hint::after  content: "Tap either page to turn · pinch or use + to zoom"; font-size: 10px; 

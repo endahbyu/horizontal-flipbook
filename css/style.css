@@ -261,8 +261,6 @@ a{
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 1800px;
-  perspective-origin: 50% 46%;
 }
 
 #book{

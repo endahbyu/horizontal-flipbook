@@ -34,7 +34,7 @@
     var p = document.createElement("div");
     p.className = "page";
     if (i === 0 || i === IMAGES.length - 1) {
-      p.setAttribute("data-density", "hard"); // cover & back cover
+      p.setAttribute("data-density", "soft"); // cover & back cover (paperback)
     }
     var img = document.createElement("img");
     img.src = src;

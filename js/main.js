@@ -65,12 +65,27 @@
     drawShadow: true,
     flippingTime: 900,
     mobileScrollSupport: false,
-    disableFlipByClick: false
+    disableFlipByClick: false,
+    showPageCorners: false   // disable the corner "peel" hint on hover
   };
 
   function computePageSize() {
     var vw = window.innerWidth;
     var vh = window.innerHeight;
+    var isMobile = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+
+    if (isMobile) {
+      // single page should fill the width (portrait mode)
+      var pageW = Math.floor(Math.min(vw * 0.86, 640));
+      var pageH = Math.floor(pageW / PAGE_RATIO);
+      var maxH = vh - 400; // reserve hero copy + meta + toolbar + hint + padding
+      if (pageH > maxH) {
+        pageH = maxH;
+        pageW = Math.floor(pageH * PAGE_RATIO);
+      }
+      return { width: pageW, height: pageH };
+    }
+
     var availW = Math.min(vw * 0.88, 1040);
     var availH = vh - RESERVED_H;
     var pageH = Math.min(availH, availW / 1.414);

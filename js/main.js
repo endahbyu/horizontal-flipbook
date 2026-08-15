@@ -33,9 +33,6 @@
   var pageNodes = IMAGES.map(function (src, i) {
     var p = document.createElement("div");
     p.className = "page";
-    if (i === 0 || i === IMAGES.length - 1) {
-      p.setAttribute("data-density", "soft"); // cover & back cover (paperback)
-    }
     var img = document.createElement("img");
     img.src = src;
     img.alt = PAGES[i].title;
@@ -60,7 +57,7 @@
     minHeight: 240,
     maxHeight: 1273,
     maxShadowOpacity: 0.3,
-    showCover: true,
+    showCover: false,
     usePortrait: true,
     drawShadow: false,
     flippingTime: 900,
@@ -128,14 +125,9 @@
   var zoomLevel = 1;
 
   function applyBookTransform() {
-    var idx = pageFlip.getCurrentPageIndex();
-    var total = pageFlip.getPageCount();
-    var isSingle = (idx === 0) || (idx === total - 1);
-
-    // no horizontal shifting of the book — the cover sits on the right half
-    // of the spread (like turn.js), so flipping is a clean rotation with no jump.
+    // covers are treated like any other page — no centering, no shifting.
+    // only the zoom scale is applied to the book.
     bookEl.style.transform = (zoomLevel !== 1) ? ("scale(" + zoomLevel + ")") : "";
-    bookEl.classList.toggle("book--single", isSingle);
   }
 
   function updateMeta() {

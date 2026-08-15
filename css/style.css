@@ -267,14 +267,8 @@ a{
   position: relative;
   z-index: 3;
   filter: saturate(0.98) contrast(1.01);
-  box-shadow: 0 12px 26px rgba(46, 37, 24, 0.16), 0 2px 6px rgba(46, 37, 24, 0.08);
   transform-origin: center center;
   transition: transform 220ms ease;
-}
-
-/* closed book (cover / back cover shown alone) — no shadow on the empty half */
-#book.book--single{
-  box-shadow: none;
 }
 
 /* StPageFlip pages (HTML mode) */
@@ -709,10 +703,9 @@ footer{
   .instruction-grid span  margin: 5px 0 0; 
 }
 
-/* tablet + mobile (< desktop): hide nav links, drop the book shadow */
+/* tablet + mobile (< desktop): hide nav links */
 @media (max-width: 1023px){
   .masthead nav  display: none; 
-  #book  box-shadow: none; 
 }
 
 @media (max-width: 760px), (pointer: coarse){

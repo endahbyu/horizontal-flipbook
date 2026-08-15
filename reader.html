@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e9e5dc" />
+    <meta
+      name="description"
+      content="Interactive licensing report — turn, inspect, and browse every page."
+    />
+    <title>Licensing 2025 — Interactive Report</title>
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <noscript>
+      <div class="script-warning">
+        Interactive mode requires JavaScript. Please enable it to browse the report.
+      </div>
+    </noscript>
+    <div class="wash" aria-hidden="true"></div>
+
+    <header class="masthead">
+      <a class="brand" href="#flipbook">Licensing <em>2025</em></a>
+      <nav aria-label="Primary navigation">
+        <a href="#flipbook" aria-current="page">Report</a>
+        <a href="#contents">Contents</a>
+        <a href="#instructions">How to use</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="flipbook" aria-labelledby="report-title">
+        <div class="hero-copy">
+          <p class="eyebrow">MCMC · Industry Performance Report</p>
+          <h1 id="report-title">A report you can <i>hold.</i></h1>
+        </div>
+
+        <div class="book-wrap" id="bookWrap">
+          <div class="stage" id="stage">
+            <button class="page-arrow left" id="prevButton" aria-label="Previous spread">
+              <svg viewBox="0 0 20 54" aria-hidden="true"><path d="M16 3 4 27l12 24" /></svg>
+            </button>
+
+            <div class="book-frame" id="bookFrame">
+              <div id="book" aria-live="polite"></div>
+            </div>
+
+            <button class="page-arrow right" id="nextButton" aria-label="Next spread">
+              <svg viewBox="0 0 20 54" aria-hidden="true"><path d="m4 3 12 24L4 51" /></svg>
+            </button>
+          </div>
+
+          <div class="book-meta">
+            <p class="page-readout" id="pageReadout">01 / 12</p>
+          </div>
+
+          <div class="toolbar" role="group" aria-label="Book controls">
+            <button id="tocButton" aria-label="Open table of contents" aria-haspopup="dialog" aria-expanded="false" aria-controls="tocPanel">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h10"></path>
+              </svg>
+            </button>
+            <span class="toolbar-separator" aria-hidden="true"></span>
+            <button id="zoomOut" aria-label="Zoom out">−</button>
+            <output id="zoomReadout" aria-label="Current zoom">100%</output>
+            <button id="zoomIn" aria-label="Zoom in">+</button>
+            <span class="toolbar-separator" aria-hidden="true"></span>
+            <button id="fullscreenButton" aria-label="Enter fullscreen" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-expand">
+                <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"></path>
+              </svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-collapse">
+                <path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"></path>
+              </svg>
+            </button>
+          </div>
+
+          <p class="hint" id="hint">Drag a page corner to turn · use ← → keys · +/− zoom · F fullscreen</p>
+        </div>
+
+        <div class="toc-backdrop" id="tocBackdrop" hidden></div>
+        <div class="toc-panel" id="tocPanel" role="dialog" aria-modal="true" aria-labelledby="tocPanelTitle" hidden>
+          <div class="toc-panel-header">
+            <h3 id="tocPanelTitle">Table of contents</h3>
+            <button type="button" class="toc-close" id="tocClose" aria-label="Close table of contents">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+            </button>
+          </div>
+          <ol class="toc-list" id="tocList"></ol>
+        </div>
+
+        <a class="scroll-cue" href="#contents" aria-label="Continue to contents">
+          <span>Explore the report</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6" /></svg>
+        </a>
+      </section>
+
+      <section class="contents" id="contents" aria-labelledby="contents-title">
+        <div class="section-heading">
+          <p class="eyebrow">Direct access</p>
+          <h2 id="contents-title">Twelve pages, one continuous story.</h2>
+        </div>
+        <ol class="contents-grid" id="contentsGrid"></ol>
+      </section>
+
+      <section class="instructions" id="instructions" aria-labelledby="instructions-title">
+        <p class="eyebrow">How to use</p>
+        <h2 id="instructions-title">Turn it slowly. Read it closely.</h2>
+        <div class="instruction-grid">
+          <p><span>01</span> Drag a page corner to turn. Release to complete the turn.</p>
+          <p><span>02</span> Use the arrows or your keyboard when you want a faster, precise browse.</p>
+          <p><span>03</span> Zoom the report with the +/− buttons to read dense tables and charts.</p>
+          <p><span>04</span> Open the contents menu to jump straight to any page from a clickable list.</p>
+          <p><span>05</span> Go fullscreen for a distraction-free, edge-to-edge reading view.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Malaysian Communications and Multimedia Commission</span>
+      <span>Interactive edition · 2025</span>
+    </footer>
+
+    <script src="js/vendor/page-flip.browser.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

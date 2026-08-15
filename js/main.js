@@ -2,52 +2,43 @@
   "use strict";
 
   /* ============================================================
-     CONFIG — EDIT HERE
-     ============================================================
-
-     - PAGE_COUNT : total number of pages (change to 213 when the
-       final book is ready).
-     - Image files must be named sequentially:
-         assets/img/page-001.webp, page-002.webp, … page-213.webp
-
-     - CHAPTERS : table of contents. Edit `title` and `page` (1-based
-       page number). This is what appears in the "Table of contents" menu.
-  */
-  var PAGE_COUNT = 12;
-
-  var CHAPTERS = [
-    { title: "Cover", page: 1 },
-    { title: "Table of Contents", page: 2 },
-    { title: "Chapter 1 — Licensing", page: 3 },
-    { title: "Chapter 2 — Framework", page: 5 },
-    { title: "Chapter 3 — Data & Analysis", page: 7 },
-    { title: "Back Cover", page: 12 }
+     PAGES — edit this list when pages change.
+     Files: assets/img/page-001.webp … page-NNN.webp
+     ============================================================ */
+  var PAGES = [
+    { title: "Cover", type: "Cover" },
+    { title: "Design rationale", type: "Concept" },
+    { title: "Chapter 1 — Licensing", type: "Chapter opener" },
+    { title: "Licensing landscape", type: "Introduction" },
+    { title: "Overview of licensing framework", type: "Framework" },
+    { title: "Licences overview", type: "Key highlights" },
+    { title: "Licensing profile over the years", type: "Data" },
+    { title: "Class licences under the CMA 1998", type: "Data" },
+    { title: "Licensing activity and developments", type: "Analysis" },
+    { title: "New and renewed licensees", type: "Table" },
+    { title: "Infrastructure and services", type: "Table" },
+    { title: "Back cover", type: "Back cover" }
   ];
 
-  /* ============================================================
-     BUILD IMAGE LIST (auto-generated from PAGE_COUNT)
-     ============================================================ */
-  function pad3(n) {
-    return String(n).padStart(3, "0");
-  }
-
-  var IMAGES = [];
-  for (var i = 1; i <= PAGE_COUNT; i++) {
-    IMAGES.push("assets/img/page-" + pad3(i) + ".webp");
-  }
+  function pad3(n) { return String(n).padStart(3, "0"); }
+  var IMAGES = PAGES.map(function (_, i) {
+    return "assets/img/page-" + pad3(i + 1) + ".webp";
+  });
 
   var bookEl = document.getElementById("book");
 
-  // Page elements (HTML mode → supports hard covers)
-  var pages = IMAGES.map(function (src, i) {
+  /* ============================================================
+     BUILD StPageFlip PAGES (HTML mode)
+     ============================================================ */
+  var pageNodes = IMAGES.map(function (src, i) {
     var p = document.createElement("div");
     p.className = "page";
     if (i === 0 || i === IMAGES.length - 1) {
-      p.setAttribute("data-density", "hard"); // cover & back cover (by position)
+      p.setAttribute("data-density", "hard"); // cover & back cover
     }
     var img = document.createElement("img");
     img.src = src;
-    img.alt = "Page " + (i + 1);
+    img.alt = PAGES[i].title;
     img.draggable = false;
     p.appendChild(img);
     bookEl.appendChild(p);
@@ -57,6 +48,9 @@
   /* ============================================================
      INITIALIZE StPageFlip
      ============================================================ */
+  var RESERVED_H = 310;          // hero copy + meta + toolbar + hint + padding
+  var PAGE_RATIO = 2481 / 3508;  // portrait page aspect ratio
+
   var settings = {
     width: 550,
     height: 778,
@@ -65,29 +59,23 @@
     maxWidth: 1000,
     minHeight: 240,
     maxHeight: 1273,
-    maxShadowOpacity: 0.25,
-    showCover: true,      // cover & back cover shown as single pages
-    usePortrait: true,    // auto-switch to 1 page on narrow screens
+    maxShadowOpacity: 0.3,
+    showCover: true,
+    usePortrait: true,
     drawShadow: true,
     flippingTime: 900,
     mobileScrollSupport: false,
     disableFlipByClick: false
   };
 
-  var RESERVED_H = 280;           // header + meta + toolbar + hint + padding
-  var PAGE_RATIO = 2481 / 3508;   // portrait page aspect ratio
-
   function computePageSize() {
     var vw = window.innerWidth;
     var vh = window.innerHeight;
-    var availH = Math.max(260, vh - RESERVED_H);
-    var availW = Math.max(240, vw - 80);
-    var pageH = availH;
+    var availW = Math.min(vw * 0.88, 1040);
+    var availH = vh - RESERVED_H;
+    var pageH = Math.min(availH, availW / 1.414);
+    pageH = Math.max(220, pageH);
     var pageW = Math.floor(pageH * PAGE_RATIO);
-    if (2 * pageW > availW) { // spread too wide → fit by width
-      pageW = Math.floor(availW / 2);
-      pageH = Math.floor(pageW / PAGE_RATIO);
-    }
     return { width: pageW, height: pageH };
   }
 
@@ -98,7 +86,7 @@
   })();
 
   var pageFlip = new St.PageFlip(bookEl, settings);
-  pageFlip.loadFromHTML(pages);
+  pageFlip.loadFromHTML(pageNodes);
 
   window.addEventListener("resize", function () {
     var s = computePageSize();
@@ -106,224 +94,191 @@
     is.width = is.minWidth = is.maxWidth = s.width;
     is.height = is.minHeight = is.maxHeight = s.height;
     pageFlip.update();
-  });
-
-  /* ============================================================
-     READOUT, CAPTION & PROGRESS
-     ============================================================ */
-  var readout = document.getElementById("readout");
-  var caption = document.getElementById("caption");
-  var progressFill = document.getElementById("progressFill");
-
-  function update() {
-    var idx = pageFlip.getCurrentPageIndex();
-    var total = pageFlip.getPageCount();
-    readout.textContent = String(idx + 1).padStart(2, "0") + " — " + String(total).padStart(2, "0");
-    caption.textContent = idx === 0 ? "Cover" : (idx === total - 1 ? "Back cover" : "Page " + (idx + 1));
-    updateProgress();
     applyBookTransform();
-  }
-
-  function updateProgress() {
-    var idx = pageFlip.getCurrentPageIndex();
-    var total = pageFlip.getPageCount();
-    var pct = total > 1 ? (idx / (total - 1)) * 100 : 0;
-    progressFill.style.width = pct + "%";
-  }
-
-  pageFlip.on("flip", update);
-  pageFlip.on("changeOrientation", update);
-
-  /* ============================================================
-     TABLE OF CONTENTS
-     ============================================================ */
-  var tocList = document.getElementById("tocList");
-
-  CHAPTERS.forEach(function (ch) {
-    var li = document.createElement("li");
-    var btn = document.createElement("button");
-    btn.type = "button";
-    var title = document.createElement("span");
-    title.className = "toc-title";
-    title.textContent = ch.title;
-    var page = document.createElement("span");
-    page.className = "toc-page";
-    page.textContent = String(ch.page).padStart(2, "0");
-    btn.appendChild(title);
-    btn.appendChild(page);
-    btn.addEventListener("click", function () {
-      pageFlip.flip(ch.page - 1);
-      closePanels();
-    });
-    li.appendChild(btn);
-    tocList.appendChild(li);
   });
 
   /* ============================================================
-     THUMBNAILS (spread view — 2 pages merged per thumbnail)
+     CAPTION, READOUT + COVER CENTERING
      ============================================================ */
-  var thumbGrid = document.getElementById("thumbGrid");
+  var caption = document.getElementById("caption");
+  var pageReadout = document.getElementById("pageReadout");
+  var hint = document.getElementById("hint");
 
-  // Build spreads: [0] cover, [1,2], [3,4], ... , [N-1] back cover
-  var spreads = [[0]];
-  for (var s = 1; s < IMAGES.length - 1; s += 2) {
-    if (s + 1 < IMAGES.length - 1) {
-      spreads.push([s, s + 1]);
-    } else {
-      spreads.push([s]); // leftover single page before the back cover
-    }
-  }
-  spreads.push([IMAGES.length - 1]);
-
-  spreads.forEach(function (spread) {
-    var cell = document.createElement("div");
-    cell.setAttribute("role", "button");
-    cell.setAttribute("tabindex", "0");
-    cell.className = "thumb" + (spread.length === 1 ? " thumb--single" : "");
-
-    spread.forEach(function (pageIdx) {
-      var img = document.createElement("img");
-      img.src = IMAGES[pageIdx];
-      img.loading = "lazy";
-      img.alt = "Page " + (pageIdx + 1);
-      cell.appendChild(img);
-    });
-
-    var label = document.createElement("span");
-    label.textContent = spread.length === 1
-      ? String(spread[0] + 1).padStart(2, "0")
-      : String(spread[0] + 1).padStart(2, "0") + "\u2013" + String(spread[1] + 1).padStart(2, "0");
-    cell.appendChild(label);
-
-    cell.addEventListener("click", function () {
-      pageFlip.flip(spread[0]);
-      closePanels();
-    });
-    cell.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        cell.click();
-      }
-    });
-
-    thumbGrid.appendChild(cell);
-  });
-
-  /* ============================================================
-     PANELS (open / close)
-     ============================================================ */
-  var overlay = document.getElementById("overlay");
-  var tocPanel = document.getElementById("tocPanel");
-  var thumbPanel = document.getElementById("thumbPanel");
-
-  function openPanel(panel) {
-    closePanels();
-    overlay.classList.add("on");
-    panel.classList.add("on");
-  }
-
-  function closePanels() {
-    overlay.classList.remove("on");
-    tocPanel.classList.remove("on");
-    thumbPanel.classList.remove("on");
-  }
-
-  document.getElementById("tocBtn").addEventListener("click", function () {
-    if (tocPanel.classList.contains("on")) closePanels();
-    else openPanel(tocPanel);
-  });
-
-  document.getElementById("thumbBtn").addEventListener("click", function () {
-    if (thumbPanel.classList.contains("on")) closePanels();
-    else openPanel(thumbPanel);
-  });
-
-  overlay.addEventListener("click", closePanels);
-  document.querySelectorAll("[data-close]").forEach(function (btn) {
-    btn.addEventListener("click", closePanels);
-  });
-
-  /* ============================================================
-     FULLSCREEN
-     ============================================================ */
-  document.getElementById("fullscreenBtn").addEventListener("click", function () {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(function () {});
-    } else {
-      document.exitFullscreen();
-    }
-  });
-
-  document.addEventListener("fullscreenchange", function () {
-    document.getElementById("fullscreenBtn").classList.toggle("active", !!document.fullscreenElement);
-  });
-
-  /* ============================================================
-     ZOOM + COVER CENTERING
-     ============================================================ */
   var zoomLevel = 1;
-  var zoomReadout = document.getElementById("zoomReadout");
 
   function applyBookTransform() {
     var idx = pageFlip.getCurrentPageIndex();
     var total = pageFlip.getPageCount();
     var parts = [];
 
-    // Center the single cover / back cover so it looks like a closed book
-    // (only in landscape spread mode, where the single page is offset)
     var isSingle = (idx === 0) || (idx === total - 1);
     if (isSingle && pageFlip.getOrientation() === "landscape") {
       var offset = bookEl.offsetWidth / 4;
       var dir = (idx === 0) ? -1 : 1;
       parts.push("translateX(" + (dir * offset) + "px)");
     }
-
     if (zoomLevel !== 1) {
       parts.push("scale(" + zoomLevel + ")");
     }
-
     bookEl.style.transform = parts.join(" ");
     bookEl.classList.toggle("book--single", isSingle);
   }
 
-  function setZoom(z) {
-    zoomLevel = Math.max(0.6, Math.min(2.5, z));
-    zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
-    document.getElementById("zoomOut").disabled = zoomLevel <= 0.61;
-    document.getElementById("zoomIn").disabled = zoomLevel >= 2.49;
-    applyBookTransform();
+  function updateMeta() {
+    var idx = pageFlip.getCurrentPageIndex();
+    var total = pageFlip.getPageCount();
+    caption.textContent = PAGES[idx].title;
+    pageReadout.textContent = String(idx + 1).padStart(2, "0") + " / " + String(total).padStart(2, "0");
+
+    // highlight current item in TOC + contents grid
+    document.querySelectorAll("#tocList button, #contentsGrid button").forEach(function (btn) {
+      btn.setAttribute("aria-current", String(Number(btn.dataset.page) - 1 === idx));
+    });
   }
 
-  document.getElementById("zoomIn").addEventListener("click", function () {
-    setZoom(zoomLevel * 1.2);
+  pageFlip.on("flip", function () {
+    updateMeta();
+    applyBookTransform();
   });
-  document.getElementById("zoomOut").addEventListener("click", function () {
-    setZoom(zoomLevel / 1.2);
-  });
-
-  // Reset zoom by double-clicking the book area
-  document.getElementById("viewport").addEventListener("dblclick", function () {
-    setZoom(1);
+  pageFlip.on("changeOrientation", function () {
+    applyBookTransform();
   });
 
   /* ============================================================
-     NAVIGATION CONTROLS
+     TABLE OF CONTENTS (slide-in panel)
      ============================================================ */
-  document.getElementById("next").addEventListener("click", function () {
+  var tocList = document.getElementById("tocList");
+  var tocPanel = document.getElementById("tocPanel");
+  var tocBackdrop = document.getElementById("tocBackdrop");
+  var tocButton = document.getElementById("tocButton");
+  var tocClose = document.getElementById("tocClose");
+
+  PAGES.forEach(function (page, i) {
+    var li = document.createElement("li");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.page = String(i + 1);
+    btn.innerHTML =
+      '<span class="toc-thumb"><img src="' + IMAGES[i] + '" alt="" loading="lazy" draggable="false"></span>' +
+      '<span class="toc-text">' +
+        '<span class="toc-number">Page ' + String(i + 1).padStart(2, "0") + "</span>" +
+        '<span class="toc-title">' + page.title + "</span>" +
+      "</span>";
+    btn.addEventListener("click", function () {
+      pageFlip.flip(i);
+      closeToc();
+    });
+    li.appendChild(btn);
+    tocList.appendChild(li);
+  });
+
+  function openToc() {
+    tocPanel.hidden = false;
+    tocBackdrop.hidden = false;
+    requestAnimationFrame(function () {
+      tocPanel.classList.add("open");
+      tocBackdrop.classList.add("open");
+    });
+    tocButton.setAttribute("aria-expanded", "true");
+  }
+  function closeToc() {
+    tocPanel.classList.remove("open");
+    tocBackdrop.classList.remove("open");
+    tocButton.setAttribute("aria-expanded", "false");
+    setTimeout(function () {
+      if (!tocPanel.classList.contains("open")) {
+        tocPanel.hidden = true;
+        tocBackdrop.hidden = true;
+      }
+    }, 260);
+  }
+
+  tocButton.addEventListener("click", function () {
+    tocPanel.hidden ? openToc() : closeToc();
+  });
+  tocClose.addEventListener("click", closeToc);
+  tocBackdrop.addEventListener("click", closeToc);
+
+  /* ============================================================
+     CONTENTS GRID (page section)
+     ============================================================ */
+  var contentsGrid = document.getElementById("contentsGrid");
+  PAGES.forEach(function (page, i) {
+    var li = document.createElement("li");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.page = String(i + 1);
+    btn.innerHTML =
+      '<span class="contents-number">' + String(i + 1).padStart(2, "0") + "</span>" +
+      '<span class="contents-title">' + page.title + "</span>" +
+      '<span class="contents-type">' + page.type + "</span>";
+    btn.addEventListener("click", function () {
+      pageFlip.flip(i);
+      document.getElementById("flipbook").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    li.appendChild(btn);
+    contentsGrid.appendChild(li);
+  });
+
+  /* ============================================================
+     NAVIGATION
+     ============================================================ */
+  document.getElementById("nextButton").addEventListener("click", function () {
     pageFlip.flipNext("top");
+    hideHint();
   });
-  document.getElementById("prev").addEventListener("click", function () {
+  document.getElementById("prevButton").addEventListener("click", function () {
     pageFlip.flipPrev("bottom");
+    hideHint();
   });
+
+  function hideHint() {
+    hint.classList.add("gone");
+  }
 
   window.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowRight") pageFlip.flipNext("top");
-    else if (e.key === "ArrowLeft") pageFlip.flipPrev("bottom");
+    if (e.key === "ArrowRight") { pageFlip.flipNext("top"); hideHint(); }
+    else if (e.key === "ArrowLeft") { pageFlip.flipPrev("bottom"); hideHint(); }
     else if (e.key === "+" || e.key === "=") setZoom(zoomLevel * 1.2);
     else if (e.key === "-") setZoom(zoomLevel / 1.2);
-    else if (e.key.toLowerCase() === "f") document.getElementById("fullscreenBtn").click();
-    else if (e.key === "Escape") closePanels();
+    else if (e.key.toLowerCase() === "f") document.getElementById("fullscreenButton").click();
+    else if (e.key === "Escape") closeToc();
   });
 
-  update();
+  /* ============================================================
+     ZOOM
+     ============================================================ */
+  var zoomReadout = document.getElementById("zoomReadout");
+  var zoomOutButton = document.getElementById("zoomOut");
+  var zoomInButton = document.getElementById("zoomIn");
+
+  function setZoom(z) {
+    zoomLevel = Math.max(0.9, Math.min(1.6, z));
+    zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
+    zoomOutButton.disabled = zoomLevel <= 0.91;
+    zoomInButton.disabled = zoomLevel >= 1.59;
+    applyBookTransform();
+  }
+
+  zoomInButton.addEventListener("click", function () { setZoom(zoomLevel * 1.2); });
+  zoomOutButton.addEventListener("click", function () { setZoom(zoomLevel / 1.2); });
+
+  /* ============================================================
+     FULLSCREEN
+     ============================================================ */
+  var fullscreenButton = document.getElementById("fullscreenButton");
+  fullscreenButton.addEventListener("click", function () {
+    if (!document.fullscreenElement) {
+      document.getElementById("bookWrap").requestFullscreen().catch(function () {});
+    } else {
+      document.exitFullscreen();
+    }
+  });
+  document.addEventListener("fullscreenchange", function () {
+    fullscreenButton.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+    setTimeout(applyBookTransform, 60);
+  });
+
+  updateMeta();
+  applyBookTransform();
 })();

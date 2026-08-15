@@ -106,6 +106,17 @@
   var pageFlip = new St.PageFlip(bookEl, settings);
   pageFlip.loadFromHTML(pageNodes);
 
+  // StPageFlip's createSpread() forces the cover + back cover to "hard" density
+  // (thick board). Reset them to "soft" so every page flips like thin, smooth paper.
+  (function unifyDensity() {
+    var first = pageFlip.getPage(0);
+    var last = pageFlip.getPage(pageFlip.getPageCount() - 1);
+    [first, last].forEach(function (pg) {
+      pg.setDensity("soft");
+      pg.setDrawingDensity("soft");
+    });
+  })();
+
   window.addEventListener("resize", function () {
     var s = computePageSize();
     var is = pageFlip.getSettings();

@@ -17,6 +17,8 @@
     { title: "Licensing activity and developments", type: "Analysis" },
     { title: "New and renewed licensees", type: "Table" },
     { title: "Infrastructure and services", type: "Table" },
+    { title: "", type: "Blank" },
+    { title: "", type: "Blank" },
     { title: "Back cover", type: "Back cover" }
   ];
 
@@ -32,7 +34,13 @@
      ============================================================ */
   var pageNodes = IMAGES.map(function (src, i) {
     var p = document.createElement("div");
-    p.className = "page";
+    var type = PAGES[i].type;
+    var cls = "page";
+    if (type === "Cover") cls += " is-front-cover";
+    else if (type === "Back cover") cls += " is-back-cover";
+    else if (type === "Blank") cls += " is-blank";
+    p.className = cls;
+    p.setAttribute("data-page-type", type);
     var img = document.createElement("img");
     img.src = src;
     img.alt = PAGES[i].title;
@@ -106,8 +114,9 @@
   var pageFlip = new St.PageFlip(bookEl, settings);
   pageFlip.loadFromHTML(pageNodes);
 
-  // StPageFlip's createSpread() forces the cover + back cover to "hard" density
-  // (thick board). Reset them to "soft" so every page flips like thin, smooth paper.
+  // StPageFlip's createSpread() forces the first cover page to "hard" density
+  // (thick board). Reset it to "soft" so every page flips like thin, smooth paper.
+  // (The back cover is the last page of a normal spread, so it stays soft already.)
   (function unifyDensity() {
     var first = pageFlip.getPage(0);
     var last = pageFlip.getPage(pageFlip.getPageCount() - 1);

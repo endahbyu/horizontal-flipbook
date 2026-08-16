@@ -90,13 +90,20 @@
       aspect-ratio: 2480 / 3508;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(var(--rotate-x, -4deg)) rotateY(var(--rotate-y, -16deg));
+      transform: rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
+      transform-origin: 50% 50% -9px;
       transition: transform 180ms cubic-bezier(.2,.8,.2,1);
       will-change: transform;
     }
 
     .book.is-resting {
       transition-duration: 600ms;
+    }
+
+    /* Cube-style interaction, adapted to the real cover and spine assets. */
+    .book.is-pressed {
+      transform: rotateX(-4deg) rotateY(180deg);
+      transition: transform 400ms ease-out;
     }
 
     .book__cover,
@@ -152,10 +159,11 @@
       left: 0;
       right: auto;
       width: 18px;
-      z-index: 3;
-      background: var(--purple) url("assets/landing/spine.webp") center / cover no-repeat;
-      transform-origin: right;
-      transform: translateX(-18px) translateZ(-9px) rotateY(-90deg);
+      z-index: 5;
+      background: var(--purple) url("assets/landing/spine.webp") center / 100% 100% no-repeat;
+      transform-origin: 50% 50%;
+      transform: translateX(-9px) rotateY(-90deg);
+      box-shadow: inset -1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 rgba(0, 0, 0, 0.2);
     }
 
     .book-shadow {
@@ -326,7 +334,7 @@
       const area = document.querySelector("#book-area");
       const book = document.querySelector("#book");
       const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (!area || !book || reduceMotion) return;
+      if (!area || !book) return;
 
       let frame = 0;
       const setTilt = (clientX, clientY) => {
@@ -336,16 +344,28 @@
         cancelAnimationFrame(frame);
         frame = requestAnimationFrame(() => {
           book.classList.remove("is-resting");
-          book.style.setProperty("--rotate-x", `${(-4 - y * 7).toFixed(2)}deg`);
-          book.style.setProperty("--rotate-y", `${(-12 + x * 16).toFixed(2)}deg`);
+          book.style.setProperty("--rotate-x", `${(-4 - y * 5).toFixed(2)}deg`);
+          book.style.setProperty("--rotate-y", `${(35 - x * 10).toFixed(2)}deg`);
         });
       };
 
-      area.addEventListener("pointermove", (event) => setTilt(event.clientX, event.clientY), { passive: true });
+      area.addEventListener("pointermove", (event) => {
+        if (!book.classList.contains("is-pressed") && !reduceMotion) {
+          setTilt(event.clientX, event.clientY);
+        }
+      }, { passive: true });
+      area.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        book.classList.add("is-pressed");
+      });
+      area.addEventListener("pointerup", () => book.classList.remove("is-pressed"));
+      area.addEventListener("pointercancel", () => book.classList.remove("is-pressed"));
       area.addEventListener("pointerleave", () => {
+        book.classList.remove("is-pressed");
+        if (reduceMotion) return;
         book.classList.add("is-resting");
-        book.style.setProperty("--rotate-x", "-4deg");
-        book.style.setProperty("--rotate-y", "-16deg");
+        book.style.setProperty("--rotate-x", "0deg");
+        book.style.setProperty("--rotate-y", "0deg");
       });
     })();
   </script>

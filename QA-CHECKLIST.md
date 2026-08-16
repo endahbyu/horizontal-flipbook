@@ -6,30 +6,38 @@ it top to bottom and tick items only after verifying them live in a browser.
 ## How to use
 
 - **Local preview:** `cd ~/projects/mcmc-flipbook && python3 -m http.server 8878`,
-  then open `http://localhost:8878/`.
+  then open `http://localhost:8878/reader.html` (flipbook) and
+  `http://localhost:8878/index.html` (landing page).
 - **Deployed build:** test the live URL as well — relative paths can behave
   differently once hosted.
 - Tick `[x]` when confirmed. Re-check any section after a change to `js/main.js`,
-  `css/*.css`, or the page images.
+  `css/*.css`, the page images, or after re-running `tools/scan-pages.py`.
 
 ---
 
-## 1. Assets (before opening the book)
+## 1. Assets & manifest
 
-- [ ] Every page exists as `assets/img/page-NNN.webp` (3-digit, zero-padded) and
-      runs continuously from `001` with no gaps.
-- [ ] The number of `page-NNN.webp` files matches the number of entries in the
-      `PAGES` array in `js/main.js`.
-- [ ] `page-001.webp` is the **front cover** and the last `page-NNN.webp` is the
-      **back cover**.
+- [ ] `assets/img/cover-front.webp` exists (front cover, fixed name).
+- [ ] `assets/img/cover-back.webp` exists (back cover, fixed name).
+- [ ] Content pages exist as `assets/img/page-NNN.webp` (3-digit, zero-padded)
+      and run continuously from `001` with no gaps.
+- [ ] After adding/removing pages, `js/pages.js` was regenerated:
+      ```bash
+      python3 tools/scan-pages.py
+      ```
+      and the page count in `js/pages.js` matches the number of `page-NNN.webp`
+      files (no manual `PAGES` array exists any more — the manifest is the source
+      of truth).
 - [ ] All images are **portrait** and the **same dimensions** (target 2481×3508).
       Mixed sizes cause inconsistent page heights.
-- [ ] Total page count is **EVEN** — an odd count pairs the back cover with the
-      previous page instead of showing it alone.
-- [ ] Each entry's `title` and `type` in the `PAGES` array is the final, approved
-      text (these drive the TOC and the "Direct access" grid).
-- [ ] "Wave of Connectivity" appears on **even-numbered** pages (`page-002`,
-      `page-004`, …) — the left page of each spread.
+- [ ] Blank pages are **not** stored as files — they are auto-inserted. Confirm
+      the count is right: an even number of content pages → 2 blanks before the
+      back cover; an odd number → 1 blank.
+- [ ] Each page carries the correct marker: `data-page-type` = `Cover`, `Content`,
+      `Blank`, or `Back cover`; and class `is-front-cover` / `is-blank` /
+      `is-back-cover` where applicable.
+- [ ] TOC / contents titles are placeholder (`Page 01`, `Page 02`, …) until the
+      final section titles are supplied.
 
 ## 2. Cover behaviour
 
@@ -37,6 +45,10 @@ it top to bottom and tick items only after verifying them live in a browser.
       stuck to the left).
 - [ ] Flipping the front cover opens to the 2-page spread (pages 2–3).
 - [ ] At the end, the back cover closes as a **single page, centered**.
+- [ ] The back cover sits **outside** the content — the two pages before it are
+      blank (paper-coloured), so no content shows behind it while flipping.
+- [ ] Blank pages and the page base use the paper colour (`#e9e5dc`), **not
+      white** — no white paper flashes behind covers when turning.
 - [ ] Cover front/back flip with the **same soft-paper effect** as every other
       page (no thick/hard-board look, no vertical "lift" on flip).
 
@@ -46,16 +58,21 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] "Previous spread" / "Next spread" buttons work.
 - [ ] ← → arrow keys turn pages; `+`/`−` zooms; `F` toggles fullscreen.
 - [ ] No page gets stuck or skips when flipping quickly.
-- [ ] The readout below the book shows the correct `XX / YY` on every page.
+- [ ] The readout below the book shows the correct `XX / YY` on every page
+      (blank pages included in the count).
 
 ## 4. Table of contents & contents grid
 
 - [ ] TOC button opens the "Table of contents" panel.
-- [ ] Every page is listed with the correct number + title.
+- [ ] TOC lists: `Front cover` → `Page 01 … Page NN` → `Back cover` (blank pages
+      are omitted).
 - [ ] Clicking a TOC entry jumps to the correct page and closes the panel.
-- [ ] "Direct access" contents grid lists every page with number + title + type.
+- [ ] "Direct access" contents grid lists every non-blank page with title + type
+      (`Cover` / `Content`).
 - [ ] Clicking a contents item jumps to the correct page.
 - [ ] The current page is highlighted in both lists (`aria-current`).
+- [ ] The contents section heading reflects the real count (e.g. "10 pages, one
+      continuous story.").
 
 ## 5. Zoom & fullscreen
 
@@ -74,7 +91,15 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] Nav links (Report / Contents / How to use) hide below 1024px; the
       "Licensing 2025" brand stays visible.
 
-## 7. Design & typography
+## 7. Landing page (3D book)
+
+- [ ] `index.html` loads the 3D book with `cover-front.webp` and
+      `cover-back.webp` (no broken image).
+- [ ] Hover/pointer tilt works; pressing/clicking the book rotates it (the
+      `is-pressed` effect) and returns to rest on release.
+- [ ] "OPEN FLIPBOOK" links to `reader.html`.
+
+## 8. Design & typography
 
 - [ ] Instrument Serif + Newsreader load from `css/fonts.css` (no system-font
       flash / fallback).
@@ -84,7 +109,7 @@ it top to bottom and tick items only after verifying them live in a browser.
       headings) stays readable at every width.
 - [ ] No broken images or missing assets anywhere on the page.
 
-## 8. Performance (final ~213+ page build)
+## 9. Performance (final ~213+ page build)
 
 - [ ] Each `page-NNN.webp` is reasonably compressed (a few hundred KB max each).
 - [ ] Initial load is acceptable (ideally < 3–4s on a normal connection).
@@ -92,7 +117,7 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] (If lazy-loading is added) pages load on demand with no blank pages during
       fast flipping.
 
-## 9. Cross-browser
+## 10. Cross-browser
 
 - [ ] Chrome (desktop) — all checks pass.
 - [ ] Safari (desktop + iOS) — all checks pass.
@@ -100,7 +125,7 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] Edge (desktop) — all checks pass.
 - [ ] Android Chrome — responsive + touch checks pass.
 
-## 10. Deployment
+## 11. Deployment
 
 - [ ] No errors in the browser console (Console and Network tabs clean).
 - [ ] All relative asset paths resolve on the deployed URL (no 404s for
@@ -115,12 +140,13 @@ it top to bottom and tick items only after verifying them live in a browser.
 
 | Section | Tester | Date | Result |
 |---|---|---|---|
-| Assets | | | |
+| Assets & manifest | | | |
 | Cover behaviour | | | |
 | Core interaction | | | |
 | TOC & contents | | | |
 | Zoom & fullscreen | | | |
 | Responsive | | | |
+| Landing page | | | |
 | Design & typography | | | |
 | Performance | | | |
 | Cross-browser | | | |

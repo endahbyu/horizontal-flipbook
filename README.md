@@ -69,6 +69,10 @@ python3 -m http.server 8000
   - The flipbook becomes a sub-page: `https://mcmc.gov.my/ipr/2025/`
   - Safe: it lives in its own folder and does not touch the 2024 code.
 
+## QA
+Before release, work through [`QA-CHECKLIST.md`](QA-CHECKLIST.md) once every page
+has been uploaded.
+
 ## Embed into another page (optional)
 ```html
 <iframe src="/ipr/2025/reader.html" width="100%" height="800" style="border:0"></iframe>

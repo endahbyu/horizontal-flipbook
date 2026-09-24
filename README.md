@@ -1,17 +1,10 @@
-# P2630 Strategy Plan — Interactive Flipbook
+# MCMC Licensing 2025 — Interactive Flipbook
 
 Interactive digital report flipbook built with **StPageFlip** (open-source, MIT license).
 
-## Current scope
-- This repository currently targets the **P2630 Strategy Plan** book.
-- The book layout is being migrated from portrait pages to a **16:9 widescreen** format.
-- The **P2630 Action Plan** book is not included in this phase.
-- Any supplied reference document is used only to review brand identity and must not be
-  uploaded directly into the source code or asset folders.
-
 ## Project structure
 ```
-flipbook-p2630/
+mcmc-flipbook/
 ├── index.html                 # landing page (3D book hero)
 ├── reader.html                # flipbook reader (the actual page-flip)
 ├── css/
@@ -25,7 +18,7 @@ flipbook-p2630/
 ├── tools/
 │   └── scan-pages.py          # scans assets/img/ and regenerates js/pages.js
 └── assets/
-    ├── img/                   # Strategy Plan covers + content pages
+    ├── img/                   # covers + content pages
     └── landing/               # spine asset for the 3D hero
 ```
 
@@ -39,7 +32,6 @@ assets/img/page-NNN.webp
 ```
 
 The page count is **derived from the images themselves** — no hardcoded list.
-For the P2630 Strategy Plan, page artwork should use a consistent **16:9** canvas.
 Blank pages (the inside of the back cover) are inserted automatically, so the
 back cover always closes over empty space.
 
@@ -73,7 +65,9 @@ python3 -m http.server 8000
 
 ## Deploy
 - **Netlify**: upload this folder (drag & drop); root is `index.html`.
-- **MCMC server**: place this entire folder in the P2630 Strategy Plan subdirectory.
+- **MCMC server**: place this entire folder in the `/ipr/2025/` subdirectory.
+  - The flipbook becomes a sub-page: `https://mcmc.gov.my/ipr/2025/`
+  - Safe: it lives in its own folder and does not touch the 2024 code.
 
 ## QA
 Before release, work through [`QA-CHECKLIST.md`](QA-CHECKLIST.md) once every page
@@ -81,6 +75,6 @@ has been uploaded.
 
 ## Embed into another page (optional)
 ```html
-<iframe src="/p2630/strategy-plan/reader.html" width="100%" height="800" style="border:0"></iframe>
+<iframe src="/ipr/2025/reader.html" width="100%" height="800" style="border:0"></iframe>
 ```
 The iframe isolates the flipbook's CSS/JS from the parent page — no conflicts.

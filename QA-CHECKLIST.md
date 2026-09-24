@@ -1,4 +1,4 @@
-# QA Checklist — MCMC Licensing 2025 Flipbook
+# QA Checklist — P2630 Strategy Plan Flipbook
 
 A pre-release checklist to run once **every page has been uploaded**. Work through
 it top to bottom and tick items only after verifying them live in a browser.
@@ -28,8 +28,8 @@ it top to bottom and tick items only after verifying them live in a browser.
       and the page count in `js/pages.js` matches the number of `page-NNN.webp`
       files (no manual `PAGES` array exists any more — the manifest is the source
       of truth).
-- [ ] All images are **portrait** and the **same dimensions** (target 2481×3508).
-      Mixed sizes cause inconsistent page heights.
+- [ ] All Strategy Plan images use the **16:9 widescreen ratio** and the same
+      dimensions. Mixed sizes or ratios cause inconsistent page rendering.
 - [ ] Blank pages are **not** stored as files — they are auto-inserted. Confirm
       the count is right: an even number of content pages → 2 blanks before the
       back cover; an odd number → 1 blank.
@@ -89,7 +89,7 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] No clipping of the book; the page shadow looks clean (not dark/cut off).
 - [ ] No rubber-band / scroll-jump when turning pages on mobile touch.
 - [ ] Nav links (Report / Contents / How to use) hide below 1024px; the
-      "Licensing 2025" brand stays visible.
+      P2630 Strategy Plan brand stays visible.
 
 ## 7. Landing page (3D book)
 
@@ -105,8 +105,8 @@ it top to bottom and tick items only after verifying them live in a browser.
       flash / fallback).
 - [ ] Masthead, hero ("A report you can hold."), sections and footer match the
       editorial design.
-- [ ] Fluid `clamp()` text ("Industry Performance Report 2025", section
-      headings) stays readable at every width.
+- [ ] Fluid `clamp()` text (P2630 Strategy Plan title and section headings)
+      stays readable at every width.
 - [ ] No broken images or missing assets anywhere on the page.
 
 ## 9. Performance (final ~213+ page build)
@@ -133,6 +133,14 @@ it top to bottom and tick items only after verifying them live in a browser.
 - [ ] Works when embedded as a subpage / iframe on the MCMC site (CSS/JS
       isolated, no collision with the parent page).
 - [ ] Deployed URL is live and matches the latest commit.
+
+## 12. Scope guard
+
+- [ ] Only the **P2630 Strategy Plan** is included in this release candidate.
+- [ ] The **P2630 Action Plan** has not been added or modified in this phase.
+- [ ] The supplied reference document was not uploaded into the repository.
+- [ ] Any changes outside brand identity, 16:9 layout, README, and this checklist
+      were reviewed before being included.
 
 ---
 

@@ -1,16 +1,23 @@
-# macOS
-.DS_Store
+# Environment files
+.env
+.env.local
+.env.*
+!.env.example
 
-# Thumbs
-Thumbs.db
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
 
 # Logs
 *.log
 
-# Editor / IDE
-.idea/
-.vscode/
-*.swp
+# Operating system files
+.DS_Store
+Thumbs.db
 
-# Node (kalau nanti ada tooling)
-node_modules/
+# Editor files
+.vscode/
+.idea/
+*.swp

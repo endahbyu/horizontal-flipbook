@@ -37,8 +37,7 @@ mcmc-flipbook/
 ├── tools/
 │   └── scan-pages.js          # scans assets/img/ and regenerates js/pages.js
 └── assets/
-    ├── img/                   # Strategy Plan 16:9 covers + content pages
-    └── landing/               # spine asset for the 3D hero
+    └── img/                   # Strategy Plan covers, spine + content pages
 ```
 
 ## Page naming convention

@@ -9,7 +9,7 @@
        assets/img/cover-front.webp
        assets/img/cover-back.webp
      Content pages:
-       assets/img/page-NNN.webp (sorted numerically)
+       assets/img/page-NN.webp (sorted numerically)
      ============================================================ */
   var manifest = window.FLIPBOOK_MANIFEST || { pages: [] };
   var contentFiles = manifest.pages || [];

@@ -43,19 +43,19 @@ mcmc-flipbook/
 
 ## Page naming convention
 ```
-assets/img/cover-front.webp    # front cover (fixed name, 1920x1080)
-assets/img/cover-back.webp     # back cover  (fixed name, 1920x1080)
-assets/img/page-001.webp       # content pages, numbered sequentially (1920x1080)
-assets/img/page-002.webp
-assets/img/page-NNN.webp
+assets/img/cover-front.webp    # front cover (fixed name, 16:9)
+assets/img/cover-back.webp     # back cover  (fixed name, 16:9)
+assets/img/page-01.webp        # content pages, numbered sequentially (16:9)
+assets/img/page-02.webp
+assets/img/page-NN.webp
 ```
 
 The page count is **derived from the images themselves** — no hardcoded list.
-Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 × 1080 px).
+Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 × 1080 px or equivalent 16:9 resolution).
 
 ## How to add / replace pages
-1. Drop 16:9 page images into `assets/img/`, named sequentially (`page-001.webp`,
-   `page-002.webp`, …).
+1. Drop 16:9 page images into `assets/img/`, named sequentially (`page-01.webp`,
+   `page-02.webp`, …).
 2. Regenerate the manifest:
    ```bash
    node tools/scan-pages.js

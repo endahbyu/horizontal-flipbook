@@ -1,18 +1,37 @@
-/* Fonts are self-hosted in css/fonts.css (Instrument Serif + Newsreader). */
+/* CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. Needs approved font files. */
+/* Fonts are self-hosted in css/fonts.css (Instrument Serif + Newsreader available locally as fallbacks). */
 
 /* ============================================================
-   THEME TOKENS
+   THEME TOKENS — P2630 VERIFIED BRAND SYSTEM
    ============================================================ */
+/* CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 primary navy and palette. */
 :root{
-  --paper: #e9e5dc;
-  --paper-light: #f3f0e8;
-  --ink: #24231f;
-  --ink-soft: rgba(36, 35, 31, 0.56);
-  --ink-faint: rgba(36, 35, 31, 0.28);
-  --line: rgba(36, 35, 31, 0.14);
-  --accent: #199c99;
-  --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --body: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --p2630-navy: #172983;
+  --p2630-blue: #4159D5;
+  --p2630-light-blue: #D0DDF4;
+  --p2630-neutral: #E5E7ED;
+  --p2630-muted-blue: #9FA6C9;
+  --p2630-gradient: linear-gradient(
+    110deg,
+    #F6B400 0%,
+    #F04A32 28%,
+    #D41478 52%,
+    #6B20B8 74%,
+    #245BDA 100%
+  );
+
+  /* Functional mappings to verified P2630 tokens */
+  --paper: #E5E7ED;
+  --paper-light: #F2F4F8;
+  --ink: #172983;
+  --ink-soft: rgba(23, 41, 131, 0.72);
+  --ink-faint: rgba(23, 41, 131, 0.38);
+  --line: #9FA6C9;
+  --accent: #4159D5;
+
+  /* CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font declaration. */
+  --display: "Host Grotesk", "Instrument Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --body: "Inter", "Newsreader", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 *{
@@ -34,7 +53,7 @@ body{
   background: var(--paper);
   color: var(--ink);
   font-family: var(--body);
-  font-weight: 350;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -44,14 +63,14 @@ body{
   margin: 76px auto -54px;
   width: min(680px, calc(100% - 30px));
   padding: 12px 16px;
-  border: 1px solid rgba(25, 156, 153, 0.28);
+  border: 1px solid rgba(23, 41, 131, 0.28);
   border-radius: 12px;
-  background: rgba(243, 240, 232, 0.96);
+  background: rgba(242, 244, 248, 0.96);
   color: var(--ink);
   font-size: 14px;
   line-height: 1.4;
   text-align: center;
-  box-shadow: 0 12px 32px rgba(36, 35, 31, 0.1);
+  box-shadow: 0 12px 32px rgba(23, 41, 131, 0.1);
 }
 
 button,
@@ -68,7 +87,7 @@ a{
 }
 
 ::selection{
-  background: var(--accent);
+  background: var(--p2630-navy);
   color: white;
 }
 
@@ -82,9 +101,9 @@ a{
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.74), transparent 32%),
-    radial-gradient(circle at 84% 68%, rgba(25, 156, 153, 0.08), transparent 30%),
-    repeating-linear-gradient(9deg, rgba(48, 42, 31, 0.018) 0 1px, transparent 1px 5px),
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.85), transparent 32%),
+    radial-gradient(circle at 84% 68%, rgba(65, 89, 213, 0.12), transparent 30%),
+    repeating-linear-gradient(9deg, rgba(23, 41, 131, 0.015) 0 1px, transparent 1px 5px),
     var(--paper);
 }
 
@@ -92,7 +111,7 @@ a{
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.28;
+  opacity: 0.2;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
   mix-blend-mode: multiply;
 }
@@ -117,7 +136,7 @@ a{
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(180deg, rgba(239, 235, 226, 0.94), rgba(239, 235, 226, 0.63) 48%, transparent);
+  background: linear-gradient(180deg, rgba(229, 231, 237, 0.94), rgba(229, 231, 237, 0.63) 48%, transparent);
   backdrop-filter: blur(14px) saturate(0.9);
   -webkit-backdrop-filter: blur(14px) saturate(0.9);
   mask-image: linear-gradient(#000 45%, transparent 100%);
@@ -131,12 +150,17 @@ a{
 .brand{
   font-family: var(--display);
   font-size: clamp(22px, 2vw, 30px);
+  font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--p2630-navy);
 }
 
 .brand em{
-  color: var(--accent);
-  font-weight: 400;
+  color: var(--p2630-blue);
+  font-weight: 700;
+  font-style: normal;
+  margin-left: 4px;
 }
 
 .masthead nav{
@@ -144,7 +168,8 @@ a{
   gap: clamp(14px, 2.1vw, 30px);
   color: var(--ink-soft);
   font-size: 14px;
-  letter-spacing: 0.07em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
 .masthead nav a{
@@ -154,6 +179,7 @@ a{
 .masthead nav a:hover,
 .masthead nav a[aria-current="page"]{
   color: var(--ink);
+  font-weight: 600;
 }
 
 /* ============================================================
@@ -180,8 +206,8 @@ a{
   margin: 0 0 12px;
   color: var(--ink-soft);
   font-size: 11px;
-  font-weight: 450;
-  letter-spacing: 0.24em;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
@@ -190,18 +216,19 @@ a{
 .instructions h2{
   margin: 0;
   font-family: var(--display);
-  font-weight: 400;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--p2630-navy);
 }
 
 .hero h1{
-  font-size: clamp(36px, 4.8vw, 70px);
+  font-size: clamp(38px, 4.8vw, 72px);
   line-height: 0.98;
 }
 
 .hero h1 i{
-  color: var(--accent);
-  font-weight: 400;
+  color: var(--p2630-blue);
+  font-style: normal;
 }
 
 /* ============================================================
@@ -245,7 +272,7 @@ a{
 .page-arrow path{
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.15;
+  stroke-width: 1.4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -280,12 +307,13 @@ a{
   perspective: 4000px !important;
 }
 
-/* StPageFlip pages (HTML mode) */
+/* StPageFlip pages (HTML mode) — Single 16:9 widescreen page */
 .page{
   width: 100%;
   height: 100%;
   background: var(--paper);
   overflow: hidden;
+  aspect-ratio: 16 / 9;
 }
 
 .page img{
@@ -293,6 +321,7 @@ a{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  aspect-ratio: 16 / 9;
   pointer-events: none;
   -webkit-user-drag: none;
   user-select: none;
@@ -317,6 +346,7 @@ a{
   margin: 0;
   color: var(--ink-soft);
   font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.06em;
 }
 
@@ -331,9 +361,9 @@ a{
   content: "";
   display: inline-block;
   width: 22px;
-  height: 1px;
+  height: 2px;
   margin: 0 10px 4px 0;
-  background: var(--line);
+  background: var(--p2630-gradient);
 }
 
 /* ============================================================
@@ -343,24 +373,26 @@ a{
 .toolbar{
   display: flex;
   align-items: center;
-  height: 34px;
+  height: 36px;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid var(--p2630-muted-blue);
   border-radius: 999px;
-  background: rgba(244, 241, 233, 0.66);
+  background: rgba(242, 244, 248, 0.85);
   backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(23, 41, 131, 0.08);
 }
 
 .toolbar button,
 .toolbar output{
-  width: 36px;
-  height: 32px;
+  width: 38px;
+  height: 34px;
   display: inline-grid;
   place-items: center;
   border: 0;
   background: transparent;
   color: var(--ink-soft);
   font-size: 15px;
+  font-weight: 500;
 }
 
 .toolbar button{
@@ -370,8 +402,8 @@ a{
 
 .toolbar button:hover,
 .toolbar button[aria-pressed="true"]{
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.32);
+  color: var(--p2630-navy);
+  background: var(--p2630-light-blue);
 }
 
 .toolbar button:disabled{
@@ -380,8 +412,9 @@ a{
 }
 
 .toolbar output{
-  width: 46px;
+  width: 48px;
   font-size: 11px;
+  font-weight: 600;
 }
 
 .toolbar svg{
@@ -389,14 +422,14 @@ a{
   height: 16px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
 
 .toolbar-separator{
   width: 1px;
   height: 17px;
-  background: var(--line);
+  background: var(--p2630-muted-blue);
 }
 
 .icon-collapse{
@@ -423,8 +456,8 @@ a{
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(24, 23, 20, 0.42);
-  backdrop-filter: blur(2px);
+  background: rgba(23, 41, 131, 0.35);
+  backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 220ms ease;
@@ -445,8 +478,8 @@ a{
   display: flex;
   flex-direction: column;
   background: var(--paper-light);
-  border-right: 1px solid var(--line);
-  box-shadow: 24px 0 48px rgba(24, 23, 20, 0.16);
+  border-right: 1px solid var(--p2630-muted-blue);
+  box-shadow: 24px 0 48px rgba(23, 41, 131, 0.16);
   transform: translateX(-100%);
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -461,14 +494,15 @@ a{
   justify-content: space-between;
   gap: 12px;
   padding: 20px 20px 14px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--p2630-muted-blue);
 }
 
 .toc-panel-header h3{
   margin: 0;
   font-family: var(--display);
   font-size: 22px;
-  font-weight: 400;
+  font-weight: 700;
+  color: var(--p2630-navy);
 }
 
 .toc-close{
@@ -486,7 +520,7 @@ a{
 
 .toc-close:hover{
   color: var(--ink);
-  background: rgba(36, 35, 31, 0.08);
+  background: var(--p2630-light-blue);
 }
 
 .toc-close svg{
@@ -494,7 +528,7 @@ a{
   height: 16px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
 
@@ -511,7 +545,7 @@ a{
 .toc-list button{
   width: 100%;
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 72px 1fr;
   align-items: center;
   gap: 14px;
   padding: 9px 10px;
@@ -525,16 +559,17 @@ a{
 
 .toc-list button:hover,
 .toc-list button[aria-current="true"]{
-  background: rgba(25, 156, 153, 0.1);
+  background: var(--p2630-light-blue);
 }
 
 .toc-thumb{
-  width: 44px;
-  height: 58px;
+  width: 72px;
+  height: 40.5px;
+  aspect-ratio: 16 / 9;
   border-radius: 4px;
   overflow: hidden;
   background: var(--paper);
-  box-shadow: 0 2px 6px rgba(24, 23, 20, 0.16);
+  box-shadow: 0 2px 6px rgba(23, 41, 131, 0.16);
 }
 
 .toc-thumb img{
@@ -553,7 +588,8 @@ a{
 
 .toc-title{
   font-family: var(--display);
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
   overflow: hidden;
@@ -586,8 +622,9 @@ a{
   gap: 8px;
   transform: translateX(-50%);
   color: var(--ink-faint);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   animation: breathe 2.8s ease-in-out infinite;
 }
@@ -597,14 +634,14 @@ a{
   height: 15px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.4;
+  stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 @keyframes breathe{
-  0%, 100%  opacity: 0.24; transform: translate(-50%, 0); 
-  50%  opacity: 0.75; transform: translate(-50%, 4px); 
+  0%, 100% { opacity: 0.35; transform: translate(-50%, 0); }
+  50% { opacity: 0.9; transform: translate(-50%, 4px); }
 }
 
 /* ============================================================
@@ -633,8 +670,8 @@ a{
 .contents h2,
 .instructions h2{
   max-width: 760px;
-  font-size: clamp(42px, 6vw, 84px);
-  line-height: 0.98;
+  font-size: clamp(38px, 5.4vw, 76px);
+  line-height: 1;
 }
 
 .contents-grid{
@@ -667,12 +704,14 @@ a{
 
 .contents-title{
   font-family: var(--display);
-  font-size: clamp(23px, 2.8vw, 38px);
+  font-size: clamp(22px, 2.6vw, 36px);
+  font-weight: 600;
 }
 
 .contents-type{
   color: var(--ink-soft);
   font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.08em;
 }
 
@@ -689,15 +728,16 @@ a{
 .instruction-grid p{
   margin: 0;
   color: var(--ink-soft);
-  font-size: clamp(17px, 1.55vw, 22px);
+  font-size: clamp(16px, 1.45vw, 20px);
   line-height: 1.45;
 }
 
 .instruction-grid span{
   display: block;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   color: var(--accent);
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.2em;
 }
 
@@ -713,6 +753,7 @@ footer{
   border-top: 1px solid var(--line);
   color: var(--ink-soft);
   font-size: 12px;
+  font-weight: 500;
   letter-spacing: 0.06em;
 }
 
@@ -721,73 +762,73 @@ footer{
    ============================================================ */
 
 @media (max-width: 900px){
-  .section-heading  grid-template-columns: 1fr; gap: 18px; 
-  .section-heading .eyebrow  padding: 0; 
-  .instruction-grid  grid-template-columns: 1fr; 
-  .instruction-grid p  display: grid; grid-template-columns: 42px 1fr; gap: 10px; 
-  .instruction-grid span  margin: 5px 0 0; 
+  .section-heading { grid-template-columns: 1fr; gap: 18px; }
+  .section-heading .eyebrow { padding: 0; }
+  .instruction-grid { grid-template-columns: 1fr; }
+  .instruction-grid p { display: grid; grid-template-columns: 42px 1fr; gap: 10px; }
+  .instruction-grid span { margin: 5px 0 0; }
 }
 
 /* tablet + mobile (< desktop): hide nav links */
 @media (max-width: 1023px){
-  .masthead nav  display: none; 
+  .masthead nav { display: none; }
 }
 
 @media (max-width: 760px), (pointer: coarse){
-  .hint  font-size: 0; 
-  .hint::after  content: "Tap either page to turn · pinch or use + to zoom"; font-size: 10px; 
+  .hint { font-size: 0; }
+  .hint::after { content: "Tap either page to turn · pinch or use + to zoom"; font-size: 10px; }
 }
 
 @media (max-width: 640px){
-  .masthead 
+  .masthead {
     padding: 15px 14px 46px;
-  
+  }
 
-  .brand  font-size: 20px; 
-  .masthead nav  gap: 12px; font-size: 12px; 
-  .masthead nav a:last-child  display: none; 
-  .script-warning  margin-top: 64px; font-size: 13px; 
+  .brand { font-size: 20px; }
+  .masthead nav { gap: 12px; font-size: 12px; }
+  .masthead nav a:last-child { display: none; }
+  .script-warning { margin-top: 64px; font-size: 13px; }
 
-  .hero 
+  .hero {
     min-height: 100svh;
     padding: 100px 0 78px;
-  
+  }
 
-  .hero-copy  margin-bottom: 28px; 
-  .hero h1  font-size: clamp(34px, 10.6vw, 48px); 
-  .eyebrow  font-size: 9px; 
+  .hero-copy { margin-bottom: 28px; }
+  .hero h1 { font-size: clamp(34px, 10.6vw, 48px); }
+  .eyebrow { font-size: 9px; }
 
-  .page-arrow  flex-basis: 8vw; width: 8vw; padding: 4px; 
-  .page-arrow svg  width: 8px; height: 38px; 
-  .book-wrap  gap: 9px; 
-  .book-meta  width: 84vw; gap: 8px; 
-  .caption  font-size: 14px; 
-  .page-readout  font-size: 10px; 
-  .page-readout::before  width: 12px; margin-right: 7px; 
-  .hint  max-width: 84vw; text-align: center; 
-  .scroll-cue span  display: none; 
+  .page-arrow { flex-basis: 8vw; width: 8vw; padding: 4px; }
+  .page-arrow svg { width: 8px; height: 38px; }
+  .book-wrap { gap: 9px; }
+  .book-meta { width: 84vw; gap: 8px; }
+  .caption { font-size: 14px; }
+  .page-readout { font-size: 10px; }
+  .page-readout::before { width: 12px; margin-right: 7px; }
+  .hint { max-width: 84vw; text-align: center; }
+  .scroll-cue span { display: none; }
 
-  .toolbar  height: 44px; 
+  .toolbar { height: 44px; }
   .toolbar button,
-  .toolbar output  width: 44px; height: 42px; 
-  .toolbar output  width: 50px; 
-  .toolbar svg  width: 18px; height: 18px; 
+  .toolbar output { width: 44px; height: 42px; }
+  .toolbar output { width: 50px; }
+  .toolbar svg { width: 18px; height: 18px; }
 
   .contents,
-  .instructions 
+  .instructions {
     width: calc(100% - 30px);
     padding: 92px 0;
-  
+  }
 
-  .section-heading  margin-bottom: 38px; 
+  .section-heading { margin-bottom: 38px; }
   .contents h2,
-  .instructions h2  font-size: 44px; 
-  .contents-grid button  grid-template-columns: 42px 1fr; gap: 10px; padding: 16px 2px; 
-  .contents-type  display: none; 
-  .contents-title  font-size: 24px; 
-  .instructions > h2  margin-bottom: 48px; 
+  .instructions h2 { font-size: 40px; }
+  .contents-grid button { grid-template-columns: 42px 1fr; gap: 10px; padding: 16px 2px; }
+  .contents-type { display: none; }
+  .contents-title { font-size: 22px; }
+  .instructions > h2 { margin-bottom: 48px; }
 
-  footer  flex-direction: column; gap: 8px; 
+  footer { flex-direction: column; gap: 8px; }
 }
 
 .book-wrap:fullscreen,
@@ -808,7 +849,7 @@ footer{
 }
 
 @media (prefers-reduced-motion: reduce){
-  html  scroll-behavior: auto; 
-  .scroll-cue  animation: none; 
-  *, *::before, *::after  transition-duration: 0.01ms !important; 
+  html { scroll-behavior: auto; }
+  .scroll-cue { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
 }

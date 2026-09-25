@@ -1,73 +1,86 @@
-# MCMC Licensing 2025 — Interactive Flipbook
+# MCMC P2630 Strategy Plan — Interactive Flipbook
 
-Interactive digital report flipbook built with **StPageFlip** (open-source, MIT license).
+Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built with **StPageFlip** (open-source, MIT license).
+
+## Current scope
+
+- This repository currently targets the **MCMC P2630 Strategy Plan** book.
+- The reading format is a **single-page 16:9 widescreen** presentation.
+- One report asset represents exactly one complete page.
+- Desktop, tablet, and mobile display **one page at a time**.
+- Page navigation advances **one individual page at a time**.
+- The **P2630 Action Plan** book is not included in this phase.
+- Current validated sample contains **12 reader pages** (1 front cover, 10 content pages, 1 back cover).
+- The final Strategy Plan page count (~64 pages) is pending the remaining approved assets.
+
+## Migration status
+
+- Brand identity: verified (MCMC Plan 2026–2030 / MCMC P2630 — Advancing Inclusivity).
+- Page ratio: verified 16:9 widescreen (1920 × 1080 px).
+- Reading format: verified single-page view across all viewports.
+- Current sample: 12 validated individual reader pages.
+- Action Plan: excluded from this phase.
 
 ## Project structure
 ```
 mcmc-flipbook/
 ├── index.html                 # landing page (3D book hero)
-├── reader.html                # flipbook reader (the actual page-flip)
+├── reader.html                # flipbook reader (single-page 16:9 format)
 ├── css/
-│   ├── style.css              # all styles
-│   └── fonts.css              # self-hosted fonts (Instrument Serif + Newsreader)
+│   ├── style.css              # all styles (P2630 verified palette & 16:9 geometry)
+│   └── fonts.css              # self-hosted fonts
 ├── js/
-│   ├── pages.js               # AUTO-GENERATED page manifest (run tools/scan-pages.py)
-│   ├── main.js                # flipbook logic (reads the manifest)
+│   ├── pages.js               # AUTO-GENERATED page manifest (run tools/scan-pages.js)
+│   ├── main.js                # flipbook logic (single-page 16:9 mode)
 │   └── vendor/
 │       └── page-flip.browser.js   # StPageFlip library (v2.0.7, MIT)
 ├── tools/
-│   └── scan-pages.py          # scans assets/img/ and regenerates js/pages.js
+│   └── scan-pages.js          # scans assets/img/ and regenerates js/pages.js
 └── assets/
-    ├── img/                   # covers + content pages
+    ├── img/                   # Strategy Plan 16:9 covers + content pages
     └── landing/               # spine asset for the 3D hero
 ```
 
 ## Page naming convention
 ```
-assets/img/cover-front.webp    # front cover (fixed name)
-assets/img/cover-back.webp     # back cover  (fixed name)
-assets/img/page-001.webp       # content pages, numbered sequentially
+assets/img/cover-front.webp    # front cover (fixed name, 1920x1080)
+assets/img/cover-back.webp     # back cover  (fixed name, 1920x1080)
+assets/img/page-001.webp       # content pages, numbered sequentially (1920x1080)
 assets/img/page-002.webp
 assets/img/page-NNN.webp
 ```
 
 The page count is **derived from the images themselves** — no hardcoded list.
-Blank pages (the inside of the back cover) are inserted automatically, so the
-back cover always closes over empty space.
+Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 × 1080 px).
 
 ## How to add / replace pages
-1. Drop page images into `assets/img/`, named sequentially (`page-001.webp`,
+1. Drop 16:9 page images into `assets/img/`, named sequentially (`page-001.webp`,
    `page-002.webp`, …).
 2. Regenerate the manifest:
    ```bash
-   python3 tools/scan-pages.py
+   node tools/scan-pages.js
    ```
-3. Done. The cover, back cover and blank pages are handled automatically.
-
-TOC / contents titles are placeholder (`Page 01`, `Page 02`, …) until the final
-section titles are supplied.
+3. Done. The manifest and reader will update automatically.
 
 ## Features
-- Realistic 3D page-flip (StPageFlip), soft/paper page feel
-- Responsive: 1 page on mobile (portrait), 2-page spread on desktop
-- Front & back cover close on the outside (single page, centered)
-- Table of contents (clickable, slide-in panel)
-- Contents grid ("direct access" section)
+- Single-page 16:9 widescreen reading format across desktop, tablet, and mobile
+- Realistic page-turn animation (StPageFlip)
+- One report asset represents one page
+- Front & back cover displayed as individual 16:9 pages
+- Table of contents (clickable, slide-in panel with 16:9 thumbnails)
 - Zoom in/out and fullscreen mode
-- Self-contained — no CDN or external dependencies
+- Self-contained — no external dependencies
 
 ## Run locally
 ```bash
-python3 -m http.server 8000
-# landing page:  http://localhost:8000/index.html
-# flipbook:      http://localhost:8000/reader.html
+npm run dev
+# landing page:  http://localhost:3000/index.html
+# flipbook:      http://localhost:3000/reader.html
 ```
 
 ## Deploy
 - **Netlify**: upload this folder (drag & drop); root is `index.html`.
-- **MCMC server**: place this entire folder in the `/ipr/2025/` subdirectory.
-  - The flipbook becomes a sub-page: `https://mcmc.gov.my/ipr/2025/`
-  - Safe: it lives in its own folder and does not touch the 2024 code.
+- **MCMC server**: place this entire folder in the P2630 Strategy Plan subdirectory.
 
 ## QA
 Before release, work through [`QA-CHECKLIST.md`](QA-CHECKLIST.md) once every page
@@ -75,6 +88,6 @@ has been uploaded.
 
 ## Embed into another page (optional)
 ```html
-<iframe src="/ipr/2025/reader.html" width="100%" height="800" style="border:0"></iframe>
+<iframe src="/p2630/strategy-plan/reader.html" width="100%" height="800" style="border:0"></iframe>
 ```
 The iframe isolates the flipbook's CSS/JS from the parent page — no conflicts.

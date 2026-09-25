@@ -3,25 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="MCMC Industry Performance Report 2025">
-  <title>Industry Performance Report 2025 — MCMC</title>
+  <meta name="description" content="MCMC Plan 2026–2030 (MCMC P2630)">
+  <title>MCMC Plan 2026–2030 — MCMC P2630</title>
+  <!-- CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 primary navy. -->
+  <meta name="theme-color" content="#172983">
 
-  <!-- Landing page styles: 3D book + editorial layout -->
+  <!-- Landing page styles: 3D book + P2630 verified brand system -->
   <style>
+    /* CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 color system */
     :root {
       color-scheme: light;
-      --background: #F5F5F5;
-      --foreground: #2D2D2D;
-      --muted: #7a7670;
-      --rule: rgba(45, 45, 45, 0.14);
-      --purple: #593792;
-      --page: #f4f1ea;
+      --p2630-navy: #172983;
+      --p2630-blue: #4159D5;
+      --p2630-light-blue: #D0DDF4;
+      --p2630-neutral: #E5E7ED;
+      --p2630-muted-blue: #9FA6C9;
+      --p2630-gradient: linear-gradient(
+        110deg,
+        #F6B400 0%,
+        #F04A32 28%,
+        #D41478 52%,
+        #6B20B8 74%,
+        #245BDA 100%
+      );
+
+      --background: var(--p2630-neutral);
+      --foreground: var(--p2630-navy);
+      --muted: #4A5B8C;
+      --rule: rgba(159, 166, 201, 0.45);
+      --navy: var(--p2630-navy);
+      --page: #F2F4F8;
     }
 
     * { box-sizing: border-box; }
 
     html, body { min-height: 100%; }
 
+    /* CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. */
     body {
       margin: 0;
       background: var(--background);
@@ -48,7 +66,9 @@
     }
 
     .brand strong {
-      font: 400 clamp(22px, 2.1vw, 34px)/1 Georgia, "Times New Roman", serif;
+      font: 700 clamp(22px, 2.1vw, 32px)/1 "Host Grotesk", Inter, sans-serif;
+      letter-spacing: -0.02em;
+      color: var(--navy);
     }
 
     .brand span,
@@ -67,6 +87,13 @@
       z-index: 10;
       top: 38px;
       right: 42px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--p2630-light-blue);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
     }
 
     .visual-column {
@@ -79,17 +106,17 @@
     }
 
     .book-stage {
-      width: min(42vw, 460px);
-      aspect-ratio: 1 / 1.2;
+      width: min(46vw, 500px);
+      aspect-ratio: 16 / 10;
       display: grid;
       place-items: center;
       transform-style: preserve-3d;
     }
 
     .book {
-      --book-width: min(29vw, 330px);
+      --book-width: min(42vw, 460px);
       width: var(--book-width);
-      aspect-ratio: 2480 / 3508;
+      aspect-ratio: 16 / 9;
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
@@ -121,7 +148,7 @@
       z-index: 4;
       transform: translateZ(9px);
       overflow: hidden;
-      background: var(--purple);
+      background: var(--navy);
     }
 
     .book__cover img,
@@ -135,7 +162,7 @@
     .book__back {
       z-index: 1;
       transform: translateZ(-9px) rotateY(180deg);
-      background: var(--purple);
+      background: var(--navy);
     }
 
     .book__pages {
@@ -162,10 +189,10 @@
       right: auto;
       width: 18px;
       z-index: 5;
-      background: var(--purple) url("assets/landing/spine.webp") center / 100% 100% no-repeat;
+      background: var(--navy) url("assets/landing/spine.webp") center / 100% 100% no-repeat;
       transform-origin: 50% 50%;
       transform: translateX(-9px) rotateY(-90deg);
-      box-shadow: inset -1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: inset -1px 0 rgba(255, 255, 255, 0.18), inset 1px 0 rgba(0, 0, 0, 0.25);
     }
 
     .book-shadow {
@@ -176,7 +203,7 @@
       bottom: -52px;
       translate: -50% 0;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.28);
+      background: rgba(23, 41, 131, 0.28);
       filter: blur(18px);
       transform: rotateX(78deg);
       pointer-events: none;
@@ -188,23 +215,37 @@
       flex-direction: column;
       justify-content: center;
       padding: 120px clamp(42px, 6vw, 100px) 72px clamp(36px, 5vw, 82px);
-      border-left: 1px solid rgba(45, 45, 45, 0.12);
+      border-left: 1px solid var(--rule);
     }
 
-    .eyebrow { margin: 0 0 24px; }
+    .eyebrow {
+      margin: 0 0 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 16px;
+      height: 3px;
+      background: var(--p2630-gradient);
+      border-radius: 2px;
+    }
 
     h1 {
       max-width: 780px;
       margin: 0;
-      font: 400 clamp(58px, 6.4vw, 112px)/0.9 Georgia, "Times New Roman", serif;
-      letter-spacing: -0.045em;
+      font: 700 clamp(48px, 5.8vw, 92px)/0.95 "Host Grotesk", Inter, sans-serif;
+      letter-spacing: -0.04em;
+      color: var(--navy);
     }
 
     .deck {
       max-width: 720px;
-      margin: 40px 0 0;
-      color: #57534e;
-      font: 400 clamp(20px, 2vw, 31px)/1.45 Georgia, "Times New Roman", serif;
+      margin: 32px 0 0;
+      color: #3B4B75;
+      font: 400 clamp(18px, 1.8vw, 25px)/1.45 Inter, sans-serif;
     }
 
     .meta {
@@ -212,20 +253,20 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 28px 52px;
-      margin: 46px 0 0;
-      padding: 30px 0;
+      margin: 40px 0 0;
+      padding: 28px 0;
       border-top: 1px solid var(--rule);
       border-bottom: 1px solid var(--rule);
     }
 
-    .meta div { display: grid; gap: 10px; }
-    .meta dd { margin: 0; color: #4a4744; font-size: 15px; line-height: 1.5; }
+    .meta div { display: grid; gap: 8px; }
+    .meta dd { margin: 0; color: var(--navy); font-size: 15px; font-weight: 500; line-height: 1.5; }
 
     .actions {
       display: flex;
       align-items: center;
       gap: 24px;
-      margin-top: 38px;
+      margin-top: 36px;
     }
 
     .button {
@@ -233,24 +274,31 @@
       align-items: center;
       justify-content: center;
       min-height: 48px;
-      padding: 0 2px 10px;
-      border-bottom: 1px solid var(--foreground);
-      color: var(--foreground);
+      padding: 0 24px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: #FFFFFF;
       font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.17em;
+      letter-spacing: 0.12em;
       text-decoration: none;
       text-transform: uppercase;
-      transition: opacity 160ms ease, transform 160ms ease;
+      box-shadow: 0 4px 18px rgba(23, 41, 131, 0.22);
+      transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
     }
 
-    .button:hover { opacity: 0.66; transform: translateY(-2px); }
-    .button:focus-visible { outline: 2px solid var(--foreground); outline-offset: 8px; }
+    .button:hover {
+      background: var(--p2630-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(65, 89, 213, 0.32);
+    }
+
+    .button:focus-visible { outline: 2px solid var(--navy); outline-offset: 4px; }
 
     .hint {
       color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 0.16em;
+      font-size: 11px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
@@ -258,33 +306,33 @@
       .page { grid-template-columns: 1fr; }
       .brand { position: absolute; top: 22px; left: 22px; }
       .edition { position: absolute; top: 28px; right: 22px; }
-      .visual-column { min-height: 58svh; padding: 100px 20px 24px; }
-      .book-stage { width: min(86vw, 420px); }
-      .book { --book-width: min(58vw, 290px); }
+      .visual-column { min-height: 52svh; padding: 100px 20px 24px; }
+      .book-stage { width: min(92vw, 440px); aspect-ratio: 16 / 10; }
+      .book { --book-width: min(86vw, 400px); aspect-ratio: 16 / 9; }
       .content-column {
         min-height: auto;
         padding: 54px 24px 70px;
         border-left: 0;
-        border-top: 1px solid rgba(45, 45, 45, 0.12);
+        border-top: 1px solid var(--rule);
       }
-      h1 { font-size: clamp(54px, 16vw, 84px); }
-      .deck { margin-top: 28px; font-size: 21px; }
+      h1 { font-size: clamp(40px, 12vw, 68px); }
+      .deck { margin-top: 24px; font-size: 18px; }
     }
 
     @media (max-width: 520px) {
       .edition { display: none; }
-      .meta { grid-template-columns: 1fr; gap: 22px; }
+      .meta { grid-template-columns: 1fr; gap: 20px; }
       .actions { align-items: flex-start; flex-direction: column; }
     }
 
     @media (min-width: 901px) and (max-height: 820px) {
       .content-column { padding-top: 82px; padding-bottom: 38px; }
-      h1 { font-size: clamp(54px, 5.35vw, 82px); }
-      .deck { margin-top: 24px; font-size: clamp(18px, 1.65vw, 25px); }
-      .meta { margin-top: 26px; padding: 20px 0; gap: 18px 42px; }
-      .actions { margin-top: 22px; }
+      h1 { font-size: clamp(44px, 4.8vw, 72px); }
+      .deck { margin-top: 20px; font-size: clamp(16px, 1.5vw, 22px); }
+      .meta { margin-top: 22px; padding: 18px 0; gap: 16px 36px; }
+      .actions { margin-top: 20px; }
       .visual-column { padding-top: 82px; padding-bottom: 32px; }
-      .book { --book-width: min(25vw, 295px); }
+      .book { --book-width: min(36vw, 400px); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -293,11 +341,14 @@
   </style>
 </head>
 <body>
-  <header class="brand" aria-label="MCMC report">
-    <strong>MCMC Report</strong>
-    <span>Industry Performance Report 2025</span>
+  <!-- CONTENT REPLACEMENT: BRAND — MCMC P2630 wordmark. -->
+  <!-- CONTENT REPLACEMENT: LOGO — replace fallback wordmark when approved logo asset is supplied. -->
+  <header class="brand" aria-label="MCMC P2630">
+    <strong>MCMC P2630</strong>
+    <span>MCMC PLAN 2026–2030</span>
   </header>
-  <div class="edition">MCMC · 2025</div>
+  <!-- CONTENT REPLACEMENT: BRAND — MCMC P2630 edition label. -->
+  <div class="edition">MCMC P2630</div>
 
   <main class="page">
     <!-- 3D book (back cover, pages, spine, front cover) -->
@@ -314,20 +365,26 @@
     </section>
 
     <section class="content-column" aria-labelledby="report-title">
-      <p class="eyebrow">Malaysian Communications and Multimedia Commission</p>
-      <h1 id="report-title">Industry Performance Report 2025</h1>
-      <p class="deck">Explore the Malaysian communications and multimedia industry through the complete interactive report.</p>
+      <!-- CONTENT REPLACEMENT: COPYWRITING — MCMC PLAN 2026–2030 eyebrow. -->
+      <p class="eyebrow">MCMC PLAN 2026–2030</p>
+      <!-- CONTENT REPLACEMENT: COPYWRITING — Advancing Inclusivity headline. -->
+      <h1 id="report-title">Advancing Inclusivity</h1>
+      <!-- CONTENT REPLACEMENT: COPYWRITING — Deck copy. -->
+      <p class="deck">MCMC Plan 2026–2030 provides a strategic framework for a future-ready regulator and strategic digital enabler.</p>
 
+      <!-- CONTENT REPLACEMENT: COPYWRITING — Metadata values. -->
       <dl class="meta">
-        <div><dt>Format</dt><dd>Digital report · 2025 edition</dd></div>
+        <div><dt>Format</dt><dd>Interactive Strategy Plan</dd></div>
         <div><dt>Publisher</dt><dd>Malaysian Communications and Multimedia Commission</dd></div>
-        <div><dt>Theme</dt><dd>Industry performance and market development</dd></div>
-        <div><dt>Experience</dt><dd>Interactive page-turning reader</dd></div>
+        <div><dt>Theme</dt><dd>Advancing Inclusivity for the Rakyat, Industry and Government</dd></div>
+        <div><dt>Experience</dt><dd>Interactive page-turning Strategy Plan</dd></div>
       </dl>
 
       <div class="actions">
-        <a class="button" href="reader.html">Open flipbook</a>
-        <span class="hint">Move your pointer over the book</span>
+        <!-- CONTENT REPLACEMENT: COPYWRITING — Open CTA. -->
+        <a class="button" href="reader.html">Open MCMC P2630</a>
+        <!-- CONTENT REPLACEMENT: COPYWRITING — Pointer hint. -->
+        <span class="hint">Explore MCMC P2630</span>
       </div>
     </section>
   </main>

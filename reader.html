@@ -3,28 +3,31 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#e9e5dc" />
+    <!-- CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 primary navy. -->
+    <meta name="theme-color" content="#172983" />
     <meta
       name="description"
-      content="Interactive licensing report — turn, inspect, and browse every page."
+      content="MCMC Plan 2026–2030 (MCMC P2630) — explore the Strategy Plan interactively."
     />
-    <title>Licensing 2025 — Interactive Report</title>
+    <title>MCMC Plan 2026–2030 — MCMC P2630</title>
+    <!-- CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. -->
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <noscript>
       <div class="script-warning">
-        Interactive mode requires JavaScript. Please enable it to browse the report.
+        Interactive mode requires JavaScript. Please enable it to browse the Strategy Plan.
       </div>
     </noscript>
     <div class="wash" aria-hidden="true"></div>
 
     <header class="masthead">
-      <a class="brand" href="#flipbook">Licensing <em>2025</em></a>
+      <!-- CONTENT REPLACEMENT: BRAND — MCMC P2630 wordmark. -->
+      <!-- CONTENT REPLACEMENT: LOGO — replace fallback wordmark when approved logo asset is supplied. -->
+      <a class="brand" href="#flipbook">MCMC <em>P2630</em></a>
       <nav aria-label="Primary navigation">
-        <a href="#flipbook" aria-current="page">Report</a>
-        <a href="#contents">Contents</a>
+        <a href="#flipbook" aria-current="page">Strategy Plan</a>
         <a href="#instructions">How to use</a>
       </nav>
     </header>
@@ -32,13 +35,15 @@
     <main>
       <section class="hero" id="flipbook" aria-labelledby="report-title">
         <div class="hero-copy">
-          <p class="eyebrow">MCMC · Industry Performance Report</p>
-          <h1 id="report-title">A report you can <i>hold.</i></h1>
+          <!-- CONTENT REPLACEMENT: COPYWRITING — MCMC PLAN 2026–2030 eyebrow. -->
+          <p class="eyebrow">MCMC PLAN 2026–2030</p>
+          <!-- CONTENT REPLACEMENT: COPYWRITING — Advancing Inclusivity headline. -->
+          <h1 id="report-title">Advancing <i>Inclusivity</i></h1>
         </div>
 
         <div class="book-wrap" id="bookWrap">
           <div class="stage" id="stage">
-            <button class="page-arrow left" id="prevButton" aria-label="Previous spread">
+            <button class="page-arrow left" id="prevButton" aria-label="Previous page">
               <svg viewBox="0 0 20 54" aria-hidden="true"><path d="M16 3 4 27l12 24" /></svg>
             </button>
 
@@ -46,7 +51,7 @@
               <div id="book" aria-live="polite"></div>
             </div>
 
-            <button class="page-arrow right" id="nextButton" aria-label="Next spread">
+            <button class="page-arrow right" id="nextButton" aria-label="Next page">
               <svg viewBox="0 0 20 54" aria-hidden="true"><path d="m4 3 12 24L4 51" /></svg>
             </button>
           </div>
@@ -90,23 +95,16 @@
           <ol class="toc-list" id="tocList"></ol>
         </div>
 
-        <a class="scroll-cue" href="#contents" aria-label="Continue to contents">
-          <span>Explore the report</span>
+        <a class="scroll-cue" href="#instructions" aria-label="Continue to instructions">
+          <span>Explore MCMC P2630</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6" /></svg>
         </a>
       </section>
 
-      <section class="contents" id="contents" aria-labelledby="contents-title">
-        <div class="section-heading">
-          <p class="eyebrow">Direct access</p>
-          <h2 id="contents-title">Twelve pages, one continuous story.</h2>
-        </div>
-        <ol class="contents-grid" id="contentsGrid"></ol>
-      </section>
-
       <section class="instructions" id="instructions" aria-labelledby="instructions-title">
         <p class="eyebrow">How to use</p>
-        <h2 id="instructions-title">Turn it slowly. Read it closely.</h2>
+        <!-- CONTENT REPLACEMENT: COPYWRITING — Instructions heading. -->
+        <h2 id="instructions-title">Explore the plan. Follow the connections.</h2>
         <div class="instruction-grid">
           <p><span>01</span> Drag a page corner to turn. Release to complete the turn.</p>
           <p><span>02</span> Use the arrows or your keyboard when you want a faster, precise browse.</p>
@@ -118,8 +116,10 @@
     </main>
 
     <footer>
+      <!-- CONTENT REPLACEMENT: BRAND — MCMC publisher. -->
       <span>Malaysian Communications and Multimedia Commission</span>
-      <span>Interactive edition · 2025</span>
+      <!-- CONTENT REPLACEMENT: BRAND — MCMC Plan 2026–2030 edition. -->
+      <span>MCMC Plan 2026–2030 · MCMC P2630</span>
     </footer>
 
     <script src="js/vendor/page-flip.browser.js"></script>

@@ -5,9 +5,9 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js",
-    "build": "node server.js --check",
+    "dev": "node tools/scan-pages.js && node server.js",
+    "start": "node tools/scan-pages.js && node server.js",
+    "build": "node tools/scan-pages.js && node server.js --check",
     "scan-pages": "node tools/scan-pages.js"
   },
   "dependencies": {

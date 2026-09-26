@@ -44,21 +44,24 @@ mcmc-flipbook/
 ```
 assets/img/cover-front.webp    # front cover (fixed name, 16:9)
 assets/img/cover-back.webp     # back cover  (fixed name, 16:9)
-assets/img/page-01.webp        # content pages, numbered sequentially (16:9)
+assets/img/page-01.webp        # content pages, strictly 2-digit zero-padded (16:9)
 assets/img/page-02.webp
-assets/img/page-NN.webp
+...
+assets/img/page-10.webp        # up to page-NN.webp (2 digits, not 3 digits)
 ```
 
 The page count is **derived from the images themselves** — no hardcoded list.
 Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 × 1080 px or equivalent 16:9 resolution).
+Page filenames must strictly use the **2-digit zero-padded format** (`page-01.webp`, `page-02.webp`, etc.).
 
 ## How to add / replace pages
-1. Drop 16:9 page images into `assets/img/`, named sequentially (`page-01.webp`,
+1. Drop 16:9 page images into `assets/img/`, named sequentially with 2 digits (`page-01.webp`,
    `page-02.webp`, …).
 2. Regenerate the manifest:
    ```bash
    node tools/scan-pages.js
    ```
+   (or automatically when running `npm run dev` or `npm run build`).
 3. Done. The manifest and reader will update automatically.
 
 ## Features

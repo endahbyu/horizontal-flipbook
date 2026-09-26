@@ -21,8 +21,8 @@ it top to bottom and tick items only after verifying them live in a browser.
 
 - [ ] `assets/img/cover-front.webp` exists (front cover, 1920×1080, 16:9).
 - [ ] `assets/img/cover-back.webp` exists (back cover, 1920×1080, 16:9).
-- [ ] Content pages exist as `assets/img/page-NN.webp` (2-digit, zero-padded, 16:9)
-      and run continuously from `01` with no gaps.
+- [ ] Content pages exist as `assets/img/page-NN.webp` (strictly 2-digit, zero-padded, e.g. `page-01.webp`, `page-02.webp` … `page-10.webp`, 16:9)
+      and run continuously from `01` with no gaps (do not use 3-digit names like `page-001.webp`).
 - [ ] Every report asset is one independent 16:9 page.
 - [ ] No asset contains two merged PDF pages.
 - [ ] No spread image or two-page composition was introduced.
@@ -32,7 +32,7 @@ it top to bottom and tick items only after verifying them live in a browser.
       ```bash
       node tools/scan-pages.js
       ```
-      and the page count in `js/pages.js` matches the number of `page-NN.webp` files.
+      and the page count in `js/pages.js` matches the number of `page-NN.webp` (2-digit) files.
 - [ ] All Strategy Plan images use the **16:9 widescreen ratio** and the exact same
       dimensions (1920×1080 px).
 

@@ -7,7 +7,9 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0';
+// Listen on IPv6 so browsers that resolve localhost to ::1 can connect.
+// Linux keeps IPv4 compatibility here unless ipv6Only is explicitly enabled.
+const HOST = '::';
 
 // Serve static assets from root directory
 app.use(express.static(__dirname));

@@ -270,30 +270,25 @@
     }
 
     .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 24px;
-      border-radius: 999px;
-      background: var(--navy);
-      color: #FFFFFF;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      color: #ecf0f1;
+      font-size: 17px;
+      background-color: #3F58D3;
+      border: 1px solid #172983;
+      border-radius: 50px;
+      cursor: pointer;
+      padding: 10px 24px 10px 24px;
+      box-shadow: 0px 6px 0px #172983;
       text-decoration: none;
-      text-transform: uppercase;
-      box-shadow: 0 4px 18px rgba(23, 41, 131, 0.22);
-      transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      transition: all 0.1s;
     }
 
-    .button:hover {
-      background: var(--p2630-blue);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(65, 89, 213, 0.32);
+    .button:active {
+      box-shadow: 0px 2px 0px #172983;
+      position: relative;
+      top: 2px;
     }
 
-    .button:focus-visible { outline: 2px solid var(--navy); outline-offset: 4px; }
+    .button:focus-visible { outline: 2px solid #172983; outline-offset: 4px; }
 
     .hint {
       color: var(--muted);

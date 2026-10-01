@@ -180,13 +180,19 @@
       return;
     }
 
-    var calculation = pageFlip.getFlipController().getCalculation();
-    var direction = calculation && typeof calculation.getDirection === "function"
-      ? calculation.getDirection()
-      : 0;
-
     bookEl.dataset.flipState = state;
-    bookEl.dataset.flipDirection = direction === 1 ? "prev" : "next";
+
+    var syncDirection = function () {
+      // For mouse dragging, user_fold fires before StPageFlip creates its
+      // calculation. Read the direction on the next frame instead.
+      if (bookEl.dataset.flipState !== state) return;
+      var calculation = pageFlip.getFlipController().getCalculation();
+      if (!calculation || typeof calculation.getDirection !== "function") return;
+      bookEl.dataset.flipDirection = calculation.getDirection() === 1 ? "prev" : "next";
+    };
+
+    syncDirection();
+    if (state === "user_fold") requestAnimationFrame(syncDirection);
   });
   pageFlip.on("changeOrientation", function () {
     applyBookTransform();

@@ -323,19 +323,7 @@ a{
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #FFFFFF;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.page-front{
-  z-index: 1;
-}
-
-.page-back{
-  z-index: 2;
-  transform: rotateY(180deg);
-  background: #FFFFFF;
+  background: var(--paper);
 }
 
 .page-front img{
@@ -347,6 +335,14 @@ a{
   pointer-events: none;
   -webkit-user-drag: none;
   user-select: none;
+}
+
+/* StPageFlip marks the active turning page with startZIndex + 5. Hide only
+   that page's artwork while the engine is in a flip state. */
+#book[data-flip-direction="next"][data-flip-state="flipping"] .stf__item[style*="z-index: 5"] .page-front img,
+#book[data-flip-direction="next"][data-flip-state="fold_corner"] .stf__item[style*="z-index: 5"] .page-front img,
+#book[data-flip-direction="next"][data-flip-state="user_fold"] .stf__item[style*="z-index: 5"] .page-front img{
+  visibility: hidden !important;
 }
 
 /* ============================================================

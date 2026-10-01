@@ -43,10 +43,6 @@
     var front = document.createElement("div");
     front.className = "page-face page-front";
 
-    var back = document.createElement("div");
-    back.className = "page-face page-back";
-    back.setAttribute("aria-hidden", "true");
-
     if (page.src) {
       var img = document.createElement("img");
       img.src = page.src;
@@ -55,7 +51,6 @@
       front.appendChild(img);
     }
     p.appendChild(front);
-    p.appendChild(back);
     bookEl.appendChild(p);
     return p;
   });
@@ -175,6 +170,23 @@
   pageFlip.on("flip", function () {
     updateMeta();
     applyBookTransform();
+  });
+  pageFlip.on("changeState", function (event) {
+    var state = event.data;
+    var isFlipping = state === "flipping" || state === "fold_corner" || state === "user_fold";
+    if (!isFlipping) {
+      delete bookEl.dataset.flipState;
+      delete bookEl.dataset.flipDirection;
+      return;
+    }
+
+    var calculation = pageFlip.getFlipController().getCalculation();
+    var direction = calculation && typeof calculation.getDirection === "function"
+      ? calculation.getDirection()
+      : 0;
+
+    bookEl.dataset.flipState = state;
+    bookEl.dataset.flipDirection = direction === 1 ? "prev" : "next";
   });
   pageFlip.on("changeOrientation", function () {
     applyBookTransform();

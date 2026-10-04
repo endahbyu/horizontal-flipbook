@@ -2,9 +2,8 @@ import * as THREE from "three";
 
 const canvas = document.querySelector("#bookCanvas");
 const stage = document.querySelector(".book-stage");
-const toggle = document.querySelector("#bookToggle");
 
-if (canvas && stage && toggle) {
+if (canvas && stage) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -260,10 +259,7 @@ if (canvas && stage && toggle) {
     dragVelocityX = 0;
     dragVelocityY = 0;
     snapping = true;
-    const isBack = side === "back";
-    toggle.setAttribute("aria-pressed", String(isBack));
-    toggle.setAttribute("aria-label", isBack ? "Show front cover" : "Show back cover");
-    toggle.querySelector(".book-toggle__arrow").textContent = isBack ? "→" : "←";
+
     canvas.setAttribute("aria-label", `Landscape 3D book showing the ${side} cover of MCMC Plan 2026–2030`);
   };
 
@@ -272,7 +268,7 @@ if (canvas && stage && toggle) {
     setSide(frontFacing ? "back" : "front");
   };
 
-  toggle.addEventListener("click", toggleFacingSide);
+
   canvas.addEventListener("pointerdown", (event) => {
     dragging = true;
     snapping = false;
@@ -323,8 +319,7 @@ if (canvas && stage && toggle) {
       velocityX = dragVelocityX;
       velocityY = dragVelocityY;
       side = "free";
-      toggle.setAttribute("aria-pressed", "false");
-      toggle.setAttribute("aria-label", "Rotate to the opposite cover");
+
       canvas.setAttribute("aria-label", "Landscape 3D book; drag horizontally to rotate it 360 degrees");
     }
   };

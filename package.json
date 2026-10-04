@@ -5,12 +5,17 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "node tools/scan-pages.js && node server.js",
-    "start": "node tools/scan-pages.js && node server.js",
-    "build": "node tools/scan-pages.js && node server.js --check",
+    "build:book": "esbuild js/book-3d-source.js --bundle --minify --format=iife --outfile=js/book-3d.js",
+    "dev": "npm run build:book && node tools/scan-pages.js && node server.js",
+    "start": "npm run build:book && node tools/scan-pages.js && node server.js",
+    "build": "npm run build:book && node tools/scan-pages.js && node server.js --check",
     "scan-pages": "node tools/scan-pages.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }

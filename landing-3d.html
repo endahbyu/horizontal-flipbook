@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MCMC Plan 2026–2030 — an interactive 16:9 strategy plan.">
+  <meta name="theme-color" content="#e5e7ed">
+  <title>MCMC Plan 2026–2030 — Interactive Strategy Plan</title>
+  <style>
+    :root{color-scheme:light;--paper:#e5e7ed;--paper-bright:#f4f5f8;--navy:#172983;--blue:#4159d5;--muted:#59658f;--line:rgba(23,41,131,.42);--book-width:min(42vw,560px);--book-depth:clamp(32px,3.4vw,48px);--ease:cubic-bezier(.2,.75,.25,1)}
+    *{box-sizing:border-box}html{min-height:100%}body{min-width:320px;min-height:100%;margin:0;overflow-x:hidden;background:var(--paper);color:var(--navy);font-family:Montserrat,Arial,sans-serif;-webkit-font-smoothing:antialiased}button,a{font:inherit}a{color:inherit}
+    .shell{min-height:100svh;position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(440px,.92fr)}
+    .wordmark{position:fixed;z-index:20;top:24px;left:26px;width:52px;color:var(--navy);text-decoration:none}.wordmark__monogram{display:grid;place-items:center;width:42px;height:42px;border:2px solid currentColor;border-radius:50%;font-size:10px;font-weight:800;letter-spacing:-.04em}.wordmark__label{display:block;margin-top:7px;font-size:8px;font-weight:700;letter-spacing:.14em;line-height:1.25;text-transform:uppercase}
+    .visual{min-height:100svh;position:relative;display:grid;place-items:center;padding:96px 5vw 76px 7vw;perspective:1700px;overflow:hidden}.book-stage{width:min(49vw,650px);height:min(34vw,440px);position:relative;display:grid;place-items:center;transform-style:preserve-3d;isolation:isolate}
+    .book-webgl{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2;cursor:grab;touch-action:none;outline:0}.book-webgl:active{cursor:grabbing}.book-webgl:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+    .book{width:var(--book-width);aspect-ratio:16/9;position:relative;z-index:2;transform-style:preserve-3d;transform:rotateX(var(--rx,5deg)) rotateY(var(--ry,-24deg)) rotateZ(var(--rz,-1deg));transform-origin:50% 50% calc(var(--book-depth)/-2);transition:transform 700ms var(--ease);will-change:transform;cursor:grab}.book:active{cursor:grabbing}.book[data-side="back"]{--ry:-204deg;--rz:1deg}
+    .book__face,.book__edge{position:absolute;backface-visibility:hidden;transform-style:preserve-3d}.book__front,.book__back{inset:0;overflow:hidden;background:var(--navy);box-shadow:0 2px 2px rgba(10,20,70,.18)}.book__front{z-index:4;transform:translateZ(calc(var(--book-depth)/2))}.book__back{z-index:1;transform:rotateY(180deg) translateZ(calc(var(--book-depth)/2))}.book__front img,.book__back img,.book__spine img{width:100%;height:100%;display:block;object-fit:cover;pointer-events:none;user-select:none}
+    .book__spine{top:0;left:calc(var(--book-depth)*-1 + 2px);width:var(--book-depth);height:100%;z-index:3;overflow:hidden;background:var(--navy);transform:none;clip-path:polygon(100% 0,100% 100%,0 94%,0 7%);backface-visibility:visible;filter:brightness(.68) saturate(.9);box-shadow:inset -5px 0 8px rgba(0,0,0,.3),inset 2px 0 rgba(255,255,255,.15)}.book__pages{top:4px;right:0;width:var(--book-depth);height:calc(100% - 8px);background:repeating-linear-gradient(90deg,rgba(23,41,131,.12) 0 1px,transparent 1px 3px),linear-gradient(90deg,#d8dbe5 0%,#fff 18%,#eef0f5 72%,#d2d6e2 100%);transform-origin:right center;transform:translateZ(calc(var(--book-depth)/2)) rotateY(90deg);box-shadow:inset 0 0 8px rgba(23,41,131,.18)}
+    .book__top,.book__bottom{left:4px;width:calc(100% - 8px);height:calc(var(--book-depth)*.44);background:repeating-linear-gradient(0deg,rgba(23,41,131,.12) 0 1px,transparent 1px 3px),linear-gradient(#fff,#d8dbe5)}.book__top{display:none}.book__bottom{bottom:calc(var(--book-depth)*-.40);z-index:2;transform:none;clip-path:polygon(0 0,100% 0,96% 100%,4% 100%);backface-visibility:visible;filter:brightness(.92);box-shadow:inset 0 2px 4px rgba(23,41,131,.12)}
+    .book-toggle{position:absolute;z-index:8;left:clamp(28px,3vw,50px);top:50%;display:grid;justify-items:center;gap:12px;padding:0;border:0;background:transparent;color:var(--muted);cursor:pointer;transform:translateY(-50%)}.book-toggle__arrow{font-size:30px;font-weight:300;line-height:1;transition:transform 200ms ease}.book-toggle__ticks{width:18px;height:146px;opacity:.7;background:repeating-linear-gradient(to bottom,currentColor 0 3px,transparent 3px 14px);clip-path:polygon(0 0,100% 0,64% 100%,34% 100%)}.book-toggle:hover .book-toggle__arrow{transform:translateX(-4px)}
+    .book-toggle:focus-visible,.cta:focus-visible,.wordmark:focus-visible{outline:2px solid var(--blue);outline-offset:6px}
+    .content{min-height:100svh;position:relative;display:flex;flex-direction:column;justify-content:center;padding:100px clamp(36px,7vw,118px) 76px clamp(42px,4.8vw,78px)}.eyebrow{margin:0 0 22px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}h1{max-width:650px;margin:0;font-size:clamp(36px,3.8vw,61px);font-weight:700;letter-spacing:-.045em;line-height:1.07}.subtitle{margin:12px 0 0;color:var(--muted);font-size:clamp(14px,1.25vw,19px);font-weight:500;letter-spacing:-.01em}.rule{width:62px;height:2px;margin:30px 0 32px;border:0;background:var(--line)}.description{max-width:620px;margin:0;font-size:clamp(14px,1.18vw,18px);font-weight:500;line-height:1.55}
+    .meta{display:flex;flex-wrap:wrap;gap:9px 28px;margin:28px 0 0;padding:0;list-style:none;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.meta li+li::before{content:"—";margin-right:28px;color:var(--line)}.cta{align-self:flex-start;display:inline-flex;align-items:center;gap:28px;min-height:48px;margin-top:34px;padding:0 18px;border:1px solid var(--navy);color:var(--navy);font-size:12px;font-weight:700;letter-spacing:.04em;text-decoration:none;transition:color 180ms ease,background 180ms ease}.cta::after{content:"→";font-size:19px;font-weight:500;transition:transform 180ms ease}.cta:hover{background:var(--navy);color:#fff}.cta:hover::after{transform:translateX(4px)}.footer-note{position:absolute;right:clamp(30px,4vw,62px);bottom:30px;color:var(--muted);font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+    @media(max-width:920px){:root{--book-width:min(82vw,580px);--book-depth:clamp(26px,7vw,42px)}.shell{grid-template-columns:1fr}.wordmark{position:absolute}.visual{min-height:auto;padding:104px 5vw 56px}.book-stage{width:min(92vw,680px);height:clamp(360px,52svh,520px)}.book-toggle{left:18px}.content{min-height:auto;padding:54px 26px 86px}.footer-note{right:26px;bottom:24px}}
+    @media(max-width:520px){.visual{padding:96px 18px 48px}.book-stage{width:100%;height:clamp(330px,50svh,440px)}.book-toggle{display:none}h1{font-size:clamp(34px,10vw,48px)}.description{font-size:14px}.meta{gap:10px 18px}.meta li+li::before{margin-right:18px}}
+    @media(min-width:921px) and (max-height:760px){:root{--book-width:min(38vw,500px)}.content{padding-top:72px;padding-bottom:54px}.eyebrow{margin-bottom:14px}.rule{margin:20px 0 22px}.cta{margin-top:24px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <a class="wordmark" href="index.html" aria-label="MCMC P2630 home"><span class="wordmark__monogram">MCMC</span><span class="wordmark__label">Plan<br>2026–2030</span></a>
+  <main class="shell">
+    <section class="visual" id="visual" aria-label="Interactive 3D view of the MCMC Plan book">
+      <button class="book-toggle" id="bookToggle" type="button" aria-label="Show back cover" aria-pressed="false"><span class="book-toggle__arrow" aria-hidden="true">←</span><span class="book-toggle__ticks" aria-hidden="true"></span></button>
+      <div class="book-stage">
+        <canvas class="book-webgl" id="bookCanvas" tabindex="0" role="img" aria-label="Landscape 3D book showing the front cover of MCMC Plan 2026–2030"></canvas>
+      </div>
+    </section>
+    <section class="content" aria-labelledby="report-title">
+      <p class="eyebrow">MCMC Plan 2026–2030</p><h1 id="report-title">Advancing<br>Inclusivity</h1><p class="subtitle">A future-ready regulator and strategic digital enabler</p><hr class="rule"><p class="description">The MCMC Plan 2026–2030 sets out a focused strategy for Malaysia’s connected future—strengthening digital infrastructure, building trust, and ensuring that progress reaches every community.</p>
+      <ul class="meta" aria-label="Publication details"><li>Strategy Plan</li><li>16:9 Edition</li><li>Interactive</li></ul><a class="cta" href="reader.html">Open the flipbook</a><span class="footer-note">MCMC P2630 · Digital Edition</span>
+    </section>
+  </main>
+  <script src="js/book-3d.js"></script>
+</body>
+</html>

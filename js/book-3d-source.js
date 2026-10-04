@@ -123,6 +123,8 @@ if (canvas && stage && toggle) {
       uvs.push(progress, 0, progress, 1);
     });
 
+    // Only the outer spine plane carries the artwork; the narrow return faces
+    // use the edge material so the tall texture is not squeezed into the seam.
     const outerIndexCount = segments * 6;
     for (let index = 0; index < profile.length; index += 1) {
       const next = (index + 1) % profile.length;
@@ -212,6 +214,9 @@ if (canvas && stage && toggle) {
     // The left spine is one continuous, flat-sided board. Its top and bottom
     // caps remain straight while the recessed seam supplies the only rounding.
     const spine = new THREE.Mesh(makeFlatSpineGeometry(), [spineMaterial, spineEdgeMaterial]);
+    // Keep the spine just in front of the cover/page boundaries to avoid
+    // coplanar surfaces fighting while the book rotates.
+    spine.position.x = -0.015;
     book.add(spine);
     addBindingSeam();
   }).catch(() => {

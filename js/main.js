@@ -26,6 +26,7 @@
   PAGES.push({ type: "Back cover", title: "Back cover", src: manifest.coverBack });
 
   var bookEl = document.getElementById("book");
+  var bookFrame = document.getElementById("bookFrame");
 
   /* ============================================================
      BUILD StPageFlip PAGES (HTML mode)
@@ -38,13 +39,18 @@
     else if (page.type === "Back cover") cls += " is-back-cover";
     p.className = cls;
     p.setAttribute("data-page-type", page.type);
+
+    var front = document.createElement("div");
+    front.className = "page-face page-front";
+
     if (page.src) {
       var img = document.createElement("img");
       img.src = page.src;
       img.alt = page.title;
       img.draggable = false;
-      p.appendChild(img);
+      front.appendChild(img);
     }
+    p.appendChild(front);
     bookEl.appendChild(p);
     return p;
   });
@@ -76,6 +82,12 @@
   // CSS clamp() equivalent — keeps the page fluid with min/max bounds
   function clamp(v, min, max) { return Math.max(min, Math.min(v, max)); }
 
+  // Keep the StPageFlip block narrower than two pages so it cannot switch
+  // into landscape/spread mode at wide viewport sizes.
+  function syncPageFrameSize(size) {
+    if (bookFrame) bookFrame.style.setProperty("--page-width", size.width + "px");
+  }
+
   function computePageSize() {
     var vw = window.innerWidth;
     var vh = window.innerHeight;
@@ -100,6 +112,7 @@
     var s = computePageSize();
     settings.width = settings.minWidth = settings.maxWidth = s.width;
     settings.height = settings.minHeight = settings.maxHeight = s.height;
+    syncPageFrameSize(s);
   })();
 
   var pageFlip = new St.PageFlip(bookEl, settings);
@@ -122,6 +135,7 @@
     var is = pageFlip.getSettings();
     is.width = is.minWidth = is.maxWidth = s.width;
     is.height = is.minHeight = is.maxHeight = s.height;
+    syncPageFrameSize(s);
     pageFlip.update();
     applyBookTransform();
   });
@@ -156,6 +170,29 @@
   pageFlip.on("flip", function () {
     updateMeta();
     applyBookTransform();
+  });
+  pageFlip.on("changeState", function (event) {
+    var state = event.data;
+    var isFlipping = state === "flipping" || state === "fold_corner" || state === "user_fold";
+    if (!isFlipping) {
+      delete bookEl.dataset.flipState;
+      delete bookEl.dataset.flipDirection;
+      return;
+    }
+
+    bookEl.dataset.flipState = state;
+
+    var syncDirection = function () {
+      // For mouse dragging, user_fold fires before StPageFlip creates its
+      // calculation. Read the direction on the next frame instead.
+      if (bookEl.dataset.flipState !== state) return;
+      var calculation = pageFlip.getFlipController().getCalculation();
+      if (!calculation || typeof calculation.getDirection !== "function") return;
+      bookEl.dataset.flipDirection = calculation.getDirection() === 1 ? "prev" : "next";
+    };
+
+    syncDirection();
+    if (state === "user_fold") requestAnimationFrame(syncDirection);
   });
   pageFlip.on("changeOrientation", function () {
     applyBookTransform();
@@ -296,6 +333,7 @@
         var is = pageFlip.getSettings();
         is.width = is.minWidth = is.maxWidth = s.width;
         is.height = is.minHeight = is.maxHeight = s.height;
+        syncPageFrameSize(s);
         pageFlip.update();
         applyBookTransform();
       }, 100);

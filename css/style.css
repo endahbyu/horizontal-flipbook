@@ -284,7 +284,8 @@ a{
 
 .book-frame{
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 1 var(--page-width, 800px);
+  width: min(var(--page-width, 800px), 100%);
   min-width: 0;
   display: flex;
   align-items: center;
@@ -309,14 +310,23 @@ a{
 
 /* StPageFlip pages (HTML mode) — Single 16:9 widescreen page */
 .page{
+  position: relative;
   width: 100%;
   height: 100%;
   background: var(--paper);
   overflow: hidden;
   aspect-ratio: 16 / 9;
+  transform-style: preserve-3d;
 }
 
-.page img{
+.page-face{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.page-front img{
   display: block;
   width: 100%;
   height: 100%;
@@ -325,6 +335,14 @@ a{
   pointer-events: none;
   -webkit-user-drag: none;
   user-select: none;
+}
+
+/* StPageFlip marks the active turning page with startZIndex + 5. Hide only
+   that page's artwork while the engine is in a flip state. */
+#book[data-flip-direction="next"][data-flip-state="flipping"] .stf__item[style*="z-index: 5"] .page-front img,
+#book[data-flip-direction="next"][data-flip-state="fold_corner"] .stf__item[style*="z-index: 5"] .page-front img,
+#book[data-flip-direction="next"][data-flip-state="user_fold"] .stf__item[style*="z-index: 5"] .page-front img{
+  visibility: hidden !important;
 }
 
 /* ============================================================

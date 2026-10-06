@@ -336,7 +336,12 @@ if (canvas && stage) {
     const rect = canvas.getBoundingClientRect();
     renderer.setSize(rect.width, rect.height, false);
     camera.aspect = rect.width / rect.height;
-    camera.position.z = window.innerWidth <= 520 ? 47 : window.innerWidth <= 920 ? 43 : 34;
+    const halfVerticalFov = THREE.MathUtils.degToRad(camera.fov / 2);
+    const halfHorizontalFov = Math.atan(Math.tan(halfVerticalFov) * camera.aspect);
+    const bookRadius = 9.25;
+    const verticalDistance = bookRadius / Math.sin(halfVerticalFov);
+    const horizontalDistance = bookRadius / Math.sin(halfHorizontalFov);
+    camera.position.z = Math.max(verticalDistance, horizontalDistance) * 1.12;
     camera.updateProjectionMatrix();
   };
   new ResizeObserver(resize).observe(canvas);

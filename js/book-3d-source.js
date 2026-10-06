@@ -7,7 +7,7 @@ if (canvas && stage) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMapping = THREE.NoToneMapping;
   renderer.toneMappingExposure = 1;
 
   const scene = new THREE.Scene();
@@ -332,16 +332,41 @@ if (canvas && stage) {
     }
   });
 
+  const fitCameraToBook = () => {
+    const halfVerticalFov = THREE.MathUtils.degToRad(camera.fov / 2);
+    const halfHorizontalFov = Math.atan(Math.tan(halfVerticalFov) * camera.aspect);
+    const verticalTangent = Math.tan(halfVerticalFov);
+    const horizontalTangent = Math.tan(halfHorizontalFov);
+    const bounds = {
+      min: new THREE.Vector3(-8.1, -4.52, -0.66),
+      max: new THREE.Vector3(8, 4.52, 0.66),
+    };
+    const distance = new THREE.Vector3();
+    let requiredDistance = 0;
+
+    book.updateMatrixWorld(true);
+    for (const x of [bounds.min.x, bounds.max.x]) {
+      for (const y of [bounds.min.y, bounds.max.y]) {
+        for (const z of [bounds.min.z, bounds.max.z]) {
+          distance.set(x, y, z).applyMatrix4(book.matrixWorld);
+          requiredDistance = Math.max(
+            requiredDistance,
+            distance.z + Math.abs(distance.y) / verticalTangent,
+            distance.z + Math.abs(distance.x) / horizontalTangent,
+          );
+        }
+      }
+    }
+
+    const targetDistance = requiredDistance * 1.08;
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetDistance, 0.16);
+  };
+
   const resize = () => {
     const rect = canvas.getBoundingClientRect();
     renderer.setSize(rect.width, rect.height, false);
     camera.aspect = rect.width / rect.height;
-    const halfVerticalFov = THREE.MathUtils.degToRad(camera.fov / 2);
-    const halfHorizontalFov = Math.atan(Math.tan(halfVerticalFov) * camera.aspect);
-    const bookRadius = 9.25;
-    const verticalDistance = bookRadius / Math.sin(halfVerticalFov);
-    const horizontalDistance = bookRadius / Math.sin(halfHorizontalFov);
-    camera.position.z = Math.max(verticalDistance, horizontalDistance) * 1.12;
+    fitCameraToBook();
     camera.updateProjectionMatrix();
   };
   new ResizeObserver(resize).observe(canvas);
@@ -371,6 +396,7 @@ if (canvas && stage) {
       book.rotation.y = target.y;
     }
     book.rotation.z = THREE.MathUtils.lerp(book.rotation.z, target.z, 0.12);
+    fitCameraToBook();
     renderer.render(scene, camera);
     window.setTimeout(animate, 16);
   };

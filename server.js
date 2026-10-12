@@ -11,17 +11,26 @@ const PORT = process.env.PORT || 3000;
 // Linux keeps IPv4 compatibility here unless ipv6Only is explicitly enabled.
 const HOST = '::';
 
-// Serve static assets from root directory
-app.use(express.static(__dirname));
-
 // Route handlers for landing and reader pages
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'index.html'));
 });
 
-app.get('/reader', (req, res) => {
-  res.sendFile(join(__dirname, 'reader.html'));
+app.get('/strategy', (req, res) => {
+  res.sendFile(join(__dirname, 'strategy.html'));
 });
+
+app.get('/action-plan', (req, res) => {
+  res.sendFile(join(__dirname, 'action-plan.html'));
+});
+
+// Old reader URL now points to the Strategy Plan.
+app.get(['/reader', '/reader.html'], (req, res) => {
+  res.redirect(301, '/strategy.html');
+});
+
+// Serve static assets from root directory
+app.use(express.static(__dirname));
 
 if (process.argv.includes('--check')) {
   console.log('Build verification check passed.');

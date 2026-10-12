@@ -172,9 +172,9 @@ if (canvas && stage) {
   };
 
   Promise.all([
-    loadTexture("assets/img/cover-front.webp"),
-    loadTexture("assets/img/cover-back.webp"),
-    loadTexture("assets/img/spine.webp"),
+    loadTexture("assets/books/strategy/cover-front.webp"),
+    loadTexture("assets/books/strategy/cover-back.webp"),
+    loadTexture("assets/books/strategy/spine.webp"),
   ]).then(([frontTexture, backTexture, spineTexture]) => {
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.repeat.x = -1;

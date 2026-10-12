@@ -1,38 +1,7 @@
 /* CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. Needs approved font files. */
 /* Fonts are self-hosted in css/fonts.css (Instrument Serif + Newsreader available locally as fallbacks). */
 
-/* ============================================================
-   THEME TOKENS — P2630 VERIFIED BRAND SYSTEM
-   ============================================================ */
-/* CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 primary navy and palette. */
-:root{
-  --p2630-navy: #172983;
-  --p2630-blue: #4159D5;
-  --p2630-light-blue: #D0DDF4;
-  --p2630-neutral: #E5E7ED;
-  --p2630-muted-blue: #9FA6C9;
-  --p2630-gradient: linear-gradient(
-    110deg,
-    #F6B400 0%,
-    #F04A32 28%,
-    #D41478 52%,
-    #6B20B8 74%,
-    #245BDA 100%
-  );
-
-  /* Functional mappings to verified P2630 tokens */
-  --paper: #E5E7ED;
-  --paper-light: #F2F4F8;
-  --ink: #172983;
-  --ink-soft: rgba(23, 41, 131, 0.72);
-  --ink-faint: rgba(23, 41, 131, 0.38);
-  --line: #9FA6C9;
-  --accent: #4159D5;
-
-  /* CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font declaration. */
-  --display: "Host Grotesk", "Instrument Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --body: "Inter", "Newsreader", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
+/* Design tokens live in css/tokens.css — use semantic tokens only. */
 
 *{
   box-sizing: border-box;
@@ -50,9 +19,9 @@ html{
 body{
   margin: 0;
   overflow-x: hidden;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
@@ -63,14 +32,14 @@ body{
   margin: 76px auto -54px;
   width: min(680px, calc(100% - 30px));
   padding: 12px 16px;
-  border: 1px solid rgba(23, 41, 131, 0.28);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 12px;
-  background: rgba(242, 244, 248, 0.96);
-  color: var(--ink);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
   font-size: 14px;
   line-height: 1.4;
   text-align: center;
-  box-shadow: 0 12px 32px rgba(23, 41, 131, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 button,
@@ -87,7 +56,7 @@ a{
 }
 
 ::selection{
-  background: var(--p2630-navy);
+  background: var(--color-brand);
   color: white;
 }
 
@@ -101,10 +70,10 @@ a{
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.85), transparent 32%),
-    radial-gradient(circle at 84% 68%, rgba(65, 89, 213, 0.12), transparent 30%),
-    repeating-linear-gradient(9deg, rgba(23, 41, 131, 0.015) 0 1px, transparent 1px 5px),
-    var(--paper);
+    radial-gradient(circle at 18% 22%, var(--wash-highlight), transparent 32%),
+    radial-gradient(circle at 84% 68%, var(--wash-tint), transparent 30%),
+    repeating-linear-gradient(9deg, var(--wash-grain) 0 1px, transparent 1px 5px),
+    var(--color-bg);
 }
 
 .wash::after{
@@ -136,7 +105,7 @@ a{
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(180deg, rgba(229, 231, 237, 0.94), rgba(229, 231, 237, 0.63) 48%, transparent);
+  background: linear-gradient(180deg, var(--color-header-fade), var(--color-header-fade-soft) 48%, transparent);
   backdrop-filter: blur(14px) saturate(0.9);
   -webkit-backdrop-filter: blur(14px) saturate(0.9);
   mask-image: linear-gradient(#000 45%, transparent 100%);
@@ -148,16 +117,16 @@ a{
 }
 
 .brand{
-  font-family: var(--display);
+  font-family: var(--font-display);
   font-size: clamp(22px, 2vw, 30px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--p2630-navy);
+  color: var(--color-brand);
 }
 
 .brand em{
-  color: var(--p2630-blue);
+  color: var(--color-accent);
   font-weight: 700;
   font-style: normal;
   margin-left: 4px;
@@ -166,7 +135,7 @@ a{
 .masthead nav{
   display: flex;
   gap: clamp(14px, 2.1vw, 30px);
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -178,7 +147,7 @@ a{
 
 .masthead nav a:hover,
 .masthead nav a[aria-current="page"]{
-  color: var(--ink);
+  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -204,7 +173,7 @@ a{
 
 .eyebrow{
   margin: 0 0 12px;
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -215,10 +184,10 @@ a{
 .contents h2,
 .instructions h2{
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--p2630-navy);
+  color: var(--color-brand);
 }
 
 .hero h1{
@@ -227,7 +196,7 @@ a{
 }
 
 .hero h1 i{
-  color: var(--p2630-blue);
+  color: var(--color-accent);
   font-style: normal;
 }
 
@@ -257,7 +226,7 @@ a{
   padding: 10px;
   border: 0;
   background: transparent;
-  color: var(--ink-faint);
+  color: var(--color-text-subtle);
   cursor: pointer;
   transition: color 180ms ease, transform 180ms ease;
   z-index: 20;
@@ -278,7 +247,7 @@ a{
 }
 
 .page-arrow:hover{
-  color: var(--ink);
+  color: var(--color-text);
   transform: scale(1.08);
 }
 
@@ -313,7 +282,7 @@ a{
   position: relative;
   width: 100%;
   height: 100%;
-  background: var(--paper);
+  background: var(--color-bg);
   overflow: hidden;
   aspect-ratio: 16 / 9;
   transform-style: preserve-3d;
@@ -323,7 +292,7 @@ a{
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: var(--paper);
+  background: var(--color-bg);
 }
 
 .page-front img{
@@ -362,15 +331,15 @@ a{
 .caption,
 .page-readout{
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.06em;
 }
 
 .caption{
-  color: var(--ink);
-  font-family: var(--display);
+  color: var(--color-text);
+  font-family: var(--font-display);
   font-size: 17px;
   letter-spacing: 0.01em;
 }
@@ -381,7 +350,7 @@ a{
   width: 22px;
   height: 2px;
   margin: 0 10px 4px 0;
-  background: var(--p2630-gradient);
+  background: var(--gradient-brand);
 }
 
 /* ============================================================
@@ -393,11 +362,11 @@ a{
   align-items: center;
   height: 36px;
   overflow: hidden;
-  border: 1px solid var(--p2630-muted-blue);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: rgba(242, 244, 248, 0.85);
+  background: var(--color-surface-glass);
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 16px rgba(23, 41, 131, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 .toolbar button,
@@ -408,7 +377,7 @@ a{
   place-items: center;
   border: 0;
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: 15px;
   font-weight: 500;
 }
@@ -420,8 +389,8 @@ a{
 
 .toolbar button:hover,
 .toolbar button[aria-pressed="true"]{
-  color: var(--p2630-navy);
-  background: var(--p2630-light-blue);
+  color: var(--color-brand);
+  background: var(--color-accent-soft);
 }
 
 .toolbar button:disabled{
@@ -447,7 +416,7 @@ a{
 .toolbar-separator{
   width: 1px;
   height: 17px;
-  background: var(--p2630-muted-blue);
+  background: var(--color-border);
 }
 
 .icon-collapse{
@@ -474,7 +443,7 @@ a{
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(23, 41, 131, 0.35);
+  background: var(--color-overlay);
   backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
@@ -495,9 +464,9 @@ a{
   width: min(360px, 88vw);
   display: flex;
   flex-direction: column;
-  background: var(--paper-light);
-  border-right: 1px solid var(--p2630-muted-blue);
-  box-shadow: 24px 0 48px rgba(23, 41, 131, 0.16);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  box-shadow: var(--shadow-panel);
   transform: translateX(-100%);
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -512,15 +481,15 @@ a{
   justify-content: space-between;
   gap: 12px;
   padding: 20px 20px 14px;
-  border-bottom: 1px solid var(--p2630-muted-blue);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .toc-panel-header h3{
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 700;
-  color: var(--p2630-navy);
+  color: var(--color-brand);
 }
 
 .toc-close{
@@ -531,14 +500,14 @@ a{
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: color 160ms ease, background-color 160ms ease;
 }
 
 .toc-close:hover{
-  color: var(--ink);
-  background: var(--p2630-light-blue);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
 }
 
 .toc-close svg{
@@ -577,7 +546,7 @@ a{
 
 .toc-list button:hover,
 .toc-list button[aria-current="true"]{
-  background: var(--p2630-light-blue);
+  background: var(--color-accent-soft);
 }
 
 .toc-thumb{
@@ -586,8 +555,8 @@ a{
   aspect-ratio: 16 / 9;
   border-radius: 4px;
   overflow: hidden;
-  background: var(--paper);
-  box-shadow: 0 2px 6px rgba(23, 41, 131, 0.16);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .toc-thumb img{
@@ -605,11 +574,11 @@ a{
 }
 
 .toc-title{
-  font-family: var(--display);
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--ink);
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -621,7 +590,7 @@ a{
 
 .hint{
   margin: 0;
-  color: var(--ink-faint);
+  color: var(--color-text-subtle);
   font-size: 11px;
   letter-spacing: 0.06em;
   transition: opacity 300ms ease;
@@ -639,7 +608,7 @@ a{
   align-items: center;
   gap: 8px;
   transform: translateX(-50%);
-  color: var(--ink-faint);
+  color: var(--color-text-subtle);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -671,7 +640,7 @@ a{
   width: min(1120px, calc(100% - 42px));
   margin: 0 auto;
   padding: clamp(100px, 15vw, 190px) 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--color-border);
 }
 
 .section-heading{
@@ -696,7 +665,7 @@ a{
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--color-border);
 }
 
 .contents-grid button{
@@ -707,7 +676,7 @@ a{
   align-items: center;
   padding: 20px 4px;
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--color-border);
   background: transparent;
   text-align: left;
   cursor: pointer;
@@ -717,17 +686,17 @@ a{
 .contents-grid button:hover,
 .contents-grid button[aria-current="true"]{
   padding-left: 14px;
-  color: var(--accent);
+  color: var(--color-accent);
 }
 
 .contents-title{
-  font-family: var(--display);
+  font-family: var(--font-display);
   font-size: clamp(22px, 2.6vw, 36px);
   font-weight: 600;
 }
 
 .contents-type{
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -745,7 +714,7 @@ a{
 
 .instruction-grid p{
   margin: 0;
-  color: var(--ink-soft);
+  color: var(--color-text-muted);
   font-size: clamp(16px, 1.45vw, 20px);
   line-height: 1.45;
 }
@@ -753,7 +722,7 @@ a{
 .instruction-grid span{
   display: block;
   margin-bottom: 18px;
-  color: var(--accent);
+  color: var(--color-accent);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -768,8 +737,8 @@ footer{
   justify-content: space-between;
   gap: 30px;
   padding: 28px clamp(20px, 4vw, 58px);
-  border-top: 1px solid var(--line);
-  color: var(--ink-soft);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.06em;
@@ -857,7 +826,7 @@ footer{
   justify-content: center;
   gap: 18px;
   padding: 28px clamp(16px, 4vw, 56px);
-  background: var(--paper);
+  background: var(--color-bg);
 }
 
 .book-wrap:fullscreen .stage,
@@ -871,3 +840,23 @@ footer{
   .scroll-cue { animation: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
+
+/* ============================================================
+   EMPTY STATE (book without assets yet)
+   ============================================================ */
+
+.empty-state{
+  display: none;
+  max-width: 42ch;
+  margin: 48px auto;
+  padding: 24px 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text-muted);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.is-empty .empty-state{ display: block; }
+.is-empty .book-wrap{ display: none; }

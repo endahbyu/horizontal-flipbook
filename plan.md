@@ -4,7 +4,7 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 > Distinguish planned, implemented and browser-verified items. Tick `[x]` only after verifying live in a browser, never just because code changed.
 
-**How to test:** `npm run dev`, then open `http://localhost:3000/index.html` (landing) and `http://localhost:3000/reader.html?book=<id>` (flipbook). Test the deployed URL too, because relative paths can behave differently once hosted. Re-check the affected sections after changing `js/*`, `css/*` or page images, or after re-running `node tools/scan-pages.js`.
+**How to test:** `npm run dev`, then open `http://localhost:3000/index.html` (landing) and `http://localhost:3000/strategy.html` and `/action-plan.html` (flipbooks). Test the deployed URL too, because relative paths can behave differently once hosted. Re-check the affected sections after changing `js/*`, `css/*` or page images, or after re-running `node tools/scan-pages.js`.
 
 - **Design source:** Figma `Flipbook-P2630`, node `47:341` (landing, 1624×2437)
 - **Inspiration:** https://press.stripe.com/ — quiet editorial layout, big 3D book that tilts on hover, book "lifts" toward the viewer before opening
@@ -16,11 +16,15 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 ## Phase 0 — Foundation & data
 
+- [x] Rename `reader.html` → `strategy.html` and add `action-plan.html`. Each picks its book via `<body data-book>`. `/reader.html` redirects (301) to `/strategy.html`.
+- [x] Add `css/tokens.css` (primitive → semantic → per-book theme). `style.css` uses semantic tokens only.
+- [x] Move assets to `assets/books/<id>/`. `scan-pages.js` writes one manifest per book. Action Plan shows an empty state until its pages arrive.
+
 - [ ] Add `books.json` (or `js/books.js`): `id`, title, eyebrow, subtitle, description, cover/back/spine, page folder, PDF path, theme colours.
 - [ ] Assets per book: `assets/books/<id>/cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-NN.webp` (2-digit, 1920×1080, 16:9).
 - [ ] Move the current Strategy Plan pages into `assets/books/advancing-inclusivity/`.
 - [ ] Make `tools/scan-pages.js` scan each book folder → `js/pages.js` exports `{ [bookId]: manifest }`.
-- [ ] `reader.html?book=<id>` loads the right manifest. Unknown/missing id → redirect to landing.
+- [ ] `strategy.html` / `action-plan.html` loads the right manifest. Unknown/missing id → redirect to landing.
 - [ ] Action Plan: use placeholder pages until the real assets arrive (mark them as a sample in the README).
 - [ ] Do not commit the reference PDFs unless we decide to (see Phase 2 PDF button).
 
@@ -38,13 +42,13 @@ UI enhancements (Stripe Press feel):
 - [ ] Hover/pointer tilt with eased lerp. The book idles with a slow float.
 - [ ] Scroll-driven reveal: the book rotates from a slight angle to face-on as its section enters the view, and the text fades and slides up (IntersectionObserver).
 - [ ] Section background colour transitions smoothly as you scroll between books.
-- [ ] Clicking **Open Flipbook** (or the book) plays an *open transition*: the book moves to the centre and scales up, the cover swings open, then we go to `reader.html?book=<id>` (View Transitions API where supported, a fade fallback otherwise).
+- [ ] Clicking **Open Flipbook** (or the book) plays an *open transition*: the book moves to the centre and scales up, the cover swings open, then we go to `strategy.html` / `action-plan.html` (View Transitions API where supported, a fade fallback otherwise).
 - [ ] Soft contact shadow under each book, plus a subtle page-edge thickness/texture.
 - [ ] Buttons: outlined style from Figma with hover fill, focus ring and active press.
 - [ ] Lazy-load the second book's textures. Show a static `<img>` cover fallback when WebGL is unavailable.
 - [ ] `prefers-reduced-motion`: no tilt, float or scroll rotation. The open transition becomes a simple fade.
 
-## Phase 2 — Reader (`reader.html`) UI enhancements
+## Phase 2 — Reader (`strategy.html` / `action-plan.html`) UI enhancements
 
 - [ ] Theme the reader by book (the blue or the light palette comes from book config).
 - [ ] Top bar: back-to-library link (←), book title, page readout `XX / NN`, and a PDF download button.
@@ -110,7 +114,7 @@ UI enhancements (Stripe Press feel):
 ### 4.7 Landing page
 - [ ] Matches Figma 47:341 (side-by-side screenshot check at 1624px).
 - [ ] Both 3D books load with 16:9 cover proportions. Tilt and click-rotate work and return to rest.
-- [ ] Each **Open Flipbook** opens `reader.html?book=<id>` for the correct book. Back-to-library returns to the landing page.
+- [ ] Each **Open Flipbook** opens `strategy.html` / `action-plan.html` for the correct book. Back-to-library returns to the landing page.
 - [ ] Each PDF button downloads the correct file.
 
 ### 4.8 Design & typography

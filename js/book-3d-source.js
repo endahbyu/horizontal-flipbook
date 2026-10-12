@@ -1,5 +1,9 @@
 import * as THREE from "three";
 
+// How much of the front cover's own colour is added on top of the lighting,
+// per book. Raise it if a cover looks dull; 0 = lighting only.
+const COVER_GLOW = { strategy: 0.45 };
+
 // One 3D book per <canvas class="book-webgl" data-book="<id>">; textures
 // come from assets/books/<id>/ (cover-front, cover-back, spine).
 const initBook = (canvas) => {
@@ -192,7 +196,17 @@ const initBook = (canvas) => {
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.repeat.x = -1;
     spineTexture.offset.x = 1;
-    const frontMaterial = new THREE.MeshStandardMaterial({ map: frontTexture, roughness: 0.58, metalness: 0.025 });
+    // Light covers turn greyish under the scene lights; let the cover art
+    // emit part of its own colour so it keeps its print vibrancy.
+    const coverGlow = COVER_GLOW[bookId] ?? 0;
+    const frontMaterial = new THREE.MeshStandardMaterial({
+      map: frontTexture,
+      roughness: 0.5,
+      metalness: 0.025,
+      emissive: 0xffffff,
+      emissiveMap: frontTexture,
+      emissiveIntensity: coverGlow,
+    });
     const backMaterial = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.62, metalness: 0.02 });
     const spineMaterial = new THREE.MeshStandardMaterial({
       map: spineTexture,

@@ -172,7 +172,7 @@ a{ color: inherit; }
   align-items: center;
   gap: 12px;
   padding: 8px 15px 6px;
-  border: var(--border-thin) var(--color-section-border);
+  border: var(--border-thin) var(--color-chip-border);
   background: var(--color-chip-bg);
   color: var(--color-section-text);
   font-size: 18px;

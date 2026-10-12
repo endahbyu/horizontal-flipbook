@@ -17,8 +17,8 @@
   --gray-200: #E5E7ED;
   --gray-100: #F2F4F8;
   --white: #FFFFFF;
+  --black: #000000;
   --indigo-950: #18185E;
-  --blue-650: #3351C7;
   --blue-250: #C1CCF4;
   --blue-50: #EBEEFB;
 
@@ -55,6 +55,7 @@
   --color-section-text: var(--color-text);
   --color-section-border: var(--color-text);
   --color-chip-bg: var(--blue-250);
+  --color-chip-border: var(--color-section-border);
 
   /* Decorative wash */
   --wash-highlight: rgb(255 255 255 / 0.85);
@@ -82,21 +83,25 @@
 }
 
 /* ---------- 3. Book themes ---------- */
-/* Strategy Plan (Advancing Inclusivity) — Figma section: blue. */
+/* Strategy Plan (Advancing Inclusivity) — Figma section: light blue, black text. */
 [data-book="strategy"]{
   --color-accent: var(--blue-600);
-  --color-section-bg: var(--blue-650);
-  --color-section-text: var(--white);
-  --color-section-border: var(--white);
+  --color-section-bg: var(--blue-50);
+  --color-section-text: var(--black);
+  --color-section-border: var(--black);
+  --color-chip-bg: var(--blue-250);
+  --color-chip-border: var(--white);
 }
 
-/* Action Plan — Figma section: light blue. */
+/* Action Plan — Figma section: periwinkle, indigo text. */
 [data-book="action-plan"]{
   --color-bg: var(--blue-100);
   --color-header-fade: rgb(234 238 250 / 0.94);
   --color-header-fade-soft: rgb(234 238 250 / 0.63);
   --color-accent: var(--navy-900);
-  --color-section-bg: var(--blue-50);
+  --color-section-bg: var(--blue-250);
   --color-section-text: var(--indigo-950);
   --color-section-border: var(--indigo-950);
+  --color-chip-bg: var(--blue-50);
+  --color-chip-border: var(--indigo-950);
 }

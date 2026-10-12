@@ -26,13 +26,26 @@ const initBook = (canvas) => {
   scene.add(book);
 
   const textureLoader = new THREE.TextureLoader();
-  const loadTexture = (url) => new Promise((resolve, reject) => {
-    textureLoader.load(url, (texture) => {
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
-      resolve(texture);
-    }, undefined, reject);
-  });
+  // Fetch the image first and load it from a same-origin blob: URL, so the
+  // texture never trips cross-origin rules on hosts that serve assets from
+  // another origin (e.g. sandboxed previews).
+  const loadTexture = (url) => fetch(url)
+    .then((response) => {
+      if (!response.ok) throw new Error(`Texture ${url}: HTTP ${response.status}`);
+      return response.blob();
+    })
+    .then((blob) => new Promise((resolve, reject) => {
+      const blobUrl = URL.createObjectURL(blob);
+      textureLoader.load(blobUrl, (texture) => {
+        URL.revokeObjectURL(blobUrl);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+        resolve(texture);
+      }, undefined, (error) => {
+        URL.revokeObjectURL(blobUrl);
+        reject(error);
+      });
+    }));
 
   const makePageTexture = () => {
     const paper = document.createElement("canvas");
@@ -218,9 +231,7 @@ const initBook = (canvas) => {
     spine.position.x = -0.015;
     book.add(spine);
     addBindingSeam();
-  }).catch(() => {
-    canvas.setAttribute("aria-label", "The 3D book textures could not be loaded");
-  });
+  }).catch(() => showFlatCover(canvas));
 
   const frontRotation = { x: 0.09, y: 0.43, z: -0.025 };
   const backRotation = { x: 0.09, y: Math.PI + 0.43, z: 0.025 };
@@ -407,4 +418,21 @@ const initBook = (canvas) => {
   animate();
 };
 
-document.querySelectorAll(".book-stage .book-webgl").forEach(initBook);
+// Fallback when WebGL or the textures are unavailable: show the flat front
+// cover in place of the canvas, so the section is never empty.
+function showFlatCover(canvas) {
+  const bookId = canvas.dataset.book || "strategy";
+  const img = document.createElement("img");
+  img.className = "book-fallback";
+  img.src = `assets/books/${bookId}/cover-front.webp`;
+  img.alt = canvas.getAttribute("aria-label") || "";
+  canvas.replaceWith(img);
+}
+
+document.querySelectorAll(".book-stage .book-webgl").forEach((canvas) => {
+  try {
+    initBook(canvas);
+  } catch (error) {
+    showFlatCover(canvas);
+  }
+});

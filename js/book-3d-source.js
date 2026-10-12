@@ -1,9 +1,9 @@
 import * as THREE from "three";
 
-const canvas = document.querySelector("#bookCanvas");
-const stage = document.querySelector(".book-stage");
-
-if (canvas && stage) {
+// One 3D book per <canvas class="book-webgl" data-book="<id>">; textures
+// come from assets/books/<id>/ (cover-front, cover-back, spine).
+const initBook = (canvas) => {
+  const bookId = canvas.dataset.book || "strategy";
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -172,9 +172,9 @@ if (canvas && stage) {
   };
 
   Promise.all([
-    loadTexture("assets/books/strategy/cover-front.webp"),
-    loadTexture("assets/books/strategy/cover-back.webp"),
-    loadTexture("assets/books/strategy/spine.webp"),
+    loadTexture(`assets/books/${bookId}/cover-front.webp`),
+    loadTexture(`assets/books/${bookId}/cover-back.webp`),
+    loadTexture(`assets/books/${bookId}/spine.webp`),
   ]).then(([frontTexture, backTexture, spineTexture]) => {
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.repeat.x = -1;
@@ -400,9 +400,11 @@ if (canvas && stage) {
     renderer.render(scene, camera);
     window.setTimeout(animate, 16);
   };
-  window.__book3D = {
+  if (!window.__book3D) window.__book3D = {
     getRotation: () => ({ x: book.rotation.x, y: book.rotation.y, targetY: target.y, dragging, snapping, velocityX, velocityY, dragVelocityX, dragVelocityY }),
     rotateTo: setSide,
   };
   animate();
-}
+};
+
+document.querySelectorAll(".book-stage .book-webgl").forEach(initBook);

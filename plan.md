@@ -74,6 +74,10 @@ UI enhancements (Stripe Press feel):
 ## Phase 4 — QA checklist (run for **each** book)
 
 ### 4.1 Assets & manifest
+
+**Naming convention (agreed):** the folder tells the books apart, and file names stay the same in every book.
+`assets/books/<strategy|action-plan>/` → `cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-01.webp` … `page-NN.webp`. Use lowercase with hyphens, 2 digits (both books have fewer than 99 pages), and 1920×1080. The number is the order in the flipbook, not the printed PDF page number.
+
 - [ ] `cover-front.webp` and `cover-back.webp` exist (1920×1080, 16:9).
 - [ ] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-01` … `page-10`), continuous from `01` with no gaps, and no 3-digit names.
 - [ ] Every asset is one independent 16:9 page. No merged PDF pages, no spreads or two-page compositions.

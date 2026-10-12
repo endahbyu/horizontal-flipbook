@@ -30,6 +30,11 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 ## Phase 1 — Landing page (Figma 47:341)
 
+- [x] **1a. Static layout:** `index.html` + `css/landing.css`, with section colours from `[data-book]` tokens. Screenshot-checked against Figma at 1624px and 390px, with no horizontal scroll.
+  - Placeholders: 72px logo exported from Figma (`assets/landing/p2630-logo.png`), Action Plan front cover upscaled from the 705px Figma export, Action Plan back cover + spine copied from Strategy, PDF buttons disabled until the files exist. Host Grotesk is loaded from Google Fonts until approved font files are supplied.
+- [ ] **1b. 3D books** replace the static covers.
+- [ ] **1c. Motion** (scroll reveal, open transition).
+
 Layout, top to bottom:
 - [ ] Header: MCMC logo top-left (small, inside the blue section).
 - [ ] **Section 1 (blue):** 3D book on the left, text column on the right: eyebrow "MCMC PLAN 2026–2030", H1, subtitle "Malaysian Communications and Multimedia Commission", outlined **Open Flipbook** button, description paragraph, then the **PDF card** (outlined box with mini title block and a `⬇ PDF` button top-right).

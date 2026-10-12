@@ -29,7 +29,7 @@
     <section class="book-section" data-book="strategy" aria-labelledby="strategy-title">
       <div class="book-section__inner">
         <div class="book-section__cover book-stage">
-          <canvas class="book-webgl" id="bookCanvas" tabindex="0" role="img" aria-label="Interactive 3D book: MCMC Plan 2026–2030, Advancing Inclusivity"></canvas>
+          <canvas class="book-webgl" id="bookCanvas" data-book="strategy" tabindex="0" role="img" aria-label="Interactive 3D book: MCMC Plan 2026–2030, Advancing Inclusivity"></canvas>
         </div>
 
         <div class="book-section__body">
@@ -60,10 +60,9 @@
 
     <section class="book-section" data-book="action-plan" aria-labelledby="action-plan-title">
       <div class="book-section__inner">
-        <figure class="book-section__cover">
-          <!-- PLACEHOLDER: static cover for step 1a; becomes the 3D book in step 1b. -->
-          <img src="assets/landing/cover-action-plan.webp" alt="Cover of MCMC Plan 2026–2030: Action Plan" width="1920" height="1080" loading="lazy">
-        </figure>
+        <div class="book-section__cover book-stage">
+          <canvas class="book-webgl" data-book="action-plan" tabindex="0" role="img" aria-label="Interactive 3D book: MCMC Plan 2026–2030, Action Plan"></canvas>
+        </div>
 
         <div class="book-section__body">
           <h2 class="book-title" id="action-plan-title">

@@ -32,8 +32,7 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 - [x] **1a. Layout:** `landing-3d.html` (default landing, keeps the 3D book) + `css/landing.css`. Only the Figma *layout* is followed. `draft.html` = static draft; `index.html` = redirect stub to `landing-3d.html`, with section colours from `[data-book]` tokens. Screenshot-checked against Figma at 1624px and 390px, with no horizontal scroll.
   - Placeholders: 72px logo exported from Figma (`assets/landing/p2630-logo.png`), Action Plan front cover upscaled from the 705px Figma export, Action Plan back cover + spine copied from Strategy, PDF buttons disabled until the files exist. Host Grotesk is loaded from Google Fonts until approved font files are supplied.
-- [x] **1b (part). 3D books:** Action Plan section has its own 3D book (one canvas per `data-book`).
-- [ ] Tune 3D lighting for the blue background.
+- [ ] **1b. 3D books:** give the Action Plan section its own 3D book (currently a static cover), and tune lighting for the blue background.
 - [ ] **1c. Motion** (scroll reveal, open transition).
 
 Layout, top to bottom:

@@ -205,3 +205,25 @@ a{ color: inherit; }
 @media (prefers-reduced-motion: reduce){
   .skip-link, .button-outline{ transition: none; }
 }
+
+/* ---------- 3D book (landing-3d.html) ---------- */
+.book-stage{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 705 / 440;
+}
+.book-webgl{
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+  outline: 0;
+}
+.book-webgl:active{ cursor: grabbing; }
+.book-webgl:focus-visible{
+  outline: 2px solid var(--color-section-border);
+  outline-offset: 4px;
+}

@@ -24,7 +24,9 @@ Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built wi
 ## Project structure
 ```
 mcmc-flipbook/
-├── index.html                 # landing page (3D book hero)
+├── landing-3d.html            # DEFAULT landing page (3D book, Figma layout)
+├── index.html                 # redirect stub → landing-3d.html (for static hosts)
+├── draft.html                 # static layout draft (not linked)
 ├── strategy.html              # Strategy Plan reader  (<body data-book="strategy">)
 ├── action-plan.html           # Action Plan reader    (<body data-book="action-plan">)
 ├── css/
@@ -89,7 +91,7 @@ To change a colour everywhere, edit the token, not the component.
 ## Run locally
 ```bash
 npm run dev
-# landing page:  http://localhost:3000/index.html
+# landing page:  http://localhost:3000/  (landing-3d.html)
 # strategy plan: http://localhost:3000/strategy.html
 # action plan:   http://localhost:3000/action-plan.html
 ```

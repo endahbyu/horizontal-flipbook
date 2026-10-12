@@ -12,8 +12,9 @@ const PORT = process.env.PORT || 3000;
 const HOST = '::';
 
 // Route handlers for landing and reader pages
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
+// landing-3d.html is the default landing page; draft.html is a static draft.
+app.get(['/', '/index.html'], (req, res) => {
+  res.sendFile(join(__dirname, 'landing-3d.html'));
 });
 
 app.get('/strategy', (req, res) => {

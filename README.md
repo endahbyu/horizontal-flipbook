@@ -85,7 +85,7 @@ npm run dev
 - **MCMC server**: place this entire folder in the P2630 Strategy Plan subdirectory.
 
 ## QA
-Before release, work through [`QA-CHECKLIST.md`](QA-CHECKLIST.md) once every page
+Before release, work through [`plan.md`](plan.md) (Phase 4 QA checklist) once every page
 has been uploaded.
 
 ## Embed into another page (optional)

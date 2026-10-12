@@ -1,6 +1,10 @@
 # Plan — MCMC P2630 Two-Book Flipbook
 
-Replaces the old single-book `QA-CHECKLIST.md` scope. Ticks mean **browser-verified**, not just "code changed".
+Single source of truth: the build plan **and** the QA checklist (merged from the old `QA-CHECKLIST.md`).
+
+> Distinguish planned, implemented and browser-verified items. Tick `[x]` only after verifying live in a browser, never just because code changed.
+
+**How to test:** `npm run dev`, then open `http://localhost:3000/index.html` (landing) and `http://localhost:3000/reader.html?book=<id>` (flipbook). Test the deployed URL too, because relative paths can behave differently once hosted. Re-check the affected sections after changing `js/*`, `css/*` or page images, or after re-running `node tools/scan-pages.js`.
 
 - **Design source:** Figma `Flipbook-P2630`, node `47:341` (landing, 1624×2437)
 - **Inspiration:** https://press.stripe.com/ — quiet editorial layout, big 3D book that tilts on hover, book "lifts" toward the viewer before opening
@@ -63,24 +67,80 @@ UI enhancements (Stripe Press feel):
 - [ ] Performance: 60fps on a mid-range phone, GPU transforms only, and images decoded ahead (`img.decode()`).
 - [ ] Decide on the engine: keep StPageFlip and tune it, or move to a custom WebGL/three.js page curl that shares the landing renderer. Spike this first and pick based on quality vs effort.
 
-## Phase 4 — QA (carried over from QA-CHECKLIST.md, now per book)
+## Phase 4 — QA checklist (run for **each** book)
 
-For **each** book:
-- [ ] Assets valid (16:9, 1920×1080, continuous `page-NN`, no merged spreads), and the manifest count matches.
-- [ ] One page at a time on desktop, tablet and mobile. Covers are centred.
-- [ ] Drag, buttons and keys all turn exactly one page. Fast flipping never sticks or skips.
-- [ ] TOC lists Front cover → Page 01…NN → Back cover. Jumping works and the active page is highlighted.
-- [ ] Zoom and fullscreen work without breaking turns.
-- [ ] No vertical overflow or horizontal clipping at 320 / 768 / 1280 / 1920 widths.
-- [ ] Brand palette is accurate (navy `#172983`, blue `#4159D5`, light blue `#D0DDF4`, neutral `#E5E7ED`, gradient).
+### 4.1 Assets & manifest
+- [ ] `cover-front.webp` and `cover-back.webp` exist (1920×1080, 16:9).
+- [ ] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-01` … `page-10`), continuous from `01` with no gaps, and no 3-digit names.
+- [ ] Every asset is one independent 16:9 page. No merged PDF pages, no spreads or two-page compositions.
+- [ ] Every image is exactly 1920×1080.
+- [ ] Missing PDF pages are not fabricated or silently added.
+- [ ] After adding or removing pages, `node tools/scan-pages.js` has been re-run and the page count in `js/pages.js` matches the files.
+- [ ] Sample status is documented (Strategy Plan: currently 12 pages = cover + 10 + back, out of 64; Action Plan: placeholder until assets arrive).
 
-Global:
-- [ ] Landing matches Figma 47:341 (side-by-side screenshot check at 1624px).
-- [ ] Landing → reader → back to landing works for both books.
-- [ ] PDF buttons download the correct file.
-- [ ] No console errors and no 404s. Works inside an iframe and when deployed.
+### 4.2 Reading format & covers
+- [ ] **One page at a time** on desktop, tablet and mobile. Two pages are never shown side by side.
+- [ ] First load shows the front cover as a single centred 16:9 page. Turning it opens Page 01.
+- [ ] The back cover shows as a single centred 16:9 page at the end.
+- [ ] Every page flips with the soft paper animation (see Phase 3).
+
+### 4.3 Interaction & navigation
+- [ ] Dragging a page corner turns forward and backward.
+- [ ] Prev/next buttons and ←/→ keys move exactly one page. `+`/`−` zooms, `F` toggles fullscreen.
+- [ ] Flipping fast never sticks or skips a page.
+- [ ] The readout shows the individual page position (`XX / NN`).
+
+### 4.4 Table of contents
+- [ ] The TOC button opens the slide-in panel.
+- [ ] It lists Front cover → Page 01…NN → Back cover, with 16:9 thumbnails.
+- [ ] Clicking an entry jumps to the correct page and closes the panel.
+- [ ] The active page is highlighted (`aria-current`).
+
+### 4.5 Zoom & fullscreen
+- [ ] Zoom in/out works and the zoom % status updates.
+- [ ] Zoom keeps the 16:9 canvas without clipping or breaking page turns.
+- [ ] Fullscreen opens and exits cleanly, and pages still turn inside it.
+
+### 4.6 Responsive & layout
+- [ ] No vertical overflow and no horizontal clipping at 320 / 768 / 1280 / 1920 widths.
+- [ ] Covers and pages keep their 16:9 ratio.
+- [ ] No rubber-band or scroll-jump when turning pages by touch.
+- [ ] The P2630 brand stays visible on desktop and mobile.
+
+### 4.7 Landing page
+- [ ] Matches Figma 47:341 (side-by-side screenshot check at 1624px).
+- [ ] Both 3D books load with 16:9 cover proportions. Tilt and click-rotate work and return to rest.
+- [ ] Each **Open Flipbook** opens `reader.html?book=<id>` for the correct book. Back-to-library returns to the landing page.
+- [ ] Each PDF button downloads the correct file.
+
+### 4.8 Design & typography
+- [ ] Titles and headings are readable at every width.
+- [ ] Palette is accurate: navy `#172983`, blue `#4159D5`, light blue `#D0DDF4`, neutral `#E5E7ED`, gradient, and the Figma section blues.
+- [ ] No broken images or missing assets.
+- [ ] Reduced motion is respected everywhere.
+
+### 4.9 Deployment & integrity
+- [ ] No console errors and no 404s.
+- [ ] Works when embedded as an iframe and on the deployed URL.
 - [ ] Lighthouse: Performance ≥ 85, Accessibility ≥ 95.
-- [ ] Reduced motion respected everywhere.
+- [ ] Reference PDFs are only committed if we decide to (see Open questions).
+
+### Sign-off
+
+| Section | Book | Tester | Date | Result |
+|---|---|---|---|---|
+| 4.1 Assets & manifest | | | | |
+| 4.2 Reading format | | | | |
+| 4.3 Interaction | | | | |
+| 4.4 TOC | | | | |
+| 4.5 Zoom & fullscreen | | | | |
+| 4.6 Responsive | | | | |
+| 4.7 Landing | | | | |
+| 4.8 Design | | | | |
+| 4.9 Deployment | | | | |
+
+- [ ] All blockers resolved and re-tested.
+- [ ] Approved for release by ________ on ________.
 
 ## Open questions
 

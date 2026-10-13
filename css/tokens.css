@@ -26,8 +26,7 @@
   --slate-50: #F8FAFC;
   --mist-50: #F5F6FA;
 
-  --font-host-grotesk: "Host Grotesk", "Instrument Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-inter: "Inter", "Newsreader", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-host-grotesk: "Host Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
   /* ---------- 2. Semantic ---------- */
   /* Surfaces */
@@ -112,7 +111,7 @@
   --text-pdf-title: clamp(1.25rem, 1.125rem + 0.6250vw, 1.6875rem); /* 20→27px · PDF card title */
   --text-display: clamp(2.125rem, 1.8036rem + 1.6071vw, 3.25rem); /* 34→52px · landing book title */
   --font-display: var(--font-host-grotesk);
-  --font-body: var(--font-inter);
+  --font-body: var(--font-host-grotesk);
 
   /* Shape & motion */
   --radius-sm: 4px;

@@ -29,13 +29,13 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 - [x] **1b. 3D books:** one 3D book per section (Strategy + Action Plan), with a flat-cover fallback when WebGL or textures fail. Strategy cover brightened (`COVER_GLOW`).
 - [x] Colours, type and buttons from Figma 56:361 as semantic tokens.
 - [ ] **1c. Motion (Stripe Press feel)** ← **next**
-  - [ ] Idle: slow float/tilt that follows the pointer (eased).
-  - [ ] Scroll reveal: book turns face-on and the text fades/slides up as each section enters the view.
+  - [x] Idle: slow float + eased tilt that follows the pointer (desktop pointers only).
+  - [x] Scroll reveal: book turns to its rest angle and the text fades/slides up (staggered) as each section enters the view.
   - [ ] Open transition: **Open Flipbook** (or clicking the book) moves the book forward, swings the cover open, then goes to the reader (View Transitions API, fade fallback).
-  - [ ] Soft contact shadow under each book.
-  - [ ] Lazy-start the second book's renderer when its section is near the viewport.
-  - [ ] `prefers-reduced-motion`: no float, tilt or scroll rotation. The open transition becomes a fade.
-- [ ] PDF button: show a clear "not available yet" state until the PDF exists (review finding, MEDIUM).
+  - [x] Soft contact shadow under each book.
+  - [x] Each book starts (renderer + textures) only when near the viewport, and stops rendering when off-screen.
+  - [x] `prefers-reduced-motion`: no float, tilt, reveal or text animation (open transition: fade, when built).
+- [x] PDF button: dimmed "coming soon" state until the PDF exists.
 - [ ] Replace the 72px logo with an SVG or hi-res version.
 
 ## Phase 2 — Reader (`strategy.html` / `action-plan.html`) UI enhancements

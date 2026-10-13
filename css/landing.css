@@ -247,3 +247,45 @@ a{ color: inherit; }
   height: 100%;
   object-fit: contain;
 }
+
+/* ---------- 1c. Motion ---------- */
+/* Soft contact shadow under each 3D book. */
+.book-stage::after{
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 12%;
+  right: 12%;
+  bottom: 4%;
+  height: 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--color-book-shadow), transparent);
+  filter: blur(6px);
+}
+.book-stage{ isolation: isolate; }
+
+/* Text reveal: only active once js/landing-motion.js adds .motion-ready. */
+.motion-ready .book-section__body > *{
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.motion-ready .book-section.is-revealed .book-section__body > *{
+  opacity: 1;
+  transform: none;
+}
+.motion-ready .book-section__body > :nth-child(2){ transition-delay: 80ms; }
+.motion-ready .book-section__body > :nth-child(3){ transition-delay: 160ms; }
+.motion-ready .book-section__body > :nth-child(4){ transition-delay: 240ms; }
+
+/* PDF placeholder: visibly unavailable until the file exists. */
+.pdf-button[aria-disabled="true"]{
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.pdf-button[aria-disabled="true"]:hover{
+  background: var(--color-button-bg);
+  border-color: var(--color-button-bg);
+}

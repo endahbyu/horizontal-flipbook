@@ -4,6 +4,8 @@ import * as THREE from "three";
 // per book. Raise it if a cover looks dull; 0 = lighting only.
 const COVER_GLOW = { strategy: 0.45 };
 
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // One 3D book per <canvas class="book-webgl" data-book="<id>">; textures
 // come from assets/books/<id>/ (cover-front, cover-back, spine).
 const initBook = (canvas) => {
@@ -26,8 +28,12 @@ const initBook = (canvas) => {
   rimLight.position.set(11, -4, -8);
   scene.add(rimLight);
 
+  // `pivot` carries the ambient motion (float, pointer tilt, scroll reveal)
+  // on top of the book's own drag/snap rotation, so the two never fight.
+  const pivot = new THREE.Group();
+  scene.add(pivot);
   const book = new THREE.Group();
-  scene.add(book);
+  pivot.add(book);
 
   const textureLoader = new THREE.TextureLoader();
   // Fetch the image first and load it from a same-origin blob: URL, so the
@@ -397,7 +403,51 @@ const initBook = (canvas) => {
   new ResizeObserver(resize).observe(canvas);
   resize();
 
+  // ---- Ambient motion (skipped entirely for reduced motion) ----
+  const stage = canvas.closest(".book-stage");
+  const hover = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  let revealStart = reduceMotion ? -Infinity : null; // null = not yet in view
+  let visible = false;
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible && revealStart === null) {
+      revealStart = performance.now();
+      stage?.classList.add("is-revealed");
+    }
+  }, { threshold: 0.25 }).observe(canvas);
+
+  if (!reduceMotion) {
+    window.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const rect = canvas.getBoundingClientRect();
+      // -1..1 across the canvas, softly clamped beyond it.
+      hover.targetX = THREE.MathUtils.clamp(((event.clientX - rect.left) / rect.width) * 2 - 1, -1.5, 1.5);
+      hover.targetY = THREE.MathUtils.clamp(((event.clientY - rect.top) / rect.height) * 2 - 1, -1.5, 1.5);
+    }, { passive: true });
+    document.documentElement.addEventListener("pointerleave", () => {
+      hover.targetX = 0;
+      hover.targetY = 0;
+    });
+  }
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const applyAmbientMotion = (now) => {
+    if (reduceMotion) return;
+    const reveal = revealStart === null ? 0 : easeOutCubic(Math.min((now - revealStart) / 1400, 1));
+    hover.x = THREE.MathUtils.lerp(hover.x, dragging ? 0 : hover.targetX, 0.06);
+    hover.y = THREE.MathUtils.lerp(hover.y, dragging ? 0 : hover.targetY, 0.06);
+    pivot.rotation.y = hover.x * 0.12 + (1 - reveal) * 0.55;
+    pivot.rotation.x = hover.y * 0.07 - (1 - reveal) * 0.08;
+    pivot.position.y = Math.sin(now / 1100) * 0.12;
+  };
+
   const animate = () => {
+    if (!visible && revealStart !== null) {
+      window.setTimeout(animate, 120);
+      return;
+    }
     if (!dragging && !snapping) {
       target.y += velocityY;
       target.x += velocityX;
@@ -421,7 +471,12 @@ const initBook = (canvas) => {
       book.rotation.y = target.y;
     }
     book.rotation.z = THREE.MathUtils.lerp(book.rotation.z, target.z, 0.12);
+    // Fit the camera to the book at rest, then add ambient motion, so the
+    // float and tilt don't make the camera zoom in and out.
+    pivot.rotation.set(0, 0, 0);
+    pivot.position.set(0, 0, 0);
     fitCameraToBook();
+    applyAmbientMotion(performance.now());
     renderer.render(scene, camera);
     window.setTimeout(animate, 16);
   };
@@ -443,10 +498,17 @@ function showFlatCover(canvas) {
   canvas.replaceWith(img);
 }
 
-document.querySelectorAll(".book-stage .book-webgl").forEach((canvas) => {
-  try {
-    initBook(canvas);
-  } catch (error) {
-    showFlatCover(canvas);
-  }
-});
+// Start each book (renderer + textures) only when it comes near the viewport.
+const startObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    startObserver.unobserve(entry.target);
+    try {
+      initBook(entry.target);
+    } catch (error) {
+      showFlatCover(entry.target);
+    }
+  });
+}, { rootMargin: "300px 0px" });
+
+document.querySelectorAll(".book-stage .book-webgl").forEach((canvas) => startObserver.observe(canvas));

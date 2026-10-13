@@ -14,45 +14,29 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 ---
 
-## Phase 0 — Foundation & data
+## Phase 0 — Foundation & data ✅
 
 - [x] Rename `reader.html` → `strategy.html` and add `action-plan.html`. Each picks its book via `<body data-book>`. `/reader.html` redirects (301) to `/strategy.html`.
-- [x] Add `css/tokens.css` (primitive → semantic → per-book theme). `style.css` uses semantic tokens only.
-- [x] Move assets to `assets/books/<id>/`. `scan-pages.js` writes one manifest per book. Action Plan shows an empty state until its pages arrive.
+- [x] Add `css/tokens.css` (primitive → semantic → per-book theme). Components use semantic tokens only.
+- [x] Assets per book in `assets/books/<strategy|action-plan>/` (agreed naming, see 4.1). `scan-pages.js` writes one manifest per book, and each reader loads its own.
+- [x] Action Plan: real front cover (1920×1080); back cover + spine copied from Strategy until its own arrive. No content pages yet, so the reader shows the covers only.
+- [ ] Optional: move per-book copy (title, description, PDF path) into one `js/books.js` so the landing and readers don't repeat it.
+- [ ] Decide where PDFs live (repo or external URL). Until then the PDF buttons stay placeholders.
 
-- [ ] Add `books.json` (or `js/books.js`): `id`, title, eyebrow, subtitle, description, cover/back/spine, page folder, PDF path, theme colours.
-- [ ] Assets per book: `assets/books/<id>/cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-NN.webp` (2-digit, 1920×1080, 16:9).
-- [ ] Move the current Strategy Plan pages into `assets/books/advancing-inclusivity/`.
-- [ ] Make `tools/scan-pages.js` scan each book folder → `js/pages.js` exports `{ [bookId]: manifest }`.
-- [ ] `strategy.html` / `action-plan.html` loads the right manifest. Unknown/missing id → redirect to landing.
-- [ ] Action Plan: use placeholder pages until the real assets arrive (mark them as a sample in the README).
-- [ ] Do not commit the reference PDFs unless we decide to (see Phase 2 PDF button).
+## Phase 1 — Landing page (Figma 56:361) — layout ✅, motion pending
 
-## Phase 1 — Landing page (Figma 47:341)
-
-- [x] **1a. Layout:** `landing-3d.html` (default landing, keeps the 3D book) + `css/landing.css`. Only the Figma *layout* is followed. `draft.html` = static draft; `index.html` = redirect stub to `landing-3d.html`, with section colours from `[data-book]` tokens. Screenshot-checked against Figma at 1624px and 390px, with no horizontal scroll.
-  - Placeholders: 72px logo exported from Figma (`assets/landing/p2630-logo.png`), Action Plan back cover + spine copied from Strategy, PDF buttons disabled until the files exist. Host Grotesk is loaded from Google Fonts until approved font files are supplied.
-- [x] **1b (part). 3D books:** Action Plan section has its own 3D book (one canvas per `data-book`).
-- [ ] Tune 3D lighting for the blue background.
-- [ ] **1c. Motion** (scroll reveal, open transition).
-
-Layout, top to bottom:
-- [ ] Header: MCMC logo top-left (small, inside the blue section).
-- [ ] **Section 1 (blue):** 3D book on the left, text column on the right: eyebrow "MCMC PLAN 2026–2030", H1, subtitle "Malaysian Communications and Multimedia Commission", outlined **Open Flipbook** button, description paragraph, then the **PDF card** (outlined box with mini title block and a `⬇ PDF` button top-right).
-- [ ] **Section 2 (light):** same layout for the Action Plan, with the colours inverted.
-- [ ] Each section is ~100svh tall on desktop. Stack it at ≤900px: book on top, text below.
-- [ ] Typography: Host Grotesk for headings, Inter for body. Pull the exact sizes, spacing and colours from Figma variables (`get_design_context` / `get_variable_defs`).
-- [ ] Generalise the 3D book (`js/book-3d-source.js`) so it can render **N instances** with different textures. Use one shared renderer per canvas, or a lazily created canvas per section.
-
-UI enhancements (Stripe Press feel):
-- [ ] Hover/pointer tilt with eased lerp. The book idles with a slow float.
-- [ ] Scroll-driven reveal: the book rotates from a slight angle to face-on as its section enters the view, and the text fades and slides up (IntersectionObserver).
-- [ ] Section background colour transitions smoothly as you scroll between books.
-- [ ] Clicking **Open Flipbook** (or the book) plays an *open transition*: the book moves to the centre and scales up, the cover swings open, then we go to `strategy.html` / `action-plan.html` (View Transitions API where supported, a fade fallback otherwise).
-- [ ] Soft contact shadow under each book, plus a subtle page-edge thickness/texture.
-- [ ] Buttons: outlined style from Figma with hover fill, focus ring and active press.
-- [ ] Lazy-load the second book's textures. Show a static `<img>` cover fallback when WebGL is unavailable.
-- [ ] `prefers-reduced-motion`: no tilt, float or scroll rotation. The open transition becomes a simple fade.
+- [x] **1a. Layout:** `landing-3d.html` is the default landing (`index.html` = redirect stub, `draft.html` = static draft). Matches Figma 56:361 at 1624px and 390px.
+- [x] **1b. 3D books:** one 3D book per section (Strategy + Action Plan), with a flat-cover fallback when WebGL or textures fail. Strategy cover brightened (`COVER_GLOW`).
+- [x] Colours, type and buttons from Figma 56:361 as semantic tokens.
+- [ ] **1c. Motion (Stripe Press feel)** ← **next**
+  - [ ] Idle: slow float/tilt that follows the pointer (eased).
+  - [ ] Scroll reveal: book turns face-on and the text fades/slides up as each section enters the view.
+  - [ ] Open transition: **Open Flipbook** (or clicking the book) moves the book forward, swings the cover open, then goes to the reader (View Transitions API, fade fallback).
+  - [ ] Soft contact shadow under each book.
+  - [ ] Lazy-start the second book's renderer when its section is near the viewport.
+  - [ ] `prefers-reduced-motion`: no float, tilt or scroll rotation. The open transition becomes a fade.
+- [ ] PDF button: show a clear "not available yet" state until the PDF exists (review finding, MEDIUM).
+- [ ] Replace the 72px logo with an SVG or hi-res version.
 
 ## Phase 2 — Reader (`strategy.html` / `action-plan.html`) UI enhancements
 

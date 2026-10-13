@@ -6,4 +6,4 @@ To replace it: `tools/prepare-sounds.sh <input file> page-turn` (trims silence, 
 
 ## Source
 
-- `page-turn.mp3` — converted from `page-turn-sound.ogg`, supplied by the project owner.
+- `page-turn.mp3` — converted from `page-turn.ogg` (second recording), supplied by the project owner.

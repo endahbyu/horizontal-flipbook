@@ -68,7 +68,6 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [x] Touch: quick swipes (< 250ms) and slow drags both work.
 - [x] Pages preloaded ±2 around the current one (Phase 2).
 - [x] Page-turn sound: one recorded sample (`assets/sounds/page-turn.mp3`, 11 KB) played with Web Audio by `js/reader-sound.js` (no library). One sound per single-page turn, slight pitch variation, covers a touch lower; scrubber/contents jumps stay silent. Speaker toggle in the bottom toolbar, off until the viewer turns it on (`p2630:sound`).
-- [ ] Paper grain / gutter shadow — skipped: the page images carry their own design, an overlay would muddy them.
 
 ## Phase 4 — QA checklist (run for **each** book)
 

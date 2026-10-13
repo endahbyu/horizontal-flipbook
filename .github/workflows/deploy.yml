@@ -39,7 +39,7 @@ jobs:
       - name: Stage static site
         run: |
           mkdir -p _site
-          cp -r assets css js index.html reader.html _site/
+          cp -r assets css js *.html _site/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages

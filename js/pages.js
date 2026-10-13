@@ -4,7 +4,6 @@ window.FLIPBOOK_MANIFESTS = {
     "coverFront": "assets/books/action-plan/cover-front.webp",
     "coverBack": "assets/books/action-plan/cover-back.webp",
     "pages": [
-      "assets/books/action-plan/page-01.webp",
       "assets/books/action-plan/page-02.webp",
       "assets/books/action-plan/page-03.webp",
       "assets/books/action-plan/page-04.webp",
@@ -35,14 +34,14 @@ window.FLIPBOOK_MANIFESTS = {
       "assets/books/action-plan/page-29.webp",
       "assets/books/action-plan/page-30.webp",
       "assets/books/action-plan/page-31.webp",
-      "assets/books/action-plan/page-32.webp"
+      "assets/books/action-plan/page-32.webp",
+      "assets/books/action-plan/page-33.webp"
     ]
   },
   "strategy": {
     "coverFront": "assets/books/strategy/cover-front.webp",
     "coverBack": "assets/books/strategy/cover-back.webp",
     "pages": [
-      "assets/books/strategy/page-01.webp",
       "assets/books/strategy/page-02.webp",
       "assets/books/strategy/page-03.webp",
       "assets/books/strategy/page-04.webp",
@@ -57,7 +56,25 @@ window.FLIPBOOK_MANIFESTS = {
       "assets/books/strategy/page-13.webp",
       "assets/books/strategy/page-14.webp",
       "assets/books/strategy/page-15.webp",
-      "assets/books/strategy/page-16.webp"
+      "assets/books/strategy/page-16.webp",
+      "assets/books/strategy/page-17.webp",
+      "assets/books/strategy/page-18.webp",
+      "assets/books/strategy/page-19.webp",
+      "assets/books/strategy/page-20.webp",
+      "assets/books/strategy/page-21.webp",
+      "assets/books/strategy/page-22.webp",
+      "assets/books/strategy/page-23.webp",
+      "assets/books/strategy/page-24.webp",
+      "assets/books/strategy/page-25.webp",
+      "assets/books/strategy/page-26.webp",
+      "assets/books/strategy/page-27.webp",
+      "assets/books/strategy/page-28.webp",
+      "assets/books/strategy/page-29.webp",
+      "assets/books/strategy/page-30.webp",
+      "assets/books/strategy/page-31.webp",
+      "assets/books/strategy/page-32.webp",
+      "assets/books/strategy/page-33.webp",
+      "assets/books/strategy/page-34.webp"
     ]
   }
 };

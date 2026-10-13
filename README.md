@@ -51,7 +51,7 @@ mcmc-flipbook/
 ```
 assets/books/<book>/cover-front.webp    # front cover (fixed name, 16:9)
 assets/books/<book>/cover-back.webp     # back cover  (fixed name, 16:9)
-assets/books/<book>/page-01.webp        # content pages, strictly 2-digit zero-padded (16:9)
+assets/books/<book>/page-02.webp        # first content page (the front cover counts as page 01), 2-digit, 16:9
 assets/books/<book>/page-02.webp
 ...
 assets/books/<book>/page-10.webp        # up to page-NN.webp (2 digits, not 3 digits)
@@ -59,11 +59,11 @@ assets/books/<book>/page-10.webp        # up to page-NN.webp (2 digits, not 3 di
 
 The page count is **derived from the images themselves** — no hardcoded list.
 Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 × 1080 px or equivalent 16:9 resolution).
-Page filenames must strictly use the **2-digit zero-padded format** (`page-01.webp`, `page-02.webp`, etc.).
+Page filenames must strictly use the **2-digit zero-padded format** and start at `page-02.webp` (the front cover is page 01), so a file's number matches the reader's `NN / total` readout.
 
 ## How to add / replace pages
-1. Drop 16:9 page images into `assets/books/<book>/` (`strategy` or `action-plan`), named sequentially with 2 digits (`page-01.webp`,
-   `page-02.webp`, …).
+1. Drop 16:9 page images into `assets/books/<book>/` (`strategy` or `action-plan`), named sequentially with 2 digits starting at 02 (`page-02.webp`,
+   `page-03.webp`, …).
 2. Regenerate the manifest:
    ```bash
    node tools/scan-pages.js

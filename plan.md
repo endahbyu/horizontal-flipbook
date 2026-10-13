@@ -75,10 +75,10 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 ### 4.1 Assets & manifest
 
 **Naming convention (agreed):** the folder tells the books apart, and file names stay the same in every book.
-`assets/books/<strategy|action-plan>/` → `cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-01.webp` … `page-NN.webp`. Use lowercase with hyphens, 2 digits (both books have fewer than 99 pages), and 1920×1080. The number is the order in the flipbook, not the printed PDF page number.
+`assets/books/<strategy|action-plan>/` → `cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-02.webp` … `page-NN.webp` (numbering starts at 02 because the front cover is page 01). Use lowercase with hyphens, 2 digits (both books have fewer than 99 pages), and 1920×1080. The number matches the reader readout (`02 / 35` = `page-02.webp`).
 
 - [ ] `cover-front.webp` and `cover-back.webp` exist (1920×1080, 16:9).
-- [ ] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-01` … `page-10`), continuous from `01` with no gaps, and no 3-digit names.
+- [ ] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-02` … `page-NN`), continuous from `02` with no gaps, and no 3-digit names.
 - [ ] Every asset is one independent 16:9 page. No merged PDF pages, no spreads or two-page compositions.
 - [ ] Every image is exactly 1920×1080.
 - [ ] Missing PDF pages are not fabricated or silently added.

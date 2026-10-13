@@ -18,8 +18,11 @@
   // one at a time. Missing covers are skipped rather than shown blank.
   var PAGES = [];
   if (manifest.coverFront) PAGES.push({ type: "Cover", title: "Front cover", src: manifest.coverFront });
-  contentFiles.forEach(function (file, i) {
-    PAGES.push({ type: "Content", title: "Page " + pad2(i + 1), src: file });
+  // The title comes from the file name (page-02.webp → "Page 02"): the front
+  // cover is page 01, so content pages are numbered from 02.
+  contentFiles.forEach(function (file) {
+    var number = (/page-(\d+)\.webp$/.exec(file) || [])[1];
+    PAGES.push({ type: "Content", title: "Page " + number, src: file });
   });
   // A blank soft-blue endpaper before the back cover, so closing the book
   // reads as a page turning onto the inside of the back board.

@@ -59,7 +59,13 @@ Both readers are generated from one template (same markup, different `data-book`
 - [ ] Physics: easing tuned for the "soft paper" turn. Velocity-based flick (fast swipe = full turn, slow drag = follow the finger, release under 50% = fall back).
 - [ ] Corner hint: on hover, the page corner peels slightly to suggest it can be dragged.
 - [ ] Cover open/close has a heavier, slower turn than inner pages (hard-cover feel).
-- [ ] Optional page-turn sound (off by default, toggle in the toolbar).
+- [ ] Page-turn sound with [`cuelume`](https://www.npmjs.com/package/cuelume) (`npm install cuelume`).
+  - Cuelume has no paper/page-flip cue; use `navigate` (soft whoosh that rises going forward and falls going back) on each turn, and a heavier cue such as `open`/`close` for the covers.
+  - Play from the flip event in code (`play("navigate", { volume })`), not via data attributes; one sound per completed turn, none while dragging or on fast multi-page jumps (TOC).
+  - ESM-only: import it in the bundled reader script (esbuild), not via a plain `<script>`.
+  - Off by default with a sound on/off toggle in the reader toolbar; remember the choice per viewer (localStorage, wrapped in try/catch). Respect `prefers-reduced-motion` only as a hint, the toggle wins.
+  - Audio starts only after a user gesture (browser autoplay rules); first flip after enabling must play.
+  - Spike first: if the whoosh doesn't feel like paper, fall back to a short recorded page-flip sample (<20 KB) played through Web Audio.
 - [ ] Zoomed state: pan with drag, and page turns disabled until zoom = 100%.
 - [ ] Performance: 60fps on a mid-range phone, GPU transforms only, and images decoded ahead (`img.decode()`).
 - [ ] Decide on the engine: keep StPageFlip and tune it, or move to a custom WebGL/three.js page curl that shares the landing renderer. Spike this first and pick based on quality vs effort.

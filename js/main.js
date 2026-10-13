@@ -654,6 +654,7 @@
     view = view || "grid";
     tocTrigger = view === "list" ? tocListButton : tocButton;
     tocPanel.dataset.view = view;
+    document.getElementById("tocPanelTitle").textContent = view === "list" ? "Contents" : "Thumbnails";
     tocPanel.hidden = false;
     tocBackdrop.hidden = false;
     requestAnimationFrame(function () {

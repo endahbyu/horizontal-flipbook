@@ -2,11 +2,10 @@ import * as THREE from "three";
 
 // How much of each printed surface's own colour (front, back, spine) is added
 // on top of the lighting, per book. Raise it if a book looks dull; 0 = lighting only.
-// Glow tint per book. The Strategy cover is near-white, so a pure-white glow
-// clips to #fff; tinting it with the section's lavender (--indigo-100) keeps
-// the highlights in the page's hue instead of floating off it.
-const COVER_TINT = { strategy: 0xe0e7ff, "action-plan": 0xffffff };
-const COVER_GLOW = { strategy: 0.22, "action-plan": 0.45 };
+// Glow tint per book. Strategy's near-white cover art glows a light blue
+// (--blue-200) instead of plain white, so its whites read as soft blue.
+const COVER_TINT = { strategy: 0xd0ddf4, "action-plan": 0xffffff };
+const COVER_GLOW = { strategy: 0.45, "action-plan": 0.45 };
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

@@ -115,7 +115,8 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 
 ### 4.6b Mobile
 - [x] Phones in landscape read immersive: no top bar, no toolbar, the page fills the screen height.
-- [x] On phones the toolbar is replaced by one floating menu button (☰) with Thumbnails, Page list, Page-turn sound and Download flipbook. Pages turn by swipe.
+- [x] Upright phones keep the toolbar (prev / page / next + ☰ with Thumbnails, Page list, sound, Full screen).
+- [x] Landscape phones hide the toolbar; one floating ☰ holds Thumbnails, Page list, sound and Download flipbook. Pages turn by swipe.
 - [x] Phones held upright see a small optional tip (with ✕) to turn the phone sideways, shown once only.
 
 ### 4.7 Landing page

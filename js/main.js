@@ -154,7 +154,7 @@
     var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
     var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
     var chromeH = immersive ? 0
-      : (inFullscreen ? 0 : topBar.offsetHeight) + (compact ? 32 : controls.offsetHeight + 20 + 20 + 24);
+      : (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
     var maxW = immersive ? vw : clamp(vw - arrows - 32, 240, 1600);
     var maxH = immersive ? vh : clamp(vh - chromeH, 135, 900);
@@ -830,12 +830,19 @@
   var menuBtn = document.getElementById("menuButton");
   var menu = document.getElementById("controlsMenu");
   var compactQuery = window.matchMedia(COMPACT_MQ);
-  var menuItems = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"].map(function (sel) {
+  var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
+  // Upright phones keep the toolbar and tuck fullscreen into the menu;
+  // landscape phones hide the toolbar and offer the download instead.
+  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", "#fullscreenButton"];
+  var MENU_IMMERSIVE = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"];
+  var menuItems = {};
+  MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
+    if (menuItems[sel]) return;
     var el = document.querySelector(sel);
     // A marker remembers where the control lives in the desktop layout.
     var marker = document.createComment(sel);
     el.parentNode.insertBefore(marker, el);
-    return { el: el, marker: marker };
+    menuItems[sel] = { el: el, marker: marker };
   });
 
   function isMenuOpen() { return !menu.hidden; }
@@ -853,16 +860,22 @@
   }
 
   function applyCompact() {
+    var immersive = immersiveQuery.matches;
     var compact = compactQuery.matches;
     document.body.classList.toggle("controls-compact", compact);
-    menuItems.forEach(function (item) {
-      if (compact) menu.appendChild(item.el);
-      else item.marker.parentNode.insertBefore(item.el, item.marker.nextSibling);
+    document.body.classList.toggle("controls-immersive", immersive);
+    var wanted = immersive ? MENU_IMMERSIVE : compact ? MENU_COMPACT : [];
+    Object.keys(menuItems).forEach(function (sel) {
+      var item = menuItems[sel];
+      item.marker.parentNode.insertBefore(item.el, item.marker.nextSibling);
     });
-    if (!compact) closeMenu(false);
+    wanted.forEach(function (sel) { menu.appendChild(menuItems[sel].el); });
+    if (!wanted.length) closeMenu(false);
   }
-  if (compactQuery.addEventListener) compactQuery.addEventListener("change", applyCompact);
-  else compactQuery.addListener(applyCompact);
+  [compactQuery, immersiveQuery].forEach(function (q) {
+    if (q.addEventListener) q.addEventListener("change", applyCompact);
+    else q.addListener(applyCompact);
+  });
   applyCompact();
 
   menuBtn.addEventListener("click", function () { isMenuOpen() ? closeMenu(true) : openMenu(); });

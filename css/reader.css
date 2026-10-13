@@ -701,8 +701,8 @@ a{ color: inherit; }
 .rotate-hint__close svg{ width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .rotate-hint__close:active{ background: var(--color-control-hover); }
 
-/* ---------- Phones: floating menu instead of a toolbar ---------- */
-.controls-compact .reader-controls{
+/* ---------- Phones in landscape: floating menu instead of a toolbar ---------- */
+.controls-immersive .reader-controls{
   position: fixed;
   width: auto;
   right: max(16px, env(safe-area-inset-right, 0px));
@@ -715,8 +715,8 @@ a{ color: inherit; }
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.controls-compact .reader-controls > :not(#menuButton):not(#controlsMenu){ display: none; }
-.controls-compact .control-menu-toggle{
+.controls-immersive .reader-controls > :not(#menuButton):not(#controlsMenu){ display: none; }
+.controls-immersive .control-menu-toggle{
   width: 48px;
   height: 48px;
   border: 1px solid var(--color-control-border);
@@ -725,7 +725,7 @@ a{ color: inherit; }
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   box-shadow: var(--shadow-control);
 }
-.controls-compact .control-menu-toggle[aria-expanded="true"]{ background: var(--color-page-bg); }
+.controls-immersive .control-menu-toggle[aria-expanded="true"]{ background: var(--color-page-bg); }
 .controls-menu .reader-download{
   display: flex;
   align-items: center;

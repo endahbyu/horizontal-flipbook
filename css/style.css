@@ -871,3 +871,23 @@ footer{
   .scroll-cue { animation: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
+
+/* Reader: back-to-homepage link (replaces the wordmark until a logo is supplied) */
+.back-home{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding-right: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--p2630-navy);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.back-home svg{ flex-shrink: 0; margin-left: -2px; transition: transform 150ms ease; }
+.back-home:hover{ color: var(--p2630-blue); }
+.back-home:hover svg{ transform: translateX(-2px); }
+.back-home:focus-visible{ outline: 2px solid var(--p2630-blue); outline-offset: 4px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce){ .back-home, .back-home svg{ transition: none; } }

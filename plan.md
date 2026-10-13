@@ -26,7 +26,7 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 
 ## Phase 1 — Landing page (Figma 56:361) — layout ✅, motion pending
 
-- [x] **1a. Layout:** `landing-3d.html` is the default landing (`index.html` = redirect stub, `draft.html` = static draft). Matches Figma 56:361 at 1624px and 390px.
+- [x] **1a. Layout:** `index.html` is the landing page (`draft.html` = static draft). Matches Figma 56:361 at 1624px and 390px.
 - [x] **1b. 3D books:** one 3D book per section (Strategy + Action Plan), with a flat-cover fallback when WebGL or textures fail. Strategy cover brightened (`COVER_GLOW`).
 - [x] Colours, type and buttons from Figma 56:361 as semantic tokens.
 - [ ] **1c. Motion (Stripe Press feel)** ← **next**

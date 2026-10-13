@@ -24,8 +24,7 @@ Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built wi
 ## Project structure
 ```
 mcmc-flipbook/
-├── landing-3d.html            # DEFAULT landing page (3D book, Figma layout)
-├── index.html                 # redirect stub → landing-3d.html (for static hosts)
+├── index.html                 # landing page (3D books, Figma layout)
 ├── draft.html                 # static layout draft (not linked)
 ├── strategy.html              # Strategy Plan reader  (<body data-book="strategy">)
 ├── action-plan.html           # Action Plan reader    (<body data-book="action-plan">)
@@ -92,7 +91,7 @@ To change a colour everywhere, edit the token, not the component.
 ## Run locally
 ```bash
 npm run dev
-# landing page:  http://localhost:3000/  (landing-3d.html)
+# landing page:  http://localhost:3000/  (index.html)
 # strategy plan: http://localhost:3000/strategy.html
 # action plan:   http://localhost:3000/action-plan.html
 ```
@@ -108,7 +107,7 @@ The site is **fully static** and makes **no external requests**: fonts (Host Gro
    node tools/scan-pages.js    # page manifest (js/pages.js)
    npm run build:standalone    # downloads/MCMC-P2630-*.html
    ```
-2. Copy these to the web root: `index.html`, `landing-3d.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`, `downloads/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
+2. Copy these to the web root: `index.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`, `downloads/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
 3. Serve them with any static web server. Nginx example:
    ```nginx
    server {

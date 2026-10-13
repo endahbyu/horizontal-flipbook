@@ -11,12 +11,7 @@ const PORT = process.env.PORT || 3000;
 // Linux keeps IPv4 compatibility here unless ipv6Only is explicitly enabled.
 const HOST = '::';
 
-// Route handlers for landing and reader pages
-// landing-3d.html is the default landing page; draft.html is a static draft.
-app.get(['/', '/index.html'], (req, res) => {
-  res.sendFile(join(__dirname, 'landing-3d.html'));
-});
-
+// index.html (the landing page) is served at / by express.static below.
 app.get('/strategy', (req, res) => {
   res.sendFile(join(__dirname, 'strategy.html'));
 });

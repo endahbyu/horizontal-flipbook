@@ -80,6 +80,7 @@
   --color-skeleton: rgb(255 255 255 / 0.7);
   --color-skeleton-shine: rgb(255 255 255 / 1);
   --shadow-control: 0 8px 24px rgb(16 43 136 / 0.12);
+  --color-cover-inside: var(--navy-800);
   --shadow-page: 0 18px 40px rgb(16 43 136 / 0.14);
 
   /* Decorative wash */

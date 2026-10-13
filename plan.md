@@ -52,24 +52,20 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
 - [ ] Section names in the contents (needs the chapter list per book).
 
-## Phase 3 — Flipbook effect enhancements
+## Phase 3 — Flipbook effect ✅ (StPageFlip, tuned)
 
-- [ ] Realistic page curl: dynamic gradient shading on the fold, a highlight on the curl ridge, and a drop shadow cast onto the page underneath.
-- [ ] Paper feel: subtle paper-grain overlay, a gutter shadow near the spine, and slight page-thickness edges that grow or shrink with progress.
-- [ ] Physics: easing tuned for the "soft paper" turn. Velocity-based flick (fast swipe = full turn, slow drag = follow the finger, release under 50% = fall back).
-- [ ] Corner hint: on hover, the page corner peels slightly to suggest it can be dragged.
-- [ ] Cover open/close has a heavier, slower turn than inner pages (hard-cover feel).
-- [ ] Page-turn sound with [`uisfx`](https://www.npmjs.com/package/uisfx) (`npm install uisfx`, MIT; audio under its LICENSE-AUDIO).
-  - Use the `zen` pack ("paper folds, soft brush, warm wood"): `forward` for next page, `back` for previous (try `swipe` too), `open` / `close` for the covers.
-  - Play from the flip event in code: `ui.play('forward')`; one sound per completed turn, none while dragging or on multi-page jumps (TOC). Keep the default cooldown so fast flicks don't stack.
-  - Create one player with `createUISFX({ pack: 'zen', volume: 0.5, preferences: { key: 'p2630:sound' } })`; it remembers the viewer's on/off choice itself.
-  - Off by default, with a sound on/off toggle in the reader toolbar wired to `ui.setEnabled()`.
-  - Call `ui.unlock()` on the first click/tap/key (browser autoplay rules) so the first flip after enabling plays.
-  - Import it in the bundled reader script (esbuild); `preload(['forward','back','open','close'])` after unlock so the first turn has no delay.
-  - Spike first: listen to `forward`, `back` and `swipe` in `zen` (and `organic` / `soft`) on the real flip, then pick.
-- [ ] Zoomed state: pan with drag, and page turns disabled until zoom = 100%.
-- [ ] Performance: 60fps on a mid-range phone, GPU transforms only, and images decoded ahead (`img.decode()`).
-- [ ] Decide on the engine: keep StPageFlip and tune it, or move to a custom WebGL/three.js page curl that shares the landing renderer. Spike this first and pick based on quality vs effort.
+Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
+
+- [x] Page curl shading: fold highlight, shadow cast onto the page underneath (`drawShadow`, `maxShadowOpacity: 0.45`).
+- [x] Corner hint: the page corner lifts on hover (`showPageCorners`).
+- [x] Covers turn as stiff boards (`hard` density); inner pages bend like paper. Inside of the covers is navy (`--color-cover-inside`); turning covers pass under the top bar.
+- [x] Drag-to-turn: both directions turn past halfway or on a quick flick (> 0.5 px/ms), and spring back otherwise. Before, forward drags needed the full page width and backward drags turned almost always.
+- [x] Turn speed 850ms (300ms with reduced motion).
+- [x] Zoom 100 / 125 / 150 / 200%: drag pans the page instead of turning it; double-click or `0` returns to 100%. Turning a page re-centres it.
+- [x] Touch: quick swipes (< 250ms) and slow drags both work.
+- [x] Pages preloaded ±2 around the current one (Phase 2).
+- [ ] Optional page-turn sound (off by default) — open question.
+- [ ] Paper grain / gutter shadow — skipped: the page images carry their own design, an overlay would muddy them.
 
 ## Phase 4 — QA checklist (run for **each** book)
 

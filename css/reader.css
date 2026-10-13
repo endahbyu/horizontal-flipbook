@@ -49,6 +49,8 @@ a{ color: inherit; }
 
 /* ---------- Top bar ---------- */
 .reader-top{
+  position: relative;
+  z-index: 30; /* turning covers swing under the top bar, not over it */
   flex: none;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -199,6 +201,18 @@ a{ color: inherit; }
   transition: transform var(--duration-base) var(--ease-out);
 }
 
+/* Zoomed: clip to the page frame; the pan layer catches drags so pages don't turn. */
+.book-frame.is-zoomed{ overflow: hidden; }
+.zoom-pan{
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  cursor: grab;
+  touch-action: none;
+}
+.zoom-pan.is-panning{ cursor: grabbing; }
+.zoom-pan[hidden]{ display: none; }
+
 /* Loading: a shimmering 16:9 placeholder until the first page has decoded. */
 .book-skeleton{
   position: absolute;
@@ -236,6 +250,10 @@ a{ color: inherit; }
   overflow: hidden;
   background: var(--color-card-bg);
 }
+/* Inside of the covers: seen while a cover board turns. */
+.is-front-cover .page-face,
+.is-back-cover .page-face{ background: var(--color-cover-inside); }
+
 .page-front img{
   display: block;
   width: 100%;

@@ -119,14 +119,16 @@
     maxWidth: 1600,
     minHeight: 146,
     maxHeight: 900,
-    maxShadowOpacity: 0.25,
+    maxShadowOpacity: 0.45,  // depth of the fold and page-under shadows
     showCover: false,        // Each cover is an individual 16:9 page
     usePortrait: true,       // Single-page reading at every width
-    drawShadow: false,
-    flippingTime: 700,
+    drawShadow: true,
+    // A little slower reads as heavier paper; reduced motion keeps turns short.
+    flippingTime: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 850,
+    swipeDistance: 30,       // a short flick is enough to turn on touch
     mobileScrollSupport: false,
     disableFlipByClick: false,
-    showPageCorners: false,
+    showPageCorners: true,   // corner lifts slightly on hover to show it can be dragged
     startPage: startIndex
   };
 
@@ -164,12 +166,54 @@
   var pageFlip = new St.PageFlip(bookEl, settings);
   pageFlip.loadFromHTML(pageNodes);
 
-  // Soft density on every page for smooth, consistent turns.
+  /* ============================================================
+     DRAG-TO-TURN THRESHOLD
+     StPageFlip only completes a forward drag once the fold passes the
+     page's left edge (a full-width drag), and completes almost any
+     backward drag. Make both directions turn past halfway, or on a
+     quick flick, and spring back otherwise.
+     ============================================================ */
+  var FLICK_SPEED = 0.5; // px per ms
+  var dragTrack = [];
+
+  bookEl.addEventListener("pointerdown", function (e) { dragTrack = [{ x: e.clientX, t: e.timeStamp }]; });
+  window.addEventListener("pointermove", function (e) {
+    if (!dragTrack.length) return;
+    dragTrack.push({ x: e.clientX, t: e.timeStamp });
+    if (dragTrack.length > 6) dragTrack.shift();
+  }, { passive: true });
+  window.addEventListener("pointerup", function () { setTimeout(function () { dragTrack = []; }, 0); });
+
+  function releaseVelocity() {
+    if (dragTrack.length < 2) return 0;
+    var a = dragTrack[0], b = dragTrack[dragTrack.length - 1];
+    return b.t > a.t ? (b.x - a.x) / (b.t - a.t) : 0;
+  }
+
+  (function tuneDragRelease() {
+    var flip = pageFlip.getFlipController();
+    flip.stopMove = function () {
+      if (this.calc === null) return;
+      var pos = this.calc.getPosition();
+      var rect = this.getBoundsRect();
+      var y = this.calc.getCorner() === "bottom" ? rect.height : 0;
+      var forward = this.calc.getDirection() === 0;
+      var v = releaseVelocity();
+      var turn = forward
+        ? pos.x <= rect.pageWidth * 0.5 || v < -FLICK_SPEED
+        : pos.x <= -rect.pageWidth * 0.5 || v > FLICK_SPEED;
+      if (turn) this.animateFlippingTo(pos, { x: -rect.pageWidth, y: y }, true);
+      else this.animateFlippingTo(pos, { x: rect.pageWidth, y: y }, false);
+    };
+  })();
+
+  // Inner pages bend like paper; the covers turn as stiff boards.
   for (var d = 0; d < pageFlip.getPageCount(); d++) {
     var pg = pageFlip.getPage(d);
     if (pg) {
-      pg.setDensity("soft");
-      pg.setDrawingDensity("soft");
+      var density = PAGES[d].type === "Content" ? "soft" : "hard";
+      pg.setDensity(density);
+      pg.setDrawingDensity(density);
     }
   }
 
@@ -201,8 +245,21 @@
     return PAGES[index].title;
   }
 
+  // Zoom scales the page; pan moves it while zoomed (clamped to its edges).
+  var pan = { x: 0, y: 0 };
+
+  function clampPan() {
+    var maxX = (bookEl.offsetWidth * (zoomLevel - 1)) / 2;
+    var maxY = (bookEl.offsetHeight * (zoomLevel - 1)) / 2;
+    pan.x = clamp(pan.x, -maxX, maxX);
+    pan.y = clamp(pan.y, -maxY, maxY);
+  }
+
   function applyBookTransform() {
-    bookEl.style.transform = zoomLevel !== 1 ? "scale(" + zoomLevel + ")" : "";
+    clampPan();
+    bookEl.style.transform = zoomLevel !== 1
+      ? "translate(" + pan.x + "px, " + pan.y + "px) scale(" + zoomLevel + ")"
+      : "";
   }
 
   function updateMeta() {
@@ -231,6 +288,7 @@
 
   pageFlip.on("flip", function () {
     updateMeta();
+    pan.x = pan.y = 0;
     applyBookTransform();
   });
   pageFlip.on("changeState", function (event) {
@@ -397,8 +455,9 @@
       case "ArrowLeft": prev(); break;
       case "Home": goTo(0); break;
       case "End": goTo(total - 1); break;
-      case "+": case "=": setZoom(zoomLevel * 1.2); break;
-      case "-": setZoom(zoomLevel / 1.2); break;
+      case "+": case "=": zoomStep(1); break;
+      case "-": zoomStep(-1); break;
+      case "0": setZoom(1); break;
       case "f": case "F": fsBtn.click(); break;
       case "t": case "T": openToc(); break;
       default: return;
@@ -413,15 +472,56 @@
   var zoomOutButton = document.getElementById("zoomOut");
   var zoomInButton = document.getElementById("zoomIn");
 
+  var ZOOM_STEPS = [1, 1.25, 1.5, 2];
+  var zoomPan = document.getElementById("zoomPan");
+
   function setZoom(z) {
-    zoomLevel = clamp(z, 0.9, 1.6);
+    zoomLevel = clamp(z, 1, 2);
+    if (zoomLevel === 1) pan.x = pan.y = 0;
     zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
-    zoomOutButton.disabled = zoomLevel <= 0.91;
-    zoomInButton.disabled = zoomLevel >= 1.59;
+    zoomOutButton.disabled = zoomLevel <= 1;
+    zoomInButton.disabled = zoomLevel >= 2;
+    // While zoomed, the pan layer sits over the page: drags pan instead of turning.
+    var zoomed = zoomLevel > 1;
+    bookFrame.classList.toggle("is-zoomed", zoomed);
+    zoomPan.hidden = !zoomed;
     applyBookTransform();
   }
-  zoomInButton.addEventListener("click", function () { setZoom(zoomLevel * 1.2); });
-  zoomOutButton.addEventListener("click", function () { setZoom(zoomLevel / 1.2); });
+  function zoomStep(direction) {
+    var i = ZOOM_STEPS.findIndex(function (step) { return step >= zoomLevel - 0.001; });
+    if (i === -1) i = ZOOM_STEPS.length - 1;
+    if (direction > 0 && ZOOM_STEPS[i] <= zoomLevel + 0.001) i++;
+    if (direction < 0) i--;
+    setZoom(ZOOM_STEPS[clamp(i, 0, ZOOM_STEPS.length - 1)]);
+  }
+
+  (function enablePan() {
+    var start = null;
+    zoomPan.addEventListener("pointerdown", function (e) {
+      start = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+      zoomPan.setPointerCapture(e.pointerId);
+      zoomPan.classList.add("is-panning");
+      bookEl.style.transition = "none"; // follow the finger without easing lag
+    });
+    zoomPan.addEventListener("pointermove", function (e) {
+      if (!start) return;
+      pan.x = e.clientX - start.x;
+      pan.y = e.clientY - start.y;
+      applyBookTransform();
+    });
+    var end = function () {
+      start = null;
+      zoomPan.classList.remove("is-panning");
+      bookEl.style.transition = "";
+    };
+    zoomPan.addEventListener("pointerup", end);
+    zoomPan.addEventListener("pointercancel", end);
+    // Double-click / double-tap returns to 100%.
+    zoomPan.addEventListener("dblclick", function () { setZoom(1); });
+  })();
+  zoomInButton.addEventListener("click", function () { zoomStep(1); });
+  zoomOutButton.addEventListener("click", function () { zoomStep(-1); });
+  setZoom(1);
 
   /* ============================================================
      FULLSCREEN

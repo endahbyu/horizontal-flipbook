@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'downloads');
@@ -19,12 +20,25 @@ export const BOOKS = {
   'action-plan': { html: 'action-plan.html', file: 'MCMC-P2630-Action-Plan.html' },
 };
 
+// Page images are re-encoded for the download only (the website keeps the
+// originals): 1600px wide is still sharp on laptop screens, and WebP quality 75
+// keeps small text crisp while cutting the file to roughly a quarter.
+const DOWNLOAD_IMAGE = { width: 1600, quality: 75 };
+
 const MIME = { '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg' };
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel));
 const dataUri = (rel) => `data:${MIME[path.extname(rel)]};base64,${read(rel).toString('base64')}`;
 // Keep inlined code from closing the surrounding <script> or <style> early.
 const safeScript = (code) => code.replace(/<\/script/gi, '<\\/script');
 const safeStyle = (css) => css.replace(/<\/style/gi, '<\\/style');
+
+async function imageDataUri(rel) {
+  const buffer = await sharp(path.join(ROOT, rel))
+    .resize({ width: DOWNLOAD_IMAGE.width, withoutEnlargement: true })
+    .webp({ quality: DOWNLOAD_IMAGE.quality, effort: 5 })
+    .toBuffer();
+  return `data:image/webp;base64,${buffer.toString('base64')}`;
+}
 
 function loadManifest(bookId) {
   const sandbox = {};
@@ -34,12 +48,12 @@ function loadManifest(bookId) {
   return manifest;
 }
 
-function inlineManifest(bookId) {
+async function inlineManifest(bookId) {
   const m = loadManifest(bookId);
   const inline = {
-    coverFront: m.coverFront && dataUri(m.coverFront),
-    coverBack: m.coverBack && dataUri(m.coverBack),
-    pages: m.pages.map(dataUri),
+    coverFront: m.coverFront && (await imageDataUri(m.coverFront)),
+    coverBack: m.coverBack && (await imageDataUri(m.coverBack)),
+    pages: await Promise.all(m.pages.map(imageDataUri)),
   };
   return `window.FLIPBOOK_MANIFESTS = ${JSON.stringify({ [bookId]: inline })};`;
 }
@@ -50,7 +64,7 @@ function inlineStylesheet(rel) {
   return `<style>\n${safeStyle(css)}\n</style>`;
 }
 
-function buildBook(bookId, { html, file }) {
+async function buildBook(bookId, { html, file }) {
   let page = read(html).toString();
 
   // Reader only: no way back to the landing page, no download-of-itself.
@@ -61,8 +75,9 @@ function buildBook(bookId, { html, file }) {
 
   page = page.replace(/<link rel="stylesheet" href="([^"]+)"\s*\/?>/g, (_, href) => inlineStylesheet(href));
 
+  const manifest = await inlineManifest(bookId);
   page = page.replace(/<script src="([^"]+)"><\/script>/g, (_, src) => {
-    let code = src === 'js/pages.js' ? inlineManifest(bookId) : read(src).toString();
+    let code = src === 'js/pages.js' ? manifest : read(src).toString();
     if (src === 'js/reader-sound.js') {
       code = code.replace('"assets/sounds/page-turn.mp3"', JSON.stringify(dataUri('assets/sounds/page-turn.mp3')));
     }
@@ -79,6 +94,6 @@ function buildBook(bookId, { html, file }) {
 }
 
 for (const [bookId, book] of Object.entries(BOOKS)) {
-  const { out, bytes } = buildBook(bookId, book);
+  const { out, bytes } = await buildBook(bookId, book);
   console.log(`${path.relative(ROOT, out)}  ${(bytes / 1048576).toFixed(1)} MB`);
 }

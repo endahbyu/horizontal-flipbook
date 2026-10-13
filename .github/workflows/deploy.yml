@@ -34,6 +34,10 @@ jobs:
       - name: Generate page manifest
         run: node tools/scan-pages.js
 
+      # Build-only tools (sharp compresses images for the downloads).
+      - name: Install build tools
+        run: npm ci
+
       # One self-contained HTML per book, for the reader's "Download flipbook".
       - name: Build standalone downloads
         run: node tools/build-standalone.js

@@ -127,7 +127,7 @@ GitHub Pages runs the same steps in `.github/workflows/deploy.yml`.
 
 ## Offline download ("Download flipbook")
 
-`tools/build-standalone.js` writes one self-contained HTML file per book to `downloads/` (reader only: every page image, font, script and the sound inlined). It opens by double-click with no server and no internet. Rebuild it whenever pages change; `npm run dev` and CI do this automatically. Sizes grow with the page images (base64 adds ~33%).
+`tools/build-standalone.js` writes one self-contained HTML file per book to `downloads/` (reader only: every page image, font, script and the sound inlined). It opens by double-click with no server and no internet. Rebuild it whenever pages change; `npm run dev` and CI do this automatically. Page images in the download are re-encoded to 1600px wide, WebP quality 75 (the website keeps the originals), so a 35-page book is about 4–5 MB.
 
 ## QA
 Before release, work through [`plan.md`](plan.md) (Phase 4 QA checklist) once every page

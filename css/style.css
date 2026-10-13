@@ -891,5 +891,3 @@ footer{
 .back-home:hover svg{ transform: translateX(-2px); }
 .back-home:focus-visible{ outline: 2px solid var(--p2630-blue); outline-offset: 4px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce){ .back-home, .back-home svg{ transition: none; } }
-.back-home__logo{ display: block; width: 32px; height: auto; margin-right: 4px; }
-@media (max-width: 640px){ .back-home__logo{ width: 28px; } }

@@ -94,6 +94,21 @@
   --shadow-panel: 24px 0 48px rgb(var(--navy-900-rgb) / 0.16);
 
   /* Typography */
+  /* Fluid type scale: min size at 320px viewport → max size at 1440px. */
+  --text-pdf-meta: clamp(0.5312rem, 0.4818rem + 0.2473vw, 0.7044rem); /* 8.5→11.27px · PDF card publisher line */
+  --text-pdf-eyebrow: clamp(0.625rem, 0.5621rem + 0.3143vw, 0.845rem); /* 10→13.52px · PDF card eyebrow */
+  --text-eyebrow-sm: clamp(0.625rem, 0.6071rem + 0.0893vw, 0.6875rem); /* 10→11px · reader top-bar eyebrow */
+  --text-caption: clamp(0.75rem, 0.7321rem + 0.0893vw, 0.8125rem); /* 12→13px · thumbnail labels, zoom readout */
+  --text-label: clamp(0.8125rem, 0.7946rem + 0.0893vw, 0.875rem); /* 13→14px · page readout */
+  --text-ui: clamp(0.875rem, 0.8571rem + 0.0893vw, 0.9375rem); /* 14→15px · top-bar links and buttons */
+  --text-body: clamp(0.9375rem, 0.9196rem + 0.0893vw, 1rem); /* 15→16px · paragraphs */
+  --text-button: clamp(0.9375rem, 0.8839rem + 0.2679vw, 1.125rem); /* 15→18px · landing buttons */
+  --text-lead: clamp(1rem, 0.9286rem + 0.3571vw, 1.25rem); /* 16→20px · publisher line */
+  --text-heading-sm: clamp(1.0625rem, 0.9375rem + 0.6250vw, 1.5rem); /* 17→24px · reader book title */
+  --text-heading: clamp(1.125rem, 1.0893rem + 0.1786vw, 1.25rem); /* 18→20px · panel headings */
+  --text-eyebrow: clamp(1.125rem, 1.0179rem + 0.5357vw, 1.5rem); /* 18→24px · landing eyebrow */
+  --text-pdf-title: clamp(1.25rem, 1.125rem + 0.6250vw, 1.6875rem); /* 20→27px · PDF card title */
+  --text-display: clamp(2.125rem, 1.8036rem + 1.6071vw, 3.25rem); /* 34→52px · landing book title */
   --font-display: var(--font-host-grotesk);
   --font-body: var(--font-inter);
 

@@ -98,20 +98,20 @@ a{ color: inherit; }
 }
 .book-title__eyebrow{
   color: var(--color-eyebrow);
-  font-size: 24px;
+  font-size: var(--text-eyebrow);
   font-weight: 600;
   text-transform: uppercase;
 }
 .book-title__name{
   color: var(--color-heading);
-  font-size: clamp(36px, 4.2vw, 52px);
+  font-size: var(--text-display);
   font-weight: 800;
   line-height: 1.15;
   text-wrap: balance;
 }
 .book-title__publisher{
   color: var(--color-subheading);
-  font-size: 20px;
+  font-size: var(--text-lead);
   font-weight: 500;
   line-height: 28px;
   letter-spacing: 0;
@@ -125,7 +125,7 @@ a{ color: inherit; }
   border: var(--border-thin) var(--color-button-bg);
   background: var(--color-button-bg);
   color: var(--color-button-text);
-  font-size: 18px;
+  font-size: var(--text-button);
   font-weight: 600;
   line-height: 25.5px;
   letter-spacing: 0.32px;
@@ -148,7 +148,7 @@ a{ color: inherit; }
   padding: 14px 0 20px;
   max-width: 538px;
   color: var(--color-body);
-  font-size: 16px;
+  font-size: var(--text-body);
   line-height: 28px;
 }
 
@@ -172,9 +172,9 @@ a{ color: inherit; }
   line-height: normal;
   letter-spacing: 0.18px;
 }
-.pdf-card__title .book-title__eyebrow{ font-size: 13.52px; }
-.pdf-card__title .book-title__name{ font-size: 27px; }
-.pdf-card__title .book-title__publisher{ font-size: 11.27px; line-height: 16px; }
+.pdf-card__title .book-title__eyebrow{ font-size: var(--text-pdf-eyebrow); }
+.pdf-card__title .book-title__name{ font-size: var(--text-pdf-title); }
+.pdf-card__title .book-title__publisher{ font-size: var(--text-pdf-meta); line-height: 1.4; }
 
 .pdf-button{
   position: absolute;
@@ -188,7 +188,7 @@ a{ color: inherit; }
   background: var(--color-button-bg);
   color: var(--color-button-text);
   font-weight: 600;
-  font-size: 18px;
+  font-size: var(--text-button);
   letter-spacing: 0.32px;
   text-decoration: none;
 }
@@ -205,14 +205,9 @@ a{ color: inherit; }
 @media (max-width: 900px){
   .book-section{ padding-top: 140px; padding-bottom: 120px; }
   .book-section__inner{ grid-template-columns: 1fr; gap: 40px; }
-  .book-title__eyebrow{ font-size: 18px; }
-  .book-title__publisher{ font-size: 16px; }
 }
 @media (max-width: 520px){
-  .pdf-card__title .book-title__eyebrow{ font-size: 10px; }
-  .pdf-card__title .book-title__name{ font-size: 20px; }
-  .pdf-card__title .book-title__publisher{ font-size: 8.5px; }
-  .pdf-button{ top: 10px; right: 10px; padding: 6px 10px 4px; font-size: 15px; gap: 8px; }
+  .pdf-button{ top: 10px; right: 10px; padding: 6px 10px 4px; gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce){

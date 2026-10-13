@@ -18,7 +18,10 @@ window.FLIPBOOK_MANIFESTS = {
       "assets/books/strategy/page-07.webp",
       "assets/books/strategy/page-08.webp",
       "assets/books/strategy/page-09.webp",
-      "assets/books/strategy/page-10.webp"
+      "assets/books/strategy/page-10.webp",
+      "assets/books/strategy/page-11.webp",
+      "assets/books/strategy/page-12.webp",
+      "assets/books/strategy/page-13.webp"
     ]
   }
 };

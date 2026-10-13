@@ -287,7 +287,7 @@
   }
 
   /* ============================================================
-     PAGE-TURN SOUND (uisfx, js/reader-sound.js)
+     PAGE-TURN SOUND (js/reader-sound.js)
      One cue per single-page turn: open/close for the covers,
      forward/back for paper. Jumps (scrubber, contents) stay silent.
      ============================================================ */

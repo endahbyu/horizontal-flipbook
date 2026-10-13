@@ -53,7 +53,7 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
 - [ ] Section names in the contents (needs the chapter list per book).
 
-## Phase 3 — Flipbook effect (StPageFlip, tuned) — recorded sounds pending
+## Phase 3 — Flipbook effect (StPageFlip, tuned) ✅
 
 Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 
@@ -66,11 +66,7 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [x] Zoom 100 / 125 / 150 / 200%: drag pans the page instead of turning it; double-click or `0` returns to 100%. Turning a page re-centres it.
 - [x] Touch: quick swipes (< 250ms) and slow drags both work.
 - [x] Pages preloaded ±2 around the current one (Phase 2).
-- [ ] Page-turn sound — **recorded samples** (replaces `uisfx`, whose cues are synthesised UI tones, not paper).
-  - [x] Player: `js/reader-sound.js` (plain Web Audio, no library). `forward`/`back` pick one of `page-flip-1..3` at random with slight pitch variation; `open`/`close` use `book-open`/`book-close` (fall back to a page flip). One sound per single-page turn; scrubber/contents jumps stay silent.
-  - [x] Speaker toggle in the top bar; off until the viewer turns it on; choice stored in `p2630:sound`.
-  - [x] `tools/prepare-sounds.sh` converts a recording (trim, mono, loudness-normalise, MP3).
-  - [ ] **Add the recordings** to `assets/sounds/` (CC0 or licensed), and list their source in `assets/sounds/README.md`. Suggested: Kenney "RPG Audio" (CC0) — `bookFlip1–3`, `bookOpen`, `bookClose`.
+- [x] Page-turn sound: one recorded sample (`assets/sounds/page-turn.mp3`, 11 KB) played with Web Audio by `js/reader-sound.js` (no library). One sound per single-page turn, slight pitch variation, covers a touch lower; scrubber/contents jumps stay silent. Speaker toggle in the top bar, off until the viewer turns it on (`p2630:sound`).
 - [ ] Paper grain / gutter shadow — skipped: the page images carry their own design, an overlay would muddy them.
 
 ## Phase 4 — QA checklist (run for **each** book)
@@ -156,7 +152,7 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 
 1. Final Action Plan page images and PDF: when will they be ready?
 2. Should the PDFs be hosted in the repo or behind an external URL?
-3. ~~Page-turn sound: yes or no?~~ Yes, with `uisfx` (see Phase 3).
+3. ~~Page-turn sound: yes or no?~~ Yes, one recorded sample (see Phase 3).
 4. Flip engine: tune StPageFlip, or a custom WebGL curl?
 
 ## Suggested order

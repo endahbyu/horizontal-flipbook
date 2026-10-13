@@ -72,6 +72,8 @@ async function buildBook(bookId, { html, file }) {
   page = page.replace(/\s*<a class="reader-download"[\s\S]*?<\/a>/, '');
   // Font preloads point at files that no longer exist.
   page = page.replace(/\s*<link rel="preload"[^>]*>/g, '');
+  page = page.replace(/<link rel="icon" type="image\/png" href="([^"]+)">/, (_, href) =>
+    `<link rel="icon" type="image/png" href="data:image/png;base64,${read(href).toString('base64')}">`);
 
   page = page.replace(/<link rel="stylesheet" href="([^"]+)"\s*\/?>/g, (_, href) => inlineStylesheet(href));
 

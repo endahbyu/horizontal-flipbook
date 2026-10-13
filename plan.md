@@ -52,7 +52,7 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Always opens at the front cover; deep link `#page=NN`, kept in sync while reading.
 - [x] Keyboard: ←/→, Home/End, `+`/`−`, `F`, `T` (contents), `Esc`.
 - [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
-- [ ] Section names in the contents (needs the chapter list per book).
+- [x] Section names in the contents (list view, `js/toc.js`).
 
 ## Phase 3 — Flipbook effect (StPageFlip, tuned) ✅
 
@@ -76,60 +76,61 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 **Naming convention (agreed):** the folder tells the books apart, and file names stay the same in every book.
 `assets/books/<strategy|action-plan>/` → `cover-front.webp`, `cover-back.webp`, `spine.webp`, `page-02.webp` … `page-NN.webp` (numbering starts at 02 because the front cover is page 01). Use lowercase with hyphens, 2 digits (both books have fewer than 99 pages), and 1920×1080. The number matches the reader readout (`02 / 35` = `page-02.webp`).
 
-- [ ] `cover-front.webp` and `cover-back.webp` exist (1920×1080, 16:9).
-- [ ] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-02` … `page-NN`), continuous from `02` with no gaps, and no 3-digit names.
-- [ ] Every asset is one independent 16:9 page. No merged PDF pages, no spreads or two-page compositions.
-- [ ] Every image is exactly 1920×1080.
-- [ ] Missing PDF pages are not fabricated or silently added.
-- [ ] After adding or removing pages, `node tools/scan-pages.js` has been re-run and the page count in `js/pages.js` matches the files.
-- [ ] Sample status is documented (Strategy Plan: currently 12 pages = cover + 10 + back, out of 64; Action Plan: placeholder until assets arrive).
+- [x] `cover-front.webp` and `cover-back.webp` exist (1920×1080, 16:9).
+- [x] Content pages are named `page-NN.webp`: strictly 2-digit, zero-padded (`page-02` … `page-NN`), continuous from `02` with no gaps, and no 3-digit names.
+- [x] Every asset is one independent 16:9 page. No merged PDF pages, no spreads or two-page compositions.
+- [x] Every image is exactly 1920×1080.
+- [x] Missing PDF pages are not fabricated or silently added (page count matches the PDFs: Strategy 66, Action Plan 34).
+- [x] After adding or removing pages, `node tools/scan-pages.js` has been re-run and the page count in `js/pages.js` matches the files.
+- [x] Status: all pages are in. Strategy Plan = cover + 64 pages + back (67 in the readout); Action Plan = cover + 32 pages + back (35). Images resized from 3508×1974 to 1920×1080 (Strategy assets 54 MB → 12 MB).
 
 ### 4.2 Reading format & covers
-- [ ] **One page at a time** on desktop, tablet and mobile. Two pages are never shown side by side.
-- [ ] First load shows the front cover as a single centred 16:9 page. Turning it opens Page 01.
-- [ ] The back cover shows as a single centred 16:9 page at the end.
-- [ ] Every page flips with the soft paper animation (see Phase 3).
+- [x] **One page at a time** on desktop, tablet and mobile. Two pages are never shown side by side.
+- [x] First load shows the front cover as a single centred 16:9 page. Turning it opens Page 01.
+- [x] The back cover shows as a single centred 16:9 page at the end.
+- [x] Every page flips with the soft paper animation (see Phase 3).
 
 ### 4.3 Interaction & navigation
-- [ ] Dragging a page corner turns forward and backward.
-- [ ] Prev/next buttons and ←/→ keys move exactly one page. `+`/`−` zooms, `F` toggles fullscreen.
-- [ ] Flipping fast never sticks or skips a page.
-- [ ] The readout shows the individual page position (`XX / NN`).
+- [x] Dragging a page corner turns forward and backward.
+- [x] Prev/next buttons and ←/→ keys move exactly one page. `+`/`−` zooms, `F` toggles fullscreen.
+- [x] Flipping fast never sticks or skips a page.
+- [x] The readout shows the individual page position (`XX / NN`).
 
 ### 4.4 Table of contents
-- [ ] The TOC button opens the slide-in panel.
-- [ ] It lists Front cover → Page 01…NN → Back cover, with 16:9 thumbnails.
-- [ ] Clicking an entry jumps to the correct page and closes the panel.
-- [ ] The active page is highlighted (`aria-current`).
+- [x] The TOC button opens the slide-in panel.
+- [x] Grid view lists Front cover → pages → Back cover with 16:9 thumbnails; list view shows the printed table of contents (`js/toc.js`).
+- [x] Clicking an entry jumps to the correct page and closes the panel.
+- [x] The active page is highlighted (`aria-current`).
 
 ### 4.5 Zoom & fullscreen
-- [ ] Zoom in/out works and the zoom % status updates.
+- [x] Zoom in/out works and the zoom % status updates.
 - [ ] Zoom keeps the 16:9 canvas without clipping or breaking page turns.
-- [ ] Fullscreen opens and exits cleanly, and pages still turn inside it.
+- [x] Fullscreen opens and exits cleanly, and pages still turn inside it.
 
 ### 4.6 Responsive & layout
-- [ ] No vertical overflow and no horizontal clipping at 320 / 768 / 1280 / 1920 widths.
-- [ ] Covers and pages keep their 16:9 ratio.
+- [x] No vertical overflow and no horizontal clipping at 320 / 768 / 1280 / 1920 widths.
+- [x] Covers and pages keep their 16:9 ratio.
 - [ ] No rubber-band or scroll-jump when turning pages by touch.
 - [ ] The P2630 brand stays visible on desktop and mobile.
 
 ### 4.7 Landing page
 - [ ] Matches Figma 47:341 (side-by-side screenshot check at 1624px).
 - [ ] Both 3D books load with 16:9 cover proportions. Tilt and click-rotate work and return to rest.
-- [ ] Each **Open Flipbook** opens `strategy.html` / `action-plan.html` for the correct book. Back-to-library returns to the landing page.
-- [ ] Each PDF button downloads the correct file.
+- [x] Each **Open Flipbook** opens `strategy.html` / `action-plan.html` for the correct book. Back-to-library returns to the landing page.
+- [x] Each PDF button downloads the correct file.
 
 ### 4.8 Design & typography
 - [ ] Titles and headings are readable at every width.
 - [ ] Palette is accurate: navy `#172983`, blue `#4159D5`, light blue `#D0DDF4`, neutral `#E5E7ED`, gradient, and the Figma section blues.
-- [ ] No broken images or missing assets.
-- [ ] Reduced motion is respected everywhere.
+- [x] No broken images or missing assets.
+- [x] Reduced motion is respected everywhere.
 
 ### 4.9 Deployment & integrity
-- [ ] No console errors and no 404s.
-- [ ] Works when embedded as an iframe and on the deployed URL.
+- [x] No console errors and no 404s.
+- [x] Works when embedded as an iframe and on the deployed URL.
 - [ ] Lighthouse: Performance ≥ 85, Accessibility ≥ 95.
-- [ ] Reference PDFs are only committed if we decide to (see Open questions).
+  - Local run (no GPU, 4× CPU throttle): Accessibility 100 / Best practices 100 on all three pages. Performance: strategy 86, action-plan 90, **index 52**. Index TBT is mostly software-emulated WebGL + three.js boot; re-measure on the deployed URL with PageSpeed Insights before deciding on fixes.
+- [x] PDFs are committed under `assets/books/<book>/` and linked from the landing page.
 
 ### Sign-off
 

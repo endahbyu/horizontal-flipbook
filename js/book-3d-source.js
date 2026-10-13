@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
-// How much of the front cover's own colour is added on top of the lighting,
-// per book. Raise it if a cover looks dull; 0 = lighting only.
-const COVER_GLOW = { strategy: 0.45 };
+// How much of each printed surface's own colour (front, back, spine) is added
+// on top of the lighting, per book. Raise it if a book looks dull; 0 = lighting only.
+const COVER_GLOW = { strategy: 0.45, "action-plan": 0.45 };
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -28,7 +28,7 @@ const initBook = (canvas) => {
   rimLight.position.set(11, -4, -8);
   scene.add(rimLight);
 
-  // `pivot` carries the ambient motion (float, pointer tilt, scroll reveal)
+  // `pivot` carries the ambient motion (pointer tilt, scroll reveal)
   // on top of the book's own drag/snap rotation, so the two never fight.
   const pivot = new THREE.Group();
   scene.add(pivot);
@@ -213,13 +213,23 @@ const initBook = (canvas) => {
       emissiveMap: frontTexture,
       emissiveIntensity: coverGlow,
     });
-    const backMaterial = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.62, metalness: 0.02 });
+    const backMaterial = new THREE.MeshStandardMaterial({
+      map: backTexture,
+      roughness: 0.5,
+      metalness: 0.02,
+      emissive: 0xffffff,
+      emissiveMap: backTexture,
+      emissiveIntensity: coverGlow,
+    });
     const spineMaterial = new THREE.MeshStandardMaterial({
       map: spineTexture,
       roughness: 0.66,
       metalness: 0.02,
       bumpMap: clothBumpTexture,
       bumpScale: 0.018,
+      emissive: 0xffffff,
+      emissiveMap: spineTexture,
+      emissiveIntensity: coverGlow,
       side: THREE.DoubleSide,
     });
     const spineEdgeMaterial = new THREE.MeshStandardMaterial({
@@ -251,6 +261,7 @@ const initBook = (canvas) => {
     spine.position.x = -0.015;
     book.add(spine);
     addBindingSeam();
+    lastFrame = null; // textures arrived: force the next render
   }).catch(() => showFlatCover(canvas));
 
   const frontRotation = { x: 0.09, y: 0.43, z: -0.025 };
@@ -418,14 +429,14 @@ const initBook = (canvas) => {
   }, { threshold: 0.25 }).observe(canvas);
 
   if (!reduceMotion) {
-    window.addEventListener("pointermove", (event) => {
+    // Tilt only while the pointer is over this book; at rest it stays still.
+    canvas.addEventListener("pointermove", (event) => {
       if (event.pointerType === "touch") return;
       const rect = canvas.getBoundingClientRect();
-      // -1..1 across the canvas, softly clamped beyond it.
-      hover.targetX = THREE.MathUtils.clamp(((event.clientX - rect.left) / rect.width) * 2 - 1, -1.5, 1.5);
-      hover.targetY = THREE.MathUtils.clamp(((event.clientY - rect.top) / rect.height) * 2 - 1, -1.5, 1.5);
+      hover.targetX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      hover.targetY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
     }, { passive: true });
-    document.documentElement.addEventListener("pointerleave", () => {
+    canvas.addEventListener("pointerleave", () => {
       hover.targetX = 0;
       hover.targetY = 0;
     });
@@ -440,9 +451,9 @@ const initBook = (canvas) => {
     hover.y = THREE.MathUtils.lerp(hover.y, dragging ? 0 : hover.targetY, 0.06);
     pivot.rotation.y = hover.x * 0.12 + (1 - reveal) * 0.55;
     pivot.rotation.x = hover.y * 0.07 - (1 - reveal) * 0.08;
-    pivot.position.y = Math.sin(now / 1100) * 0.12;
   };
 
+  let lastFrame = null;
   const animate = () => {
     if (!visible && revealStart !== null) {
       window.setTimeout(animate, 120);
@@ -477,7 +488,17 @@ const initBook = (canvas) => {
     pivot.position.set(0, 0, 0);
     fitCameraToBook();
     applyAmbientMotion(performance.now());
-    renderer.render(scene, camera);
+    // Render only when something actually moved, so a book at rest is
+    // pixel-still (no shimmer) and costs nothing.
+    const frame = [
+      book.rotation.x, book.rotation.y, book.rotation.z,
+      pivot.rotation.x, pivot.rotation.y,
+      camera.position.z, canvas.width, canvas.height,
+    ];
+    if (!lastFrame || frame.some((value, i) => Math.abs(value - lastFrame[i]) > 1e-4)) {
+      renderer.render(scene, camera);
+      lastFrame = frame;
+    }
     window.setTimeout(animate, 16);
   };
   if (!window.__book3D) window.__book3D = {

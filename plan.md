@@ -29,10 +29,10 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 - [x] **1b. 3D books:** one 3D book per section (Strategy + Action Plan), with a flat-cover fallback when WebGL or textures fail. Strategy cover brightened (`COVER_GLOW`).
 - [x] Colours, type and buttons from Figma 56:361 as semantic tokens.
 - [ ] **1c. Motion (Stripe Press feel)** ← **next**
-  - [x] Idle: slow float + eased tilt that follows the pointer (desktop pointers only).
+  - [x] Book is still at rest; it tilts only while the pointer is over it (desktop pointers only). No idle float.
   - [x] Scroll reveal: book turns to its rest angle and the text fades/slides up (staggered) as each section enters the view.
   - [ ] Open transition: **Open Flipbook** (or clicking the book) moves the book forward, swings the cover open, then goes to the reader (View Transitions API, fade fallback).
-  - [x] Soft contact shadow under each book.
+  - [x] ~~Contact shadow~~ removed at review.
   - [x] Each book starts (renderer + textures) only when near the viewport, and stops rendering when off-screen.
   - [x] `prefers-reduced-motion`: no float, tilt, reveal or text animation (open transition: fade, when built).
 - [x] PDF button: dimmed "coming soon" state until the PDF exists.

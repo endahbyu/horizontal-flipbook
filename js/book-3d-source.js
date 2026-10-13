@@ -2,7 +2,11 @@ import * as THREE from "three";
 
 // How much of each printed surface's own colour (front, back, spine) is added
 // on top of the lighting, per book. Raise it if a book looks dull; 0 = lighting only.
-const COVER_GLOW = { strategy: 0.45, "action-plan": 0.45 };
+// Glow tint per book. The Strategy cover is near-white, so a pure-white glow
+// clips to #fff; tinting it with the section's lavender (--indigo-100) keeps
+// the highlights in the page's hue instead of floating off it.
+const COVER_TINT = { strategy: 0xe0e7ff, "action-plan": 0xffffff };
+const COVER_GLOW = { strategy: 0.22, "action-plan": 0.45 };
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -205,11 +209,12 @@ const initBook = (canvas) => {
     // Light covers turn greyish under the scene lights; let the cover art
     // emit part of its own colour so it keeps its print vibrancy.
     const coverGlow = COVER_GLOW[bookId] ?? 0;
+    const coverTint = COVER_TINT[bookId] ?? 0xffffff;
     const frontMaterial = new THREE.MeshStandardMaterial({
       map: frontTexture,
       roughness: 0.5,
       metalness: 0.025,
-      emissive: 0xffffff,
+      emissive: coverTint,
       emissiveMap: frontTexture,
       emissiveIntensity: coverGlow,
     });
@@ -217,7 +222,7 @@ const initBook = (canvas) => {
       map: backTexture,
       roughness: 0.5,
       metalness: 0.02,
-      emissive: 0xffffff,
+      emissive: coverTint,
       emissiveMap: backTexture,
       emissiveIntensity: coverGlow,
     });
@@ -227,7 +232,7 @@ const initBook = (canvas) => {
       metalness: 0.02,
       bumpMap: clothBumpTexture,
       bumpScale: 0.018,
-      emissive: 0xffffff,
+      emissive: coverTint,
       emissiveMap: spineTexture,
       emissiveIntensity: coverGlow,
       side: THREE.DoubleSide,

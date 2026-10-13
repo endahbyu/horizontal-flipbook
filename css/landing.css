@@ -159,7 +159,15 @@ a{ color: inherit; }
   max-width: 539px;
   aspect-ratio: 539 / 283;
   border: var(--border-thin) var(--color-card-border);
-  background: var(--color-card-bg);
+  background: transparent;
+  /* Makes the card the containing block for the stretched link below. */
+  contain: layout;
+}
+/* Stretch the PDF link over the whole card so a click anywhere downloads. */
+.pdf-button::after{
+  content: "";
+  position: fixed;
+  inset: 0;
 }
 .pdf-card__title{
   position: absolute;
@@ -192,7 +200,6 @@ a{ color: inherit; }
   letter-spacing: 0.32px;
   text-decoration: none;
 }
-.pdf-button[aria-disabled="true"]{ cursor: not-allowed; }
 .pdf-button__icon{
   width: 18px;
   height: 18px;
@@ -277,12 +284,3 @@ a{ color: inherit; }
 .motion-ready .book-section__body > :nth-child(3){ transition-delay: 160ms; }
 .motion-ready .book-section__body > :nth-child(4){ transition-delay: 240ms; }
 
-/* PDF placeholder: visibly unavailable until the file exists. */
-.pdf-button[aria-disabled="true"]{
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.pdf-button[aria-disabled="true"]:hover{
-  background: var(--color-button-bg);
-  border-color: var(--color-button-bg);
-}

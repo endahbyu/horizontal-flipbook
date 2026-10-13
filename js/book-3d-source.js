@@ -119,19 +119,6 @@ const initBook = (canvas) => {
   pageBlock.position.x = -0.05;
   book.add(pageBlock);
 
-  // First page, revealed when the cover swings open. Plain paper until the
-  // book's page-01 image loads (or if the book has no pages yet).
-  const firstPageMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.9,
-    metalness: 0,
-    emissive: 0xffffff,
-    emissiveIntensity: 0.35,
-  });
-  const firstPage = new THREE.Mesh(new THREE.PlaneGeometry(15.6, 8.6), firstPageMaterial);
-  firstPage.position.set(-0.05, 0, 0.545);
-  book.add(firstPage);
-
   const makeFlatSpineGeometry = () => {
     const segments = 1;
     const profile = [];
@@ -212,13 +199,6 @@ const initBook = (canvas) => {
     loadTexture(`assets/books/${bookId}/cover-back.webp`),
     loadTexture(`assets/books/${bookId}/spine.webp`),
   ]).then(([frontTexture, backTexture, spineTexture]) => {
-    // Optional: books without content pages keep the plain paper.
-    loadTexture(`assets/books/${bookId}/page-01.webp`).then((texture) => {
-      firstPageMaterial.map = texture;
-      firstPageMaterial.emissiveMap = texture;
-      firstPageMaterial.needsUpdate = true;
-      lastFrame = null;
-    }).catch(() => {});
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.repeat.x = -1;
     spineTexture.offset.x = 1;
@@ -263,12 +243,8 @@ const initBook = (canvas) => {
       new THREE.BoxGeometry(16, 9, 0.08),
       [edgeMaterial, edgeMaterial, edgeMaterial, edgeMaterial, frontMaterial, edgeMaterial],
     );
-    // Hinge the front cover at the spine so it can swing open.
-    coverHinge = new THREE.Group();
-    coverHinge.position.set(-8, 0, 0.58);
-    frontCover.position.x = 8;
-    coverHinge.add(frontCover);
-    book.add(coverHinge);
+    frontCover.position.z = 0.58;
+    book.add(frontCover);
 
     const backCover = new THREE.Mesh(
       new THREE.BoxGeometry(16, 9, 0.08),
@@ -288,7 +264,6 @@ const initBook = (canvas) => {
     lastFrame = null; // textures arrived: force the next render
   }).catch(() => showFlatCover(canvas));
 
-  let coverHinge = null;
   const frontRotation = { x: 0.09, y: 0.43, z: -0.025 };
   const backRotation = { x: 0.09, y: Math.PI + 0.43, z: 0.025 };
   const target = { ...frontRotation };
@@ -469,58 +444,8 @@ const initBook = (canvas) => {
 
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-  // ---- Open animation: turn face-on, come closer, swing the cover open ----
-  let openStart = null;
-  let openFrom = null;
-  let resolveOpen = null;
-  const OPEN_DURATION = 1300;
-  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const phase = (t, start, end) => Math.min(Math.max((t - start) / (end - start), 0), 1);
-
-  const open = () => new Promise((resolve) => {
-    if (reduceMotion || !coverHinge) {
-      resolve();
-      return;
-    }
-    dragging = false;
-    snapping = false;
-    velocityX = 0;
-    velocityY = 0;
-    openFrom = { x: book.rotation.x, y: nearestEquivalentAngle(book.rotation.y, 0), z: book.rotation.z };
-    openStart = performance.now();
-    resolveOpen = resolve;
-  });
-  // Close the book again (e.g. when the page is restored by the Back button).
-  const reset = () => {
-    openStart = null;
-    resolveOpen = null;
-    if (coverHinge) coverHinge.rotation.y = 0;
-    Object.assign(target, frontRotation);
-    book.rotation.set(frontRotation.x, frontRotation.y, frontRotation.z);
-    side = "front";
-    lastFrame = null;
-  };
-  canvas.book3d = { open, reset };
-
-  // Runs before the camera fit, so the camera frames the face-on book.
-  const applyOpenMotion = (now) => {
-    const t = Math.min((now - openStart) / OPEN_DURATION, 1);
-    const turn = easeInOutCubic(phase(t, 0, 0.5));
-    const swing = easeInOutCubic(phase(t, 0.3, 1));
-    book.rotation.set(
-      THREE.MathUtils.lerp(openFrom.x, 0, turn),
-      THREE.MathUtils.lerp(openFrom.y, 0, turn),
-      THREE.MathUtils.lerp(openFrom.z, 0, turn),
-    );
-    coverHinge.rotation.y = -swing * Math.PI * 0.82;
-    if (t === 1 && resolveOpen) {
-      resolveOpen();
-      resolveOpen = null;
-    }
-  };
-
   const applyAmbientMotion = (now) => {
-    if (reduceMotion || openStart !== null) return;
+    if (reduceMotion) return;
     const reveal = revealStart === null ? 0 : easeOutCubic(Math.min((now - revealStart) / 1400, 1));
     hover.x = THREE.MathUtils.lerp(hover.x, dragging ? 0 : hover.targetX, 0.06);
     hover.y = THREE.MathUtils.lerp(hover.y, dragging ? 0 : hover.targetY, 0.06);
@@ -534,9 +459,7 @@ const initBook = (canvas) => {
       window.setTimeout(animate, 120);
       return;
     }
-    if (openStart !== null) {
-      // The open animation owns the book's rotation.
-    } else if (!dragging && !snapping) {
+    if (!dragging && !snapping) {
       target.y += velocityY;
       target.x += velocityX;
       velocityY *= 0.95;
@@ -564,7 +487,6 @@ const initBook = (canvas) => {
     pivot.rotation.set(0, 0, 0);
     pivot.position.set(0, 0, 0);
     pivot.scale.setScalar(1);
-    if (openStart !== null) applyOpenMotion(performance.now());
     fitCameraToBook();
     applyAmbientMotion(performance.now());
     // Render only when something actually moved, so a book at rest is
@@ -572,7 +494,6 @@ const initBook = (canvas) => {
     const frame = [
       book.rotation.x, book.rotation.y, book.rotation.z,
       pivot.rotation.x, pivot.rotation.y, pivot.scale.x,
-      coverHinge ? coverHinge.rotation.y : 0,
       camera.position.z, canvas.width, canvas.height,
     ];
     if (!lastFrame || frame.some((value, i) => Math.abs(value - lastFrame[i]) > 1e-4)) {

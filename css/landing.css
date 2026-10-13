@@ -274,10 +274,3 @@ a{ color: inherit; }
   background: var(--color-button-bg);
   border-color: var(--color-button-bg);
 }
-
-/* Page fade after the open animation, before going to the reader. */
-body{ transition: opacity 350ms var(--ease-out); }
-.is-leaving body{ opacity: 0; }
-@media (prefers-reduced-motion: reduce){
-  body{ transition-duration: 150ms; }
-}

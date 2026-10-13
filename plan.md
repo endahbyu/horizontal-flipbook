@@ -31,7 +31,6 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 - [ ] **1c. Motion (Stripe Press feel)** ← **next**
   - [x] Book is still at rest; it tilts only while the pointer is over it (desktop pointers only). No idle float.
   - [x] Scroll reveal: book turns to its rest angle and the text fades/slides up (staggered) as each section enters the view.
-  - [x] Open transition: **Open Flipbook** turns the book face-on, swings the cover open to page 1, fades the page, then opens the reader (~2s; reduced motion: fade only, ~0.5s). Back button restores a closed book.
   - [x] ~~Contact shadow~~ removed at review.
   - [x] Each book starts (renderer + textures) only when near the viewport, and stops rendering when off-screen.
   - [x] `prefers-reduced-motion`: no float, tilt, reveal or text animation (open transition: fade, when built).

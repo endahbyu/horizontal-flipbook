@@ -110,28 +110,6 @@ a{ color: inherit; }
   gap: clamp(12px, 2vw, 24px);
 }
 
-.reader-switch{
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  font-weight: 500;
-}
-.reader-switch a{
-  color: var(--color-subheading);
-  text-decoration: none;
-  padding-block: 12px;
-}
-.reader-switch a:hover,
-.reader-switch a[aria-current="page"]{
-  color: var(--color-heading);
-  font-weight: 600;
-}
-.reader-switch a[aria-current="page"]{
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
-}
-
 .reader-pdf{
   display: inline-flex;
   align-items: center;
@@ -525,9 +503,6 @@ a{ color: inherit; }
 .is-empty .book-wrap{ display: none; }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px){
-  .reader-switch{ display: none; }
-}
 @media (max-width: 640px){
   .reader-top{
     grid-template-columns: auto 1fr auto;

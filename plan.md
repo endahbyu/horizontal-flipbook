@@ -42,7 +42,7 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 Both readers are generated from one template (same markup, different `data-book` and copy). Styles: `css/reader.css`, semantic tokens only. The old `css/style.css` was removed.
 
 - [x] Theme by book: background follows the landing section colour (`--color-reader-bg`). Host Grotesk throughout.
-- [x] Top bar: ← Homepage, book title, book switcher, PDF button (placeholder).
+- [x] Top bar: ← Homepage, book title, PDF button (placeholder).
 - [x] Book sized to the space between the top bar and the toolbar; no page scroll at 320–1920px.
 - [x] Glass toolbar: contents, previous, page scrubber with thumbnail preview, readout `XX / NN`, next, zoom, fullscreen. Auto-hides after ~3s idle on desktop; any pointer move, key or focus brings it back.
 - [x] Contents: two-column thumbnail grid, current page highlighted, focus kept inside while open.

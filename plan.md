@@ -114,9 +114,9 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [ ] The P2630 brand stays visible on desktop and mobile.
 
 ### 4.6b Mobile
-- [x] Phones held upright get a "Turn your phone sideways" hint once per visit, with one-tap full screen + landscape lock where the browser allows it (Android); iPhone gets a rotate-only hint.
-- [x] On small screens the toolbar keeps prev / page / next; Thumbnails, Page list, sound and Full screen move into a menu (☰).
-- [x] Phones in landscape get a slimmer top bar and toolbar so the page has more room.
+- [x] Phones in landscape read immersive: no top bar, no toolbar, the page fills the screen height.
+- [x] On phones the toolbar is replaced by one floating menu button (☰) with Thumbnails, Page list, Page-turn sound and Download flipbook. Pages turn by swipe.
+- [x] Phones held upright see a small optional tip (with ✕) to turn the phone sideways, shown once only.
 
 ### 4.7 Landing page
 - [ ] Matches Figma 47:341 (side-by-side screenshot check at 1624px).

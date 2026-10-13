@@ -141,15 +141,23 @@
   }
 
   // Fit the page into the space left between the top bar and the toolbar.
+  var COMPACT_MQ = "(max-width: 640px), (max-height: 500px) and (pointer: coarse)";
+  var IMMERSIVE_MQ = "(max-height: 500px) and (orientation: landscape) and (pointer: coarse)";
+
   function computePageSize() {
     var vw = document.documentElement.clientWidth;
     var vh = window.innerHeight;
     var inFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
-    var arrows = window.matchMedia("(max-width: 640px)").matches ? 0 : 2 * clamp(vw * 0.06, 44, 80);
-    var chromeH = (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
+    // Phones: the toolbar collapses to a floating menu button, and in
+    // landscape the top bar goes too, so the page fills the screen.
+    var compact = window.matchMedia(COMPACT_MQ).matches;
+    var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
+    var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
+    var chromeH = immersive ? 0
+      : (inFullscreen ? 0 : topBar.offsetHeight) + (compact ? 32 : controls.offsetHeight + 20 + 20 + 24);
 
-    var maxW = clamp(vw - arrows - 32, 240, 1600);
-    var maxH = clamp(vh - chromeH, 135, 900);
+    var maxW = immersive ? vw : clamp(vw - arrows - 32, 240, 1600);
+    var maxH = immersive ? vh : clamp(vh - chromeH, 135, 900);
 
     var pageW = maxW;
     var pageH = pageW / PAGE_RATIO;
@@ -821,11 +829,11 @@
      ============================================================ */
   var menuBtn = document.getElementById("menuButton");
   var menu = document.getElementById("controlsMenu");
-  var compactQuery = window.matchMedia("(max-width: 640px), (max-height: 500px) and (pointer: coarse)");
-  var menuItems = ["tocButton", "tocListButton", "soundToggle", "fullscreenButton"].map(function (id) {
-    var el = document.getElementById(id);
-    // A marker remembers where the button lives in the desktop bar.
-    var marker = document.createComment(id);
+  var compactQuery = window.matchMedia(COMPACT_MQ);
+  var menuItems = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"].map(function (sel) {
+    var el = document.querySelector(sel);
+    // A marker remembers where the control lives in the desktop layout.
+    var marker = document.createComment(sel);
     el.parentNode.insertBefore(marker, el);
     return { el: el, marker: marker };
   });
@@ -834,7 +842,7 @@
   function openMenu() {
     menu.hidden = false;
     menuBtn.setAttribute("aria-expanded", "true");
-    var first = menu.querySelector("button:not([hidden])");
+    var first = menu.querySelector("button:not([hidden]), a");
     if (first) first.focus();
   }
   function closeMenu(returnFocus) {
@@ -860,7 +868,7 @@
   menuBtn.addEventListener("click", function () { isMenuOpen() ? closeMenu(true) : openMenu(); });
   // Picking an item closes the menu (the sound toggle stays open so its state is visible).
   menu.addEventListener("click", function (e) {
-    var btn = e.target.closest("button");
+    var btn = e.target.closest("button, a");
     if (btn && btn.id !== "soundToggle") closeMenu(false);
   });
   menu.addEventListener("keydown", function (e) {
@@ -877,41 +885,25 @@
      landscape in one tap. Dismissal is remembered for the visit.
      ============================================================ */
   var rotateHint = document.getElementById("rotateHint");
-  var rotateFs = document.getElementById("rotateFullscreen");
-  var rotateDismiss = document.getElementById("rotateDismiss");
+  var rotateClose = document.getElementById("rotateClose");
   var portraitPhone = window.matchMedia("(max-width: 640px) and (orientation: portrait) and (pointer: coarse)");
   var HINT_KEY = "p2630:rotate-hint";
 
-  function hintDismissed() {
-    try { return sessionStorage.getItem(HINT_KEY) === "1"; } catch (e) { return false; }
+  function hintSeen() {
+    try { return localStorage.getItem(HINT_KEY) === "1"; } catch (e) { return false; }
   }
-  function dismissHint() {
+  function closeHint() {
     rotateHint.hidden = true;
-    try { sessionStorage.setItem(HINT_KEY, "1"); } catch (e) { /* private mode: hide for now only */ }
+    try { localStorage.setItem(HINT_KEY, "1"); } catch (e) { /* storage blocked: hide for now only */ }
   }
-  function updateHint() {
-    rotateHint.hidden = !(portraitPhone.matches && !hintDismissed());
+  rotateClose.addEventListener("click", closeHint);
+  // Shown once, ever. Turning the phone counts as having seen it.
+  if (portraitPhone.matches && !hintSeen()) {
+    rotateHint.hidden = false;
+    if (portraitPhone.addEventListener) portraitPhone.addEventListener("change", function () {
+      if (!portraitPhone.matches) closeHint();
+    });
   }
-  if (!canFullscreen) {
-    // iPhone Safari can't full-screen a page element: just ask to rotate.
-    rotateFs.hidden = true;
-    rotateDismiss.textContent = "Got it";
-    rotateDismiss.className = "rotate-hint__primary";
-  }
-  rotateFs.addEventListener("click", function () {
-    dismissHint();
-    var req = bookWrap.requestFullscreen ? bookWrap.requestFullscreen() : bookWrap.webkitRequestFullscreen();
-    Promise.resolve(req).then(function () {
-      if (screen.orientation && screen.orientation.lock) return screen.orientation.lock("landscape");
-    }).catch(function () { /* refused or unsupported: the reader still works upright */ });
-  });
-  rotateDismiss.addEventListener("click", dismissHint);
-  // Turning the phone answers the hint by itself.
-  if (portraitPhone.addEventListener) portraitPhone.addEventListener("change", function () {
-    if (!portraitPhone.matches && !rotateHint.hidden) dismissHint();
-    else updateHint();
-  });
-  updateHint();
 
   /* ============================================================
      AUTO-HIDE TOOLBAR (desktop only)

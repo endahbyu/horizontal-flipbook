@@ -76,14 +76,10 @@
         </div>
       </div>
 
-      <div class="rotate-hint" id="rotateHint" role="dialog" aria-labelledby="rotateHintTitle" aria-describedby="rotateHintText" hidden>
-        <svg class="rotate-hint__icon" aria-hidden="true" viewBox="0 0 48 48"><rect x="16" y="6" width="16" height="28" rx="3"/><path d="M22 30h4"/><path d="M8 30a16 16 0 0 0 14 13" /><path d="m19 40 3 3-3 3"/></svg>
-        <h2 class="rotate-hint__title" id="rotateHintTitle">Turn your phone sideways</h2>
-        <p class="rotate-hint__text" id="rotateHintText">Pages are wide, so they read best in landscape and full screen.</p>
-        <div class="rotate-hint__actions">
-          <button type="button" class="rotate-hint__primary" id="rotateFullscreen">Read in full screen</button>
-          <button type="button" class="rotate-hint__secondary" id="rotateDismiss">Not now</button>
-        </div>
+      <div class="rotate-hint" id="rotateHint" role="status" hidden>
+        <svg class="rotate-hint__icon" aria-hidden="true" viewBox="0 0 48 48"><rect x="16" y="6" width="16" height="28" rx="3"/><path d="M22 30h4"/><path d="M8 30a16 16 0 0 0 14 13"/><path d="m19 40 3 3-3 3"/></svg>
+        <p class="rotate-hint__text"><strong>Tip:</strong> turn your phone sideways to read pages full screen.</p>
+        <button type="button" class="rotate-hint__close" id="rotateClose" aria-label="Close tip"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
 
       <div class="toc-backdrop" id="tocBackdrop" hidden></div>

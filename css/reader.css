@@ -550,25 +550,49 @@ a{ color: inherit; }
 .toc-list button:hover .toc-thumb{ border-color: var(--color-card-border); }
 .toc-list button[aria-current="true"]{ color: var(--color-heading); font-weight: 700; }
 /* List view: page names only, one per row. */
-.toc-panel[data-view="list"] .toc-list{
-  grid-template-columns: 1fr;
-  gap: 2px;
-}
-.toc-panel[data-view="list"] .toc-thumb{ display: none; }
-.toc-panel[data-view="list"] .toc-list button{
+/* List view: the printed table of contents instead of thumbnails. */
+.toc-outline{ display: none; flex: 1; list-style: none; margin: 0; padding: 0 12px calc(24px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+.toc-panel[data-view="list"] .toc-list{ display: none; }
+.toc-panel[data-view="list"] .toc-outline{ display: block; }
+.toc-outline button{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
   min-height: 44px;
-  padding: 0 12px;
-  justify-content: center;
+  padding: 10px 12px;
+  border: 0;
   border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  font: inherit;
   font-size: var(--text-label);
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
 }
+.toc-entry--l1 button{ font-weight: 700; color: var(--color-heading); margin-top: 6px; }
+.toc-entry--l2 button{ padding-left: 28px; }
+.toc-entry--l3 button{ padding-left: 44px; }
+.toc-entry__title{ flex: 0 1 auto; }
+.toc-entry__leader{
+  flex: 1 1 16px;
+  min-width: 16px;
+  border-bottom: 1px dotted currentColor;
+  opacity: .45;
+  transform: translateY(-4px);
+}
+.toc-entry__page{ flex: none; font-variant-numeric: tabular-nums; }
+.toc-brand{ font-style: italic; color: var(--color-track-fill); }
+.toc-outline button:disabled{ opacity: .4; cursor: default; }
 @media (hover: hover){
-  .toc-panel[data-view="list"] .toc-list button:hover{ background: var(--color-control-hover); }
+  .toc-outline button:not(:disabled):hover{ background: var(--color-control-hover); }
 }
-.toc-panel[data-view="list"] .toc-list button[aria-current="true"]{
+.toc-outline button[aria-current="true"]{
   background: var(--color-control-hover);
   box-shadow: inset 3px 0 0 var(--color-track-fill);
 }
+.toc-outline button:focus-visible{ outline: 2px solid var(--color-track-fill); outline-offset: -2px; }
 
 .toc-list button[aria-current="true"] .toc-thumb{
   border-color: var(--color-track-fill);

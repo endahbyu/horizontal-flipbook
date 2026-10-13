@@ -577,6 +577,73 @@
     tocList.appendChild(li);
   });
 
+  // List view: the book's printed table of contents (js/toc.js).
+  var tocOutline = document.getElementById("tocOutline");
+  var outline = (window.FLIPBOOK_TOC || {})[bookId] || [];
+  var BRAND = "MCMC P2630";
+
+  function indexForPage(n) {
+    if (n <= 1) return 0;
+    var file = "page-" + pad2(n) + ".webp";
+    for (var k = 0; k < PAGES.length; k++) {
+      if (PAGES[k].src && PAGES[k].src.slice(-file.length) === file) return k;
+    }
+    return -1;
+  }
+
+  outline.forEach(function (entry) {
+    var target = indexForPage(entry.page);
+    var li = document.createElement("li");
+    li.className = "toc-entry toc-entry--l" + (entry.level || 1);
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.index = String(target);
+
+    var title = document.createElement("span");
+    title.className = "toc-entry__title";
+    // Brand name in italic accent, built with text nodes (no innerHTML).
+    entry.title.split(BRAND).forEach(function (part, n) {
+      if (n > 0) {
+        var em = document.createElement("em");
+        em.className = "toc-brand";
+        em.textContent = BRAND;
+        title.appendChild(em);
+      }
+      if (part) title.appendChild(document.createTextNode(part));
+    });
+    var leader = document.createElement("span");
+    leader.className = "toc-entry__leader";
+    leader.setAttribute("aria-hidden", "true");
+    var num = document.createElement("span");
+    num.className = "toc-entry__page";
+    num.textContent = String(entry.page);
+
+    btn.appendChild(title);
+    btn.appendChild(leader);
+    btn.appendChild(num);
+    if (target < 0) {
+      btn.disabled = true;
+    } else {
+      btn.addEventListener("click", function () {
+        goTo(target);
+        closeToc();
+      });
+    }
+    li.appendChild(btn);
+    tocOutline.appendChild(li);
+  });
+
+  // Highlight the section the reader is in: last entry starting at or before this page.
+  function markOutline(idx) {
+    var best = null;
+    tocOutline.querySelectorAll("button").forEach(function (btn) {
+      var t = Number(btn.dataset.index);
+      btn.removeAttribute("aria-current");
+      if (t >= 0 && t <= idx) best = btn;
+    });
+    if (best) best.setAttribute("aria-current", "true");
+  }
+
   function isTocOpen() { return !tocPanel.hidden; }
 
   // One panel, two views: "grid" (thumbnails) and "list" (page names only).
@@ -594,7 +661,9 @@
       tocBackdrop.classList.add("open");
     });
     tocTrigger.setAttribute("aria-expanded", "true");
-    var current = tocList.querySelector('button[aria-current="true"]') || tocList.querySelector("button");
+    var list = view === "list" && outline.length ? tocOutline : tocList;
+    if (list === tocOutline) markOutline(pageFlip.getCurrentPageIndex());
+    var current = list.querySelector('button[aria-current="true"]') || list.querySelector("button:not(:disabled)");
     if (current) current.focus({ preventScroll: false });
   }
   function closeToc() {

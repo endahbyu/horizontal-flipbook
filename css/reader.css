@@ -324,6 +324,10 @@ a{ color: inherit; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.reader-sound .icon-sound-on,
+.reader-sound[aria-pressed="true"] .icon-sound-off{ display: none; }
+.reader-sound[aria-pressed="true"] .icon-sound-on{ display: block; }
+
 #fullscreenButton .icon-collapse,
 #fullscreenButton[aria-pressed="true"] .icon-expand{ display: none; }
 #fullscreenButton[aria-pressed="true"] .icon-collapse{ display: block; }

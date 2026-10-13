@@ -286,7 +286,38 @@
     }
   }
 
+  /* ============================================================
+     PAGE-TURN SOUND (uisfx, js/reader-sound.js)
+     One cue per single-page turn: open/close for the covers,
+     forward/back for paper. Jumps (scrubber, contents) stay silent.
+     ============================================================ */
+  var sound = window.P2630Sound;
+  var soundToggle = document.getElementById("soundToggle");
+  var lastIndex = startIndex;
+
+  if (sound) {
+    soundToggle.setAttribute("aria-pressed", String(sound.isEnabled()));
+    soundToggle.addEventListener("click", function () {
+      var on = !sound.isEnabled();
+      sound.setEnabled(on);
+      soundToggle.setAttribute("aria-pressed", String(on));
+    });
+  } else {
+    soundToggle.hidden = true;
+  }
+
+  function cueForTurn(from, to) {
+    if (Math.abs(to - from) !== 1) return null;
+    var last = total - 1;
+    if (to > from) return from === 0 ? "open" : to === last ? "close" : "forward";
+    return to === 0 ? "close" : from === last ? "open" : "back";
+  }
+
   pageFlip.on("flip", function () {
+    var idx = pageFlip.getCurrentPageIndex();
+    var cue = cueForTurn(lastIndex, idx);
+    if (sound && cue) sound.play(cue);
+    lastIndex = idx;
     updateMeta();
     pan.x = pan.y = 0;
     applyBookTransform();

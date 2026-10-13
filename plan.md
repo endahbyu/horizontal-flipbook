@@ -53,7 +53,7 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
 - [ ] Section names in the contents (needs the chapter list per book).
 
-## Phase 3 — Flipbook effect (StPageFlip, tuned) — sound pending
+## Phase 3 — Flipbook effect (StPageFlip, tuned) ✅
 
 Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 
@@ -66,14 +66,12 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [x] Zoom 100 / 125 / 150 / 200%: drag pans the page instead of turning it; double-click or `0` returns to 100%. Turning a page re-centres it.
 - [x] Touch: quick swipes (< 250ms) and slow drags both work.
 - [x] Pages preloaded ±2 around the current one (Phase 2).
-- [ ] Page-turn sound with [`uisfx`](https://www.npmjs.com/package/uisfx) (`npm install uisfx`, MIT; audio under its LICENSE-AUDIO). Decided: yes.
-  - `zen` pack ("paper folds, soft brush, warm wood"): `forward` for next page, `back` for previous (also try `swipe`), `open` / `close` for the hard covers.
-  - Play from StPageFlip's `flip` event: one sound per completed turn; none while dragging, on spring-back, or on multi-page jumps (TOC). Keep the default cooldown so fast flicks don't stack.
-  - One player: `createUISFX({ pack: 'zen', volume: 0.5, preferences: { key: 'p2630:sound' } })`; it remembers the viewer's on/off choice.
-  - Off by default, with a sound on/off toggle in the reader top bar wired to `ui.setEnabled()`.
-  - `ui.unlock()` on the first click/tap/key (browser autoplay rules), then `preload(['forward','back','open','close'])` so the first turn has no delay.
-  - Import it in the bundled reader script (esbuild); only the used cues ship (each ~2–5 KB).
-  - Spike first: compare `forward`, `back`, `swipe` in `zen`, `organic` and `soft` on the real flip, then pick.
+- [x] Page-turn sound with [`uisfx`](https://www.npmjs.com/package/uisfx) 0.4.0 (MIT), `zen` pack. `js/reader-sound-source.js` → `js/reader-sound.js` (`npm run build:sound`).
+  - `forward` / `back` for paper, `open` / `close` for the covers (incl. endpaper ↔ back cover). One cue per single-page turn; scrubber and contents jumps stay silent; nothing while dragging or on spring-back (cues fire on StPageFlip's `flip` event).
+  - `createUISFX({ pack: 'zen', volume: 0.5, preferences: { key: 'p2630:sound' } })` remembers the viewer's choice. Off until the viewer turns it on (top-bar speaker button, `aria-pressed`).
+  - `unlock()` on the first pointer/key, then `preload()` the four cues.
+  - Note: uisfx synthesises cues with Web Audio, so no audio files are served; the bundle is ~40 KB minified (the whole cue table ships, not only the four cues).
+  - [ ] Listening spike still to do by ear: compare `forward` / `back` / `swipe` in `zen`, `organic`, `soft` on the real flip.
 - [ ] Paper grain / gutter shadow — skipped: the page images carry their own design, an overlay would muddy them.
 
 ## Phase 4 — QA checklist (run for **each** book)

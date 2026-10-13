@@ -26,6 +26,10 @@
         <h1 class="reader-title__name">Advancing Inclusivity</h1>
       </div>
       <div class="reader-top__actions">
+        <button type="button" class="control reader-sound" id="soundToggle" aria-pressed="false" aria-label="Page-turn sound">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="icon-sound-on"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="icon-sound-off"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5m0-5-5 5"/></svg>
+        </button>
         <!-- PLACEHOLDER: PDF link pending. Set href and remove aria-disabled when the file is ready. -->
         <a class="reader-pdf" aria-disabled="true" title="PDF coming soon" aria-label="Advancing Inclusivity PDF, coming soon">PDF</a>
       </div>
@@ -81,6 +85,7 @@
 
     <script src="js/vendor/page-flip.browser.js"></script>
     <script src="js/pages.js"></script>
+    <script src="js/reader-sound.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

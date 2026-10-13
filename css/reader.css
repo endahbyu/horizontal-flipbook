@@ -254,6 +254,9 @@ a{ color: inherit; }
 .is-front-cover .page-face,
 .is-back-cover .page-face{ background: var(--color-cover-inside); }
 
+/* Blank endpaper before the back cover. */
+.is-endpaper .page-face{ background: var(--color-endpaper); }
+
 .page-front img{
   display: block;
   width: 100%;

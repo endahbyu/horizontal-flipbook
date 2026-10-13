@@ -81,6 +81,7 @@
   --color-skeleton-shine: rgb(255 255 255 / 1);
   --shadow-control: 0 8px 24px rgb(16 43 136 / 0.12);
   --color-cover-inside: var(--navy-800);
+  --color-endpaper: var(--indigo-100);
   --shadow-page: 0 18px 40px rgb(16 43 136 / 0.14);
 
   /* Decorative wash */
@@ -122,6 +123,7 @@
   --duration-fast: 160ms;
   --duration-base: 260ms;
   --duration-reveal: 700ms;
+  --duration-enter: 300ms;
 }
 
 /* ---------- 3. Book themes ---------- */

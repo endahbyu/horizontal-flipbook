@@ -231,6 +231,23 @@ a{ color: inherit; }
   outline: 0;
 }
 .book-webgl:active{ cursor: grabbing; }
+
+/* Hidden until its textures are drawn: no grey, coverless book on first load. */
+.book-webgl{
+  opacity: 0;
+  transition: opacity var(--duration-enter) ease-out;
+}
+.book-webgl.is-ready{ opacity: 1; }
+@media (prefers-reduced-motion: no-preference){
+  .book-webgl{
+    filter: blur(4px);
+    translate: 0 12px;
+    transition-property: opacity, filter, translate;
+    transition-duration: var(--duration-enter);
+    transition-timing-function: ease-out;
+  }
+  .book-webgl.is-ready{ filter: none; translate: 0 0; }
+}
 .book-webgl:focus-visible{
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 4px;

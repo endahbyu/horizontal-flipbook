@@ -32,7 +32,8 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
   - [x] Book is still at rest; it tilts only while the pointer is over it (desktop pointers only). No idle float.
   - [x] Scroll reveal: book turns to its rest angle and the text fades/slides up (staggered) as each section enters the view.
   - [x] ~~Contact shadow~~ removed at review.
-  - [x] Each book starts (renderer + textures) only when near the viewport, and stops rendering when off-screen.
+  - [x] 3D book stays hidden until its textures are drawn, then fades in (300ms; opacity only with reduced motion).
+- [x] Each book starts (renderer + textures) only when near the viewport, and stops rendering when off-screen.
   - [x] `prefers-reduced-motion`: no float, tilt, reveal or text animation (open transition: fade, when built).
 - [x] PDF button: dimmed "coming soon" state until the PDF exists.
 - [ ] Replace the 72px logo with an SVG or hi-res version.
@@ -47,7 +48,7 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Glass toolbar: contents, previous, page scrubber with thumbnail preview, readout `XX / NN`, next, zoom, fullscreen. Auto-hides after ~3s idle on desktop; any pointer move, key or focus brings it back.
 - [x] Contents: two-column thumbnail grid, current page highlighted, focus kept inside while open.
 - [x] Loading: shimmer placeholder until the first page decodes; only pages within ±2 of the current one are downloaded.
-- [x] Remembers the last page per book (`localStorage`, wrapped in try/catch); deep link `#page=NN`, kept in sync while reading.
+- [x] Always opens at the front cover; deep link `#page=NN`, kept in sync while reading.
 - [x] Keyboard: ←/→, Home/End, `+`/`−`, `F`, `T` (contents), `Esc`.
 - [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
 - [ ] Section names in the contents (needs the chapter list per book).
@@ -58,6 +59,7 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 
 - [x] Page curl shading: fold highlight, shadow cast onto the page underneath (`drawShadow`, `maxShadowOpacity: 0.45`).
 - [x] Corner hint: the page corner lifts on hover (`showPageCorners`).
+- [x] Soft-blue endpaper before the back cover, so closing the book is visible.
 - [x] Covers turn as stiff boards (`hard` density); inner pages bend like paper. Inside of the covers is navy (`--color-cover-inside`); turning covers pass under the top bar.
 - [x] Drag-to-turn: both directions turn past halfway or on a quick flick (> 0.5 px/ms), and spring back otherwise. Before, forward drags needed the full page width and backward drags turned almost always.
 - [x] Turn speed 850ms (300ms with reduced motion).

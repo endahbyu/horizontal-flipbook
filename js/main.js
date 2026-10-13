@@ -21,7 +21,12 @@
   contentFiles.forEach(function (file, i) {
     PAGES.push({ type: "Content", title: "Page " + pad2(i + 1), src: file });
   });
-  if (manifest.coverBack) PAGES.push({ type: "Back cover", title: "Back cover", src: manifest.coverBack });
+  // A blank soft-blue endpaper before the back cover, so closing the book
+  // reads as a page turning onto the inside of the back board.
+  if (manifest.coverBack) {
+    if (contentFiles.length) PAGES.push({ type: "Endpaper", title: "Endpaper", src: null });
+    PAGES.push({ type: "Back cover", title: "Back cover", src: manifest.coverBack });
+  }
 
   // No assets yet for this book: show the empty state and stop.
   if (!PAGES.length) {
@@ -35,19 +40,11 @@
 
   /* ============================================================
      START PAGE
-     #page=NN in the URL wins, then the last page read in this
-     browser, then the front cover.
+     Always the front cover, unless the link asks for #page=NN.
      ============================================================ */
-  var STORAGE_KEY = "p2630:" + bookId + ":page";
-
   function readStartIndex() {
     var match = /(?:^#|&)page=(\d+)/.exec(window.location.hash);
-    if (match) return clamp(parseInt(match[1], 10) - 1, 0, total - 1);
-    try {
-      var saved = parseInt(window.localStorage.getItem(STORAGE_KEY), 10);
-      if (!isNaN(saved)) return clamp(saved, 0, total - 1);
-    } catch (e) { /* storage unavailable: start at the cover */ }
-    return 0;
+    return match ? clamp(parseInt(match[1], 10) - 1, 0, total - 1) : 0;
   }
 
   function clamp(v, min, max) { return Math.max(min, Math.min(v, max)); }
@@ -73,12 +70,16 @@
     var front = document.createElement("div");
     front.className = "page-face page-front";
 
-    var img = document.createElement("img");
-    img.alt = page.title;
-    img.draggable = false;
-    img.decoding = "async";
-    front.appendChild(img);
-    pageImages[i] = img;
+    if (page.src) {
+      var img = document.createElement("img");
+      img.alt = page.title;
+      img.draggable = false;
+      img.decoding = "async";
+      front.appendChild(img);
+      pageImages[i] = img;
+    } else {
+      p.className += " is-endpaper";
+    }
 
     p.appendChild(front);
     bookEl.appendChild(p);
@@ -97,7 +98,7 @@
   (function watchFirstPage() {
     var img = pageImages[startIndex];
     var done = function () { document.body.classList.add("is-loaded"); };
-    if (img.complete && img.naturalWidth) done();
+    if (!img || (img.complete && img.naturalWidth)) done();
     else {
       img.addEventListener("load", done, { once: true });
       img.addEventListener("error", done, { once: true });
@@ -280,7 +281,6 @@
 
     preloadAround(idx);
 
-    try { window.localStorage.setItem(STORAGE_KEY, String(idx)); } catch (e) { /* ignore */ }
     if (window.history.replaceState) {
       window.history.replaceState(null, "", idx === 0 ? window.location.pathname : "#page=" + (idx + 1));
     }
@@ -337,7 +337,8 @@
 
   function showPreview() {
     var i = Number(scrubber.value) - 1;
-    previewImg.src = PAGES[i].src;
+    previewImg.hidden = !PAGES[i].src;
+    if (PAGES[i].src) previewImg.src = PAGES[i].src;
     previewLabel.textContent = pageLabel(i);
     var ratio = total > 1 ? i / (total - 1) : 0;
     preview.style.setProperty("--preview-x", (scrubber.offsetLeft + 8 + ratio * (scrubber.offsetWidth - 16)) + "px");
@@ -369,6 +370,7 @@
   var tocClose = document.getElementById("tocClose");
 
   PAGES.forEach(function (page, i) {
+    if (!page.src) return; // the endpaper isn't a contents entry
     var li = document.createElement("li");
     var btn = document.createElement("button");
     btn.type = "button";

@@ -262,6 +262,8 @@ const initBook = (canvas) => {
     book.add(spine);
     addBindingSeam();
     lastFrame = null; // textures arrived: force the next render
+    // Reveal the canvas only after the textured book has been drawn once.
+    requestAnimationFrame(() => requestAnimationFrame(() => canvas.classList.add("is-ready")));
   }).catch(() => showFlatCover(canvas));
 
   const frontRotation = { x: 0.09, y: 0.43, z: -0.025 };

@@ -2,10 +2,11 @@ import * as THREE from "three";
 
 // How much of each printed surface's own colour (front, back, spine) is added
 // on top of the lighting, per book. Raise it if a book looks dull; 0 = lighting only.
-// Glow tint per book. Strategy's near-white cover art glows a light blue
-// (--blue-200) instead of plain white, so its whites read as soft blue.
-const COVER_TINT = { strategy: 0xd0ddf4, "action-plan": 0xffffff };
-const COVER_GLOW = { strategy: 0.45, "action-plan": 0.45 };
+// Cover tint per book. Strategy's cover art is near-white, so its front and
+// spine are multiplied by the section background (--indigo-100) and glow in
+// it too: the paper-white then lands on the page colour instead of #fff.
+const COVER_TINT = { strategy: 0xe0e7ff, "action-plan": 0xffffff };
+const COVER_GLOW = { strategy: 0.65, "action-plan": 0.45 };
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -211,6 +212,7 @@ const initBook = (canvas) => {
     const coverTint = COVER_TINT[bookId] ?? 0xffffff;
     const frontMaterial = new THREE.MeshStandardMaterial({
       map: frontTexture,
+      color: coverTint,
       roughness: 0.5,
       metalness: 0.025,
       emissive: coverTint,
@@ -227,6 +229,7 @@ const initBook = (canvas) => {
     });
     const spineMaterial = new THREE.MeshStandardMaterial({
       map: spineTexture,
+      color: coverTint,
       roughness: 0.66,
       metalness: 0.02,
       bumpMap: clothBumpTexture,

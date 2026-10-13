@@ -60,7 +60,7 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [x] Page curl shading: fold highlight, shadow cast onto the page underneath (`drawShadow`, `maxShadowOpacity: 0.45`).
 - [x] Corner hint: the page corner lifts on hover (`showPageCorners`).
 - [x] Soft-blue endpaper before the back cover, so closing the book is visible.
-- [x] Covers turn as stiff boards (`hard` density); inner pages bend like paper. Inside of the covers is navy (`--color-cover-inside`); turning covers pass under the top bar.
+- [x] Covers are turned by our own 3D cover board (StPageFlip's portrait hard turn starts already showing the board's back). Open: the front cover swings on the spine, navy inside (`--color-cover-inside`), onto page 1. Close: the endpaper turns over into the back cover with nothing underneath, like closing a real book. Both reverse; taps, swipes, keys and buttons all use it.
 - [x] Drag-to-turn: both directions turn past halfway or on a quick flick (> 0.5 px/ms), and spring back otherwise. Before, forward drags needed the full page width and backward drags turned almost always.
 - [x] Turn speed 850ms (300ms with reduced motion).
 - [x] Zoom 100 / 125 / 150 / 200%: drag pans the page instead of turning it; double-click or `0` returns to 100%. Turning a page re-centres it.

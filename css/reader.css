@@ -250,9 +250,28 @@ a{ color: inherit; }
   overflow: hidden;
   background: var(--color-card-bg);
 }
-/* Inside of the covers: seen while a cover board turns. */
-.is-front-cover .page-face,
-.is-back-cover .page-face{ background: var(--color-cover-inside); }
+/* Cover board: turns the covers in 3D (see js/main.js). */
+.book-frame{ perspective: 2400px; }
+.cover-board{
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.cover-board--open{ transform-origin: left center; }  /* hinged on the spine */
+.cover-board--close{ transform-origin: center; }      /* the whole book turns over */
+.cover-board__face{
+  position: absolute;
+  inset: 0;
+  background: var(--color-card-bg) center / cover no-repeat;
+  backface-visibility: hidden;
+  box-shadow: var(--shadow-page);
+}
+.cover-board__back{ transform: rotateY(180deg); }
+.book-frame.is-closing{ box-shadow: none; } /* no page outline under a closing book */
+.cover-board__face.is-cover-inside{ background-color: var(--color-cover-inside); }
+.cover-board__face.is-endpaper-face{ background-color: var(--color-endpaper); }
 
 /* Blank endpaper before the back cover. */
 .is-endpaper .page-face{ background: var(--color-endpaper); }

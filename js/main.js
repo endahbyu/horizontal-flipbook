@@ -208,13 +208,12 @@
     };
   })();
 
-  // Inner pages bend like paper; the covers turn as stiff boards.
+  // Paper pages bend; the covers are turned by the cover board below.
   for (var d = 0; d < pageFlip.getPageCount(); d++) {
     var pg = pageFlip.getPage(d);
     if (pg) {
-      var density = PAGES[d].type === "Content" ? "soft" : "hard";
-      pg.setDensity(density);
-      pg.setDrawingDensity(density);
+      pg.setDensity("soft");
+      pg.setDrawingDensity("soft");
     }
   }
 
@@ -313,15 +312,17 @@
     return to === 0 ? "close" : from === last ? "open" : "back";
   }
 
-  pageFlip.on("flip", function () {
+  function onTurned() {
     var idx = pageFlip.getCurrentPageIndex();
+    if (idx === lastIndex) return;
     var cue = cueForTurn(lastIndex, idx);
     if (sound && cue) sound.play(cue);
     lastIndex = idx;
     updateMeta();
     pan.x = pan.y = 0;
     applyBookTransform();
-  });
+  }
+  pageFlip.on("flip", onTurned);
   pageFlip.on("changeState", function (event) {
     var state = event.data;
     var isFlipping = state === "flipping" || state === "fold_corner" || state === "user_fold";
@@ -347,14 +348,133 @@
   });
   pageFlip.on("changeOrientation", applyBookTransform);
 
+  /* ============================================================
+     COVER BOARD
+     StPageFlip's portrait "hard" turn starts already showing the back of
+     the board, so the covers are turned by our own 3D board instead:
+       open  — front cover swings open on the spine onto page 1
+       close — the last sheet turns over into the back cover; nothing
+               lies underneath, as when a real book is closed
+     Both run backwards for the reverse turn.
+     ============================================================ */
+  var hasFrontCover = PAGES[0].type === "Cover";
+  var hasBackCover = PAGES[total - 1].type === "Back cover";
+  var BOARD_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 900;
+  var boardBusy = false;
+
+  // Which cover move (if any) a single-page turn from `from` to `to` is.
+  function coverMove(from, to) {
+    if (Math.abs(to - from) !== 1) return null;
+    var hi = Math.max(from, to);
+    if (hasBackCover && hi === total - 1) return "close";
+    if (hasFrontCover && hi === 1) return "open";
+    return null;
+  }
+
+  function face(page, fallbackClass) {
+    var el = document.createElement("div");
+    el.className = "cover-board__face " + (page && page.src ? "" : fallbackClass);
+    if (page && page.src) el.style.backgroundImage = "url(\"" + page.src + "\")";
+    return el;
+  }
+
+  function turnCover(from, to) {
+    var move = coverMove(from, to);
+    var forward = to > from;
+    var board = document.createElement("div");
+    board.className = "cover-board cover-board--" + move;
+    var front, back;
+    if (move === "open") {
+      front = face(PAGES[0]);
+      back = face(null, "is-cover-inside");
+    } else {
+      front = face(PAGES[total - 2], "is-endpaper-face");
+      back = face(PAGES[total - 1]);
+    }
+    back.classList.add("cover-board__back");
+    board.appendChild(front);
+    board.appendChild(back);
+
+    var shut = "rotateY(0deg)";
+    var turned = "rotateY(-180deg)";
+    boardBusy = true;
+    if (sound) sound.play(cueForTurn(from, to));
+    lastIndex = to; // sound handled here, not by the flip event
+    if (move === "open") {
+      // Page 1 lies under the board while the cover swings.
+      if (forward) pageFlip.turnToPage(1);
+    } else {
+      bookEl.style.visibility = "hidden"; // nothing beneath a closed book
+      bookFrame.classList.add("is-closing");
+    }
+    bookFrame.appendChild(board);
+
+    var anim = board.animate(
+      forward ? [{ transform: shut }, { transform: turned }] : [{ transform: turned }, { transform: shut }],
+      { duration: BOARD_MS, easing: "cubic-bezier(0.45, 0, 0.25, 1)", fill: "forwards" }
+    );
+    anim.onfinish = function () {
+      pageFlip.turnToPage(to);
+      bookEl.style.visibility = "";
+      bookFrame.classList.remove("is-closing");
+      board.remove();
+      boardBusy = false;
+      updateMeta();
+    };
+    updateMeta();
+  }
+
+  // Stop StPageFlip from starting a turn (drag, click, corner hint) that
+  // the cover board owns; taps and swipes on those pages are handled below.
+  (function guardCoverTurns() {
+    var flip = pageFlip.getFlipController();
+    var start = flip.start.bind(flip);
+    flip.start = function (point) {
+      var idx = pageFlip.getCurrentPageIndex();
+      var dir = this.getDirectionByPoint(this.render.convertToBook(point));
+      var to = dir === 0 ? idx + 1 : idx - 1;
+      if (boardBusy || coverMove(idx, to)) return false;
+      return start(point);
+    };
+  })();
+
+  function turn(step) {
+    if (boardBusy) return;
+    var from = pageFlip.getCurrentPageIndex();
+    var to = clamp(from + step, 0, total - 1);
+    if (to === from) return;
+    if (coverMove(from, to)) turnCover(from, to);
+    else if (step > 0) pageFlip.flipNext("top");
+    else pageFlip.flipPrev("bottom");
+  }
+  function next() { turn(1); }
+  function prev() { turn(-1); }
+
   function goTo(index) {
     index = clamp(index, 0, total - 1);
-    if (index === pageFlip.getCurrentPageIndex()) return;
+    var from = pageFlip.getCurrentPageIndex();
+    if (index === from || boardBusy) return;
+    if (Math.abs(index - from) === 1) { turn(index - from); return; }
     preloadAround(index);
-    pageFlip.flip(index);
+    // Jumps onto a cover land there directly; paper jumps keep the page turn.
+    if (index === 0 || index === total - 1) { pageFlip.turnToPage(index); onTurned(); }
+    else pageFlip.flip(index);
   }
-  function next() { pageFlip.flipNext("top"); }
-  function prev() { pageFlip.flipPrev("bottom"); }
+
+  // Taps and swipes on a page whose turn belongs to the cover board.
+  (function coverGestures() {
+    var down = null;
+    bookFrame.addEventListener("pointerdown", function (e) { down = { x: e.clientX, y: e.clientY }; });
+    bookFrame.addEventListener("pointerup", function (e) {
+      if (!down || zoomLevel > 1) return;
+      var dx = e.clientX - down.x;
+      var rect = bookEl.getBoundingClientRect();
+      down = null;
+      var idx = pageFlip.getCurrentPageIndex();
+      var step = Math.abs(dx) > 30 ? (dx < 0 ? 1 : -1) : (e.clientX > rect.left + rect.width / 2 ? 1 : -1);
+      if (coverMove(idx, idx + step)) turn(step);
+    });
+  })();
 
   nextBtn.addEventListener("click", next);
   prevBtn.addEventListener("click", prev);

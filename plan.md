@@ -60,13 +60,13 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 - [x] Page curl shading: fold highlight, shadow cast onto the page underneath (`drawShadow`, `maxShadowOpacity: 0.45`).
 - [x] Corner hint: the page corner lifts on hover (`showPageCorners`).
 - [x] Soft-blue endpaper before the back cover, so closing the book is visible.
-- [x] Covers are turned by our own 3D cover board (StPageFlip's portrait hard turn starts already showing the board's back). Open: the front cover swings on the spine, navy inside (`--color-cover-inside`), onto page 1. Close: the endpaper turns over into the back cover with nothing underneath, like closing a real book. Both reverse; taps, swipes, keys and buttons all use it.
+- [x] Covers are turned by our own 3D cover board (StPageFlip's portrait hard turn starts already showing the board's back). Open: the front cover swings on the spine, navy inside (`--color-cover-inside`), onto page 1. Close: the last leaf lifts on the spine and, once upright, glides to the centre while it keeps turning, landing as the back cover with nothing underneath (1.1s; fade only with reduced motion). Both reverse; taps, swipes, keys and buttons all use it.
 - [x] Drag-to-turn: both directions turn past halfway or on a quick flick (> 0.5 px/ms), and spring back otherwise. Before, forward drags needed the full page width and backward drags turned almost always.
 - [x] Turn speed 850ms (300ms with reduced motion).
 - [x] Zoom 100 / 125 / 150 / 200%: drag pans the page instead of turning it; double-click or `0` returns to 100%. Turning a page re-centres it.
 - [x] Touch: quick swipes (< 250ms) and slow drags both work.
 - [x] Pages preloaded ±2 around the current one (Phase 2).
-- [x] Page-turn sound: one recorded sample (`assets/sounds/page-turn.mp3`, 11 KB) played with Web Audio by `js/reader-sound.js` (no library). One sound per single-page turn, slight pitch variation, covers a touch lower; scrubber/contents jumps stay silent. Speaker toggle in the top bar, off until the viewer turns it on (`p2630:sound`).
+- [x] Page-turn sound: one recorded sample (`assets/sounds/page-turn.mp3`, 11 KB) played with Web Audio by `js/reader-sound.js` (no library). One sound per single-page turn, slight pitch variation, covers a touch lower; scrubber/contents jumps stay silent. Speaker toggle in the bottom toolbar, off until the viewer turns it on (`p2630:sound`).
 - [ ] Paper grain / gutter shadow — skipped: the page images carry their own design, an overlay would muddy them.
 
 ## Phase 4 — QA checklist (run for **each** book)

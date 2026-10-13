@@ -359,7 +359,29 @@
      ============================================================ */
   var hasFrontCover = PAGES[0].type === "Cover";
   var hasBackCover = PAGES[total - 1].type === "Back cover";
-  var BOARD_MS = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 900;
+  var REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var BOARD_MS = REDUCED_MOTION ? 200 : 900;
+  var CLOSE_MS = REDUCED_MOTION ? 200 : 1100;
+  var EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
+
+  // Keyframes for each cover move, written for the forward turn.
+  function boardKeyframes(move) {
+    if (REDUCED_MOTION) return move === "open"
+      ? [{ opacity: 1 }, { opacity: 0 }]
+      : [
+          { opacity: 0, transform: "translateX(100%) rotateY(-180deg)" },
+          { opacity: 1, transform: "translateX(100%) rotateY(-180deg)" },
+        ];
+    if (move === "open") return [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-180deg)" }];
+    // Close: the last leaf lifts on the spine; once it stands upright the
+    // spine glides right while the leaf keeps turning, so the closed book
+    // lands centred showing the back cover, without leaving the frame.
+    return [
+      { transform: "translateX(0) rotateY(0deg)", easing: "cubic-bezier(0.55, 0, 1, 0.45)" },
+      { transform: "translateX(0) rotateY(-90deg)", offset: 0.45, easing: "cubic-bezier(0, 0.55, 0.45, 1)" },
+      { transform: "translateX(100%) rotateY(-180deg)" },
+    ];
+  }
   var boardBusy = false;
 
   // Which cover move (if any) a single-page turn from `from` to `to` is.
@@ -395,8 +417,6 @@
     board.appendChild(front);
     board.appendChild(back);
 
-    var shut = "rotateY(0deg)";
-    var turned = "rotateY(-180deg)";
     boardBusy = true;
     if (sound) sound.play(cueForTurn(from, to));
     lastIndex = to; // sound handled here, not by the flip event
@@ -409,10 +429,12 @@
     }
     bookFrame.appendChild(board);
 
-    var anim = board.animate(
-      forward ? [{ transform: shut }, { transform: turned }] : [{ transform: turned }, { transform: shut }],
-      { duration: BOARD_MS, easing: "cubic-bezier(0.45, 0, 0.25, 1)", fill: "forwards" }
-    );
+    var anim = board.animate(boardKeyframes(move), {
+      duration: move === "open" ? BOARD_MS : CLOSE_MS,
+      easing: move === "open" ? EASE_IN_OUT : "linear", // close eases per keyframe
+      direction: forward ? "normal" : "reverse",
+      fill: "both",
+    });
     anim.onfinish = function () {
       pageFlip.turnToPage(to);
       bookEl.style.visibility = "";

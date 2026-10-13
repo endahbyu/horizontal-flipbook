@@ -549,6 +549,27 @@ a{ color: inherit; }
 }
 .toc-list button:hover .toc-thumb{ border-color: var(--color-card-border); }
 .toc-list button[aria-current="true"]{ color: var(--color-heading); font-weight: 700; }
+/* List view: page names only, one per row. */
+.toc-panel[data-view="list"] .toc-list{
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+.toc-panel[data-view="list"] .toc-thumb{ display: none; }
+.toc-panel[data-view="list"] .toc-list button{
+  min-height: 44px;
+  padding: 0 12px;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-label);
+}
+@media (hover: hover){
+  .toc-panel[data-view="list"] .toc-list button:hover{ background: var(--color-control-hover); }
+}
+.toc-panel[data-view="list"] .toc-list button[aria-current="true"]{
+  background: var(--color-control-hover);
+  box-shadow: inset 3px 0 0 var(--color-track-fill);
+}
+
 .toc-list button[aria-current="true"] .toc-thumb{
   border-color: var(--color-track-fill);
   box-shadow: 0 0 0 2px var(--color-track-fill);

@@ -480,10 +480,12 @@
     var from = pageFlip.getCurrentPageIndex();
     if (index === from || boardBusy) return;
     if (Math.abs(index - from) === 1) { turn(index - from); return; }
+    // A jump (contents, Home/End, scrubber) goes straight to the page, like a
+    // link. (pageFlip.flip(index) was blocked by the cover-board guard when
+    // jumping from the cover, so jumps never moved.)
     preloadAround(index);
-    // Jumps onto a cover land there directly; paper jumps keep the page turn.
-    if (index === 0 || index === total - 1) { pageFlip.turnToPage(index); onTurned(); }
-    else pageFlip.flip(index);
+    pageFlip.turnToPage(index);
+    onTurned();
   }
 
   // Taps and swipes on a page whose turn belongs to the cover board.
@@ -577,14 +579,21 @@
 
   function isTocOpen() { return !tocPanel.hidden; }
 
-  function openToc() {
+  // One panel, two views: "grid" (thumbnails) and "list" (page names only).
+  var tocListButton = document.getElementById("tocListButton");
+  var tocTrigger = tocButton;
+
+  function openToc(view) {
+    view = view || "grid";
+    tocTrigger = view === "list" ? tocListButton : tocButton;
+    tocPanel.dataset.view = view;
     tocPanel.hidden = false;
     tocBackdrop.hidden = false;
     requestAnimationFrame(function () {
       tocPanel.classList.add("open");
       tocBackdrop.classList.add("open");
     });
-    tocButton.setAttribute("aria-expanded", "true");
+    tocTrigger.setAttribute("aria-expanded", "true");
     var current = tocList.querySelector('button[aria-current="true"]') || tocList.querySelector("button");
     if (current) current.focus({ preventScroll: false });
   }
@@ -593,16 +602,18 @@
     tocPanel.classList.remove("open");
     tocBackdrop.classList.remove("open");
     tocButton.setAttribute("aria-expanded", "false");
+    tocListButton.setAttribute("aria-expanded", "false");
     setTimeout(function () {
       if (!tocPanel.classList.contains("open")) {
         tocPanel.hidden = true;
         tocBackdrop.hidden = true;
       }
     }, 260);
-    tocButton.focus();
+    tocTrigger.focus();
   }
 
-  tocButton.addEventListener("click", function () { isTocOpen() ? closeToc() : openToc(); });
+  tocButton.addEventListener("click", function () { isTocOpen() ? closeToc() : openToc("grid"); });
+  tocListButton.addEventListener("click", function () { isTocOpen() ? closeToc() : openToc("list"); });
   tocClose.addEventListener("click", closeToc);
   tocBackdrop.addEventListener("click", closeToc);
 
@@ -619,7 +630,7 @@
   /* ============================================================
      KEYBOARD
      ← → turn · Home/End first/last · + − zoom · F fullscreen ·
-     T contents · Esc closes contents
+     T contents (thumbnails) · L page list · Esc closes them
      ============================================================ */
   window.addEventListener("keydown", function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -637,7 +648,8 @@
       case "-": zoomStep(-1); break;
       case "0": setZoom(1); break;
       case "f": case "F": fsBtn.click(); break;
-      case "t": case "T": openToc(); break;
+      case "t": case "T": openToc("grid"); break;
+      case "l": case "L": openToc("list"); break;
       default: return;
     }
     e.preventDefault();

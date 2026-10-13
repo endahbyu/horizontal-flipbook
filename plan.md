@@ -47,7 +47,7 @@ Both readers are generated from one template (same markup, different `data-book`
 - [x] Top bar: ← Homepage, book title, PDF button (placeholder).
 - [x] Book sized to the space between the top bar and the toolbar; no page scroll at 320–1920px.
 - [x] Glass toolbar: contents, previous, page scrubber with thumbnail preview, readout `XX / NN`, next, zoom, fullscreen. Auto-hides after ~3s idle on desktop; any pointer move, key or focus brings it back.
-- [x] Contents: two-column thumbnail grid, current page highlighted, focus kept inside while open.
+- [x] Contents: two views in one panel — thumbnail grid (`T`) and a text page list (`L`, button next to it). Clicking an entry jumps straight to that page; current page highlighted; focus kept inside while open.
 - [x] Loading: shimmer placeholder until the first page decodes; only pages within ±2 of the current one are downloaded.
 - [x] Always opens at the front cover; deep link `#page=NN`, kept in sync while reading.
 - [x] Keyboard: ←/→, Home/End, `+`/`−`, `F`, `T` (contents), `Esc`.

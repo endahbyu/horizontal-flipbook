@@ -21,7 +21,8 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 - [x] Assets per book in `assets/books/<strategy|action-plan>/` (agreed naming, see 4.1). `scan-pages.js` writes one manifest per book, and each reader loads its own.
 - [x] Action Plan: real front cover (1920×1080); back cover + spine copied from Strategy until its own arrive. No content pages yet, so the reader shows the covers only.
 - [ ] Optional: move per-book copy (title, description, PDF path) into one `js/books.js` so the landing and readers don't repeat it.
-- [ ] Decide where PDFs live (repo or external URL). Until then the PDF buttons stay placeholders.
+- [x] Reader: the PDF button is replaced by **Download flipbook**: a single self-contained HTML per book (`tools/build-standalone.js` → `downloads/`), reader only, opens offline by double-click.
+- [x] No external requests: Host Grotesk self-hosted (`assets/fonts/`, OFL 1.1); Google Fonts and the unused serif fallback fonts removed. Handoff/deploy notes in README.
 
 ## Phase 1 — Landing page (Figma 56:361) — layout ✅, motion pending
 

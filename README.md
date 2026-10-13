@@ -33,7 +33,7 @@ mcmc-flipbook/
 │   ├── tokens.css             # design tokens: primitive → semantic → per-book theme
 │   ├── landing.css            # landing page (semantic tokens only)
 │   ├── reader.css             # flipbook readers (semantic tokens only)
-│   └── fonts.css              # self-hosted fonts
+│   └── fonts.css              # Host Grotesk @font-face (self-hosted, assets/fonts/)
 ├── js/
 │   ├── pages.js               # AUTO-GENERATED page manifest (run tools/scan-pages.js)
 │   ├── main.js                # flipbook logic (single-page 16:9 mode)
@@ -97,9 +97,37 @@ npm run dev
 # action plan:   http://localhost:3000/action-plan.html
 ```
 
-## Deploy
-- **Netlify**: upload this folder (drag & drop); root is `index.html`.
-- **MCMC server**: place this entire folder in the P2630 Strategy Plan subdirectory.
+## Deploy (handoff to the client's own server / VPS)
+
+The site is **fully static** and makes **no external requests**: fonts (Host Grotesk, OFL), three.js, StPageFlip and the page-turn sound are all served from this folder. Node.js is only needed to *build* it, not to run it.
+
+1. Build once (Node 20+):
+   ```bash
+   npm ci
+   npm run build:book          # 3D landing bundle (js/book-3d.js)
+   node tools/scan-pages.js    # page manifest (js/pages.js)
+   npm run build:standalone    # downloads/MCMC-P2630-*.html
+   ```
+2. Copy these to the web root: `index.html`, `landing-3d.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`, `downloads/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
+3. Serve them with any static web server. Nginx example:
+   ```nginx
+   server {
+     listen 80;
+     server_name flipbook.example.gov.my;
+     root /var/www/p2630;
+     index index.html;
+     location / { try_files $uri $uri/ =404; }
+     location ~* \.(webp|woff2|mp3|js|css)$ { expires 30d; add_header Cache-Control "public"; }
+     location /downloads/ { add_header Content-Disposition "attachment"; }
+   }
+   ```
+   `woff2` and `webp` need their MIME types (`font/woff2`, `image/webp`); current Nginx and Apache include both.
+
+GitHub Pages runs the same steps in `.github/workflows/deploy.yml`.
+
+## Offline download ("Download flipbook")
+
+`tools/build-standalone.js` writes one self-contained HTML file per book to `downloads/` (reader only: every page image, font, script and the sound inlined). It opens by double-click with no server and no internet. Rebuild it whenever pages change; `npm run dev` and CI do this automatically. Sizes grow with the page images (base64 adds ~33%).
 
 ## QA
 Before release, work through [`plan.md`](plan.md) (Phase 4 QA checklist) once every page

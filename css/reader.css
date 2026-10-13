@@ -112,21 +112,34 @@ a{ color: inherit; }
   gap: clamp(12px, 2vw, 24px);
 }
 
-.reader-pdf{
+.reader-download{
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 40px;
-  padding: 0 16px;
+  padding: 0 16px 0 12px;
   border: 1px solid var(--color-button-bg);
   background: var(--color-button-bg);
   color: var(--color-button-text);
   font-size: var(--text-ui);
   font-weight: 600;
   text-decoration: none;
+  transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease;
 }
-.reader-pdf[aria-disabled="true"]{
-  opacity: 0.45;
-  cursor: not-allowed;
+.reader-download svg{
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (hover: hover){
+  .reader-download:hover{
+    background: var(--color-button-bg-hover);
+    border-color: var(--color-button-bg-hover);
+  }
 }
 
 /* ---------- Book area ---------- */
@@ -555,7 +568,8 @@ a{ color: inherit; }
   .reader-back{ gap: 0; width: 44px; justify-content: center; }
   .reader-back__text{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .reader-back svg{ width: 20px; height: 20px; }
-  .reader-pdf{ min-height: 36px; padding: 0 12px; }
+  .reader-download{ min-height: 44px; min-width: 44px; padding: 0; justify-content: center; }
+  .reader-download__text{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .page-arrow{ display: none; }
   .zoom-group, .control-sep{ display: none; }
   #fullscreenButton{ display: none; }

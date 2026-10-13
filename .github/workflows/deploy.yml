@@ -34,12 +34,16 @@ jobs:
       - name: Generate page manifest
         run: node tools/scan-pages.js
 
+      # One self-contained HTML per book, for the reader's "Download flipbook".
+      - name: Build standalone downloads
+        run: node tools/build-standalone.js
+
       # GitHub Pages serves this as a static site; the local Express server is
       # not needed in the deployed artifact.
       - name: Stage static site
         run: |
           mkdir -p _site
-          cp -r assets css js *.html _site/
+          cp -r assets css js downloads *.html _site/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages

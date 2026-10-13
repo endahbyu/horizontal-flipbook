@@ -38,16 +38,20 @@ Single source of truth: the build plan **and** the QA checklist (merged from the
 - [x] PDF button: dimmed "coming soon" state until the PDF exists.
 - [ ] Replace the 72px logo with an SVG or hi-res version.
 
-## Phase 2 — Reader (`strategy.html` / `action-plan.html`) UI enhancements
+## Phase 2 — Reader (`strategy.html` / `action-plan.html`) UI ✅
 
-- [ ] Theme the reader by book (the blue or the light palette comes from book config).
-- [ ] Top bar: back-to-library link (←), book title, page readout `XX / NN`, and a PDF download button.
-- [ ] Bottom toolbar: prev/next, a scrubber/progress bar with a thumbnail preview on hover, TOC, zoom, fullscreen. Use glassy/blurred bar styling and auto-hide when idle (show again on mouse move or tap).
-- [ ] TOC panel: thumbnail grid, active page highlighted, quick jump. Optional: section names from config.
-- [ ] Loading state: cover skeleton + progress, and preload the ±2 neighbouring pages.
-- [ ] Remember the last page per book (`localStorage`, wrapped in try/catch). Add a deep link `#page=NN`.
-- [ ] Keyboard: ←/→, Home/End, `+`/`−`, `F`, `T` (TOC), `Esc`.
-- [ ] Mobile: swipe, pinch-zoom, safe-area insets, controls ≥44px.
+Both readers are generated from one template (same markup, different `data-book` and copy). Styles: `css/reader.css`, semantic tokens only. The old `css/style.css` was removed.
+
+- [x] Theme by book: background follows the landing section colour (`--color-reader-bg`). Host Grotesk throughout.
+- [x] Top bar: ← Homepage, book title, book switcher, PDF button (placeholder).
+- [x] Book sized to the space between the top bar and the toolbar; no page scroll at 320–1920px.
+- [x] Glass toolbar: contents, previous, page scrubber with thumbnail preview, readout `XX / NN`, next, zoom, fullscreen. Auto-hides after ~3s idle on desktop; any pointer move, key or focus brings it back.
+- [x] Contents: two-column thumbnail grid, current page highlighted, focus kept inside while open.
+- [x] Loading: shimmer placeholder until the first page decodes; only pages within ±2 of the current one are downloaded.
+- [x] Remembers the last page per book (`localStorage`, wrapped in try/catch); deep link `#page=NN`, kept in sync while reading.
+- [x] Keyboard: ←/→, Home/End, `+`/`−`, `F`, `T` (contents), `Esc`.
+- [x] Mobile: 44px controls, safe-area insets; zoom and fullscreen hidden (pinch-zoom and the browser's own fullscreen still work).
+- [ ] Section names in the contents (needs the chapter list per book).
 
 ## Phase 3 — Flipbook effect enhancements
 

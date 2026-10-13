@@ -68,6 +68,20 @@
   --color-card-border: var(--navy-500);
   --color-focus-ring: var(--navy-800);
 
+  /* Reader (strategy.html / action-plan.html) */
+  --color-reader-bg: var(--color-section-bg);
+  --color-control-bg: rgb(255 255 255 / 0.82);
+  --color-control-border: rgb(64 85 160 / 0.22);
+  --color-control-icon: var(--navy-800);
+  --color-control-hover: rgb(16 43 136 / 0.08);
+  --color-control-disabled: rgb(16 43 136 / 0.3);
+  --color-track: rgb(64 85 160 / 0.25);
+  --color-track-fill: var(--navy-800);
+  --color-skeleton: rgb(255 255 255 / 0.7);
+  --color-skeleton-shine: rgb(255 255 255 / 1);
+  --shadow-control: 0 8px 24px rgb(16 43 136 / 0.12);
+  --shadow-page: 0 18px 40px rgb(16 43 136 / 0.14);
+
   /* Decorative wash */
   --wash-highlight: rgb(255 255 255 / 0.85);
   --wash-tint: rgb(65 89 213 / 0.12);

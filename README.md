@@ -31,7 +31,8 @@ mcmc-flipbook/
 ├── action-plan.html           # Action Plan reader    (<body data-book="action-plan">)
 ├── css/
 │   ├── tokens.css             # design tokens: primitive → semantic → per-book theme
-│   ├── style.css              # components (uses semantic tokens only)
+│   ├── landing.css            # landing page (semantic tokens only)
+│   ├── reader.css             # flipbook readers (semantic tokens only)
 │   └── fonts.css              # self-hosted fonts
 ├── js/
 │   ├── pages.js               # AUTO-GENERATED page manifest (run tools/scan-pages.js)
@@ -74,7 +75,7 @@ Page filenames must strictly use the **2-digit zero-padded format** (`page-01.we
 All colours, shadows, fonts, radii and motion live in `css/tokens.css`, in three layers:
 
 1. **Primitive**: raw brand values (`--navy-900`, `--blue-500` …). Never used directly in components.
-2. **Semantic**: what a value is *for* (`--color-bg`, `--color-text`, `--color-accent`, `--shadow-md` …). `style.css` uses only these.
+2. **Semantic**: what a value is *for* (`--color-bg`, `--color-text`, `--color-accent`, `--shadow-md` …). `landing.css` and `reader.css` use only these.
 3. **Book theme**: `[data-book="strategy"]` / `[data-book="action-plan"]` override semantic tokens per book.
 
 To change a colour everywhere, edit the token, not the component.

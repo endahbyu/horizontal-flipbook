@@ -31,12 +31,38 @@
 
   var bookEl = document.getElementById("book");
   var bookFrame = document.getElementById("bookFrame");
+  var total = PAGES.length;
+
+  /* ============================================================
+     START PAGE
+     #page=NN in the URL wins, then the last page read in this
+     browser, then the front cover.
+     ============================================================ */
+  var STORAGE_KEY = "p2630:" + bookId + ":page";
+
+  function readStartIndex() {
+    var match = /(?:^#|&)page=(\d+)/.exec(window.location.hash);
+    if (match) return clamp(parseInt(match[1], 10) - 1, 0, total - 1);
+    try {
+      var saved = parseInt(window.localStorage.getItem(STORAGE_KEY), 10);
+      if (!isNaN(saved)) return clamp(saved, 0, total - 1);
+    } catch (e) { /* storage unavailable: start at the cover */ }
+    return 0;
+  }
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(v, max)); }
+
+  var startIndex = readStartIndex();
 
   /* ============================================================
      BUILD StPageFlip PAGES (HTML mode)
-     Each page is an independent 16:9 widescreen page.
+     Images get their src only when they are within two pages of
+     the current one, so long books don't download every page up front.
      ============================================================ */
-  var pageNodes = PAGES.map(function (page) {
+  var PRELOAD_RADIUS = 2;
+  var pageImages = [];
+
+  var pageNodes = PAGES.map(function (page, i) {
     var p = document.createElement("div");
     var cls = "page";
     if (page.type === "Cover") cls += " is-front-cover";
@@ -47,68 +73,84 @@
     var front = document.createElement("div");
     front.className = "page-face page-front";
 
-    if (page.src) {
-      var img = document.createElement("img");
-      img.src = page.src;
-      img.alt = page.title;
-      img.draggable = false;
-      front.appendChild(img);
-    }
+    var img = document.createElement("img");
+    img.alt = page.title;
+    img.draggable = false;
+    img.decoding = "async";
+    front.appendChild(img);
+    pageImages[i] = img;
+
     p.appendChild(front);
     bookEl.appendChild(p);
     return p;
   });
 
+  function preloadAround(index) {
+    for (var i = index - PRELOAD_RADIUS; i <= index + PRELOAD_RADIUS; i++) {
+      var img = pageImages[i];
+      if (img && !img.getAttribute("src")) img.src = PAGES[i].src;
+    }
+  }
+  preloadAround(startIndex);
+
+  // Hide the loading skeleton once the first visible page has an image.
+  (function watchFirstPage() {
+    var img = pageImages[startIndex];
+    var done = function () { document.body.classList.add("is-loaded"); };
+    if (img.complete && img.naturalWidth) done();
+    else {
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", done, { once: true });
+    }
+  })();
+
   /* ============================================================
-     INITIALIZE StPageFlip (Single-Page 16:9 Mode)
+     INITIALIZE StPageFlip (single 16:9 page)
      ============================================================ */
-  var RESERVED_H = 250;      // masthead + hero + meta + toolbar + hint + padding
-  var PAGE_RATIO = 16 / 9;   // 16:9 widescreen aspect ratio
+  var PAGE_RATIO = 16 / 9;
+  var topBar = document.querySelector(".reader-top");
+  var controls = document.getElementById("controls");
 
   var settings = {
     width: 800,
     height: 450,
     size: "fixed",
     minWidth: 260,
-    maxWidth: 1200,
+    maxWidth: 1600,
     minHeight: 146,
-    maxHeight: 675,
+    maxHeight: 900,
     maxShadowOpacity: 0.25,
-    showCover: false,        // Each cover is treated as an individual 16:9 page
-    usePortrait: true,       // Enforces single-page reading format across all screen widths
+    showCover: false,        // Each cover is an individual 16:9 page
+    usePortrait: true,       // Single-page reading at every width
     drawShadow: false,
     flippingTime: 700,
     mobileScrollSupport: false,
     disableFlipByClick: false,
-    showPageCorners: false   // disable the corner "peel" hint on hover
+    showPageCorners: false,
+    startPage: startIndex
   };
 
-  // CSS clamp() equivalent — keeps the page fluid with min/max bounds
-  function clamp(v, min, max) { return Math.max(min, Math.min(v, max)); }
-
-  // Keep the StPageFlip block narrower than two pages so it cannot switch
-  // into landscape/spread mode at wide viewport sizes.
   function syncPageFrameSize(size) {
     if (bookFrame) bookFrame.style.setProperty("--page-width", size.width + "px");
   }
 
+  // Fit the page into the space left between the top bar and the toolbar.
   function computePageSize() {
-    var vw = window.innerWidth;
+    var vw = document.documentElement.clientWidth;
     var vh = window.innerHeight;
-    var isMobile = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+    var inFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    var arrows = window.matchMedia("(max-width: 640px)").matches ? 0 : 2 * clamp(vw * 0.06, 44, 80);
+    var chromeH = (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
-    // Fluid single-page width clamped within viewport bounds
-    var maxAvailableW = isMobile ? clamp(vw * 0.86, 260, 600) : clamp(vw * 0.78, 360, 1140);
-    var maxAvailableH = clamp(vh - (isMobile ? 260 : RESERVED_H), 180, 680);
+    var maxW = clamp(vw - arrows - 32, 240, 1600);
+    var maxH = clamp(vh - chromeH, 135, 900);
 
-    var pageW = maxAvailableW;
+    var pageW = maxW;
     var pageH = pageW / PAGE_RATIO;
-
-    if (pageH > maxAvailableH) {
-      pageH = maxAvailableH;
+    if (pageH > maxH) {
+      pageH = maxH;
       pageW = pageH * PAGE_RATIO;
     }
-
     return { width: Math.round(pageW), height: Math.round(pageH) };
   }
 
@@ -122,19 +164,16 @@
   var pageFlip = new St.PageFlip(bookEl, settings);
   pageFlip.loadFromHTML(pageNodes);
 
-  // Set all pages to soft density for smooth, consistent page turns
-  (function unifyDensity() {
-    var count = pageFlip.getPageCount();
-    for (var i = 0; i < count; i++) {
-      var pg = pageFlip.getPage(i);
-      if (pg) {
-        pg.setDensity("soft");
-        pg.setDrawingDensity("soft");
-      }
+  // Soft density on every page for smooth, consistent turns.
+  for (var d = 0; d < pageFlip.getPageCount(); d++) {
+    var pg = pageFlip.getPage(d);
+    if (pg) {
+      pg.setDensity("soft");
+      pg.setDrawingDensity("soft");
     }
-  })();
+  }
 
-  window.addEventListener("resize", function () {
+  function resizeBook() {
     var s = computePageSize();
     var is = pageFlip.getSettings();
     is.width = is.minWidth = is.maxWidth = s.width;
@@ -142,33 +181,52 @@
     syncPageFrameSize(s);
     pageFlip.update();
     applyBookTransform();
-  });
+  }
+  window.addEventListener("resize", resizeBook);
 
   /* ============================================================
-     READOUT & ZOOM TRANSFORM
-     In single-page mode, each 16:9 page is naturally centered.
+     READOUT, SCRUBBER, NAV STATE
      ============================================================ */
   var pageReadout = document.getElementById("pageReadout");
-  var hint = document.getElementById("hint");
+  var scrubber = document.getElementById("pageScrubber");
+  var nextBtn = document.getElementById("nextButton");
+  var prevBtn = document.getElementById("prevButton");
+  var nextControl = document.getElementById("nextControl");
+  var prevControl = document.getElementById("prevControl");
   var zoomLevel = 1;
 
+  scrubber.max = String(total);
+
+  function pageLabel(index) {
+    return PAGES[index].title;
+  }
+
   function applyBookTransform() {
-    var parts = [];
-    if (zoomLevel !== 1) {
-      parts.push("scale(" + zoomLevel + ")");
-    }
-    bookEl.style.transform = parts.length ? parts.join(" ") : "";
+    bookEl.style.transform = zoomLevel !== 1 ? "scale(" + zoomLevel + ")" : "";
   }
 
   function updateMeta() {
     var idx = pageFlip.getCurrentPageIndex();
-    var total = pageFlip.getPageCount();
     pageReadout.textContent = pad2(idx + 1) + " / " + pad2(total);
+    scrubber.value = String(idx + 1);
+    scrubber.setAttribute("aria-valuetext", pageLabel(idx) + ", " + (idx + 1) + " of " + total);
+    scrubber.style.setProperty("--progress", (total > 1 ? (idx / (total - 1)) * 100 : 100) + "%");
 
-    // highlight current item in TOC
+    var atStart = idx === 0;
+    var atEnd = idx === total - 1;
+    prevBtn.disabled = prevControl.disabled = atStart;
+    nextBtn.disabled = nextControl.disabled = atEnd;
+
     document.querySelectorAll("#tocList button").forEach(function (btn) {
       btn.setAttribute("aria-current", String(Number(btn.dataset.page) - 1 === idx));
     });
+
+    preloadAround(idx);
+
+    try { window.localStorage.setItem(STORAGE_KEY, String(idx)); } catch (e) { /* ignore */ }
+    if (window.history.replaceState) {
+      window.history.replaceState(null, "", idx === 0 ? window.location.pathname : "#page=" + (idx + 1));
+    }
   }
 
   pageFlip.on("flip", function () {
@@ -198,12 +256,53 @@
     syncDirection();
     if (state === "user_fold") requestAnimationFrame(syncDirection);
   });
-  pageFlip.on("changeOrientation", function () {
-    applyBookTransform();
+  pageFlip.on("changeOrientation", applyBookTransform);
+
+  function goTo(index) {
+    index = clamp(index, 0, total - 1);
+    if (index === pageFlip.getCurrentPageIndex()) return;
+    preloadAround(index);
+    pageFlip.flip(index);
+  }
+  function next() { pageFlip.flipNext("top"); }
+  function prev() { pageFlip.flipPrev("bottom"); }
+
+  nextBtn.addEventListener("click", next);
+  prevBtn.addEventListener("click", prev);
+  nextControl.addEventListener("click", next);
+  prevControl.addEventListener("click", prev);
+
+  // Scrubber: preview while dragging, turn the page on release.
+  var preview = document.getElementById("scrubPreview");
+  var previewImg = document.getElementById("scrubPreviewImg");
+  var previewLabel = document.getElementById("scrubPreviewLabel");
+
+  function showPreview() {
+    var i = Number(scrubber.value) - 1;
+    previewImg.src = PAGES[i].src;
+    previewLabel.textContent = pageLabel(i);
+    var ratio = total > 1 ? i / (total - 1) : 0;
+    preview.style.setProperty("--preview-x", (scrubber.offsetLeft + 8 + ratio * (scrubber.offsetWidth - 16)) + "px");
+    preview.hidden = false;
+  }
+  function hidePreview() { preview.hidden = true; }
+
+  // Follow #page=NN links opened while the reader is already showing.
+  window.addEventListener("hashchange", function () {
+    var match = /(?:^#|&)page=(\d+)/.exec(window.location.hash);
+    if (match) goTo(parseInt(match[1], 10) - 1);
   });
 
+  scrubber.addEventListener("input", showPreview);
+  scrubber.addEventListener("change", function () {
+    hidePreview();
+    goTo(Number(scrubber.value) - 1);
+  });
+  scrubber.addEventListener("blur", hidePreview);
+  scrubber.addEventListener("pointerup", hidePreview);
+
   /* ============================================================
-     TABLE OF CONTENTS (slide-in panel)
+     CONTENTS (slide-in panel with thumbnails)
      ============================================================ */
   var tocList = document.getElementById("tocList");
   var tocPanel = document.getElementById("tocPanel");
@@ -216,21 +315,31 @@
     var btn = document.createElement("button");
     btn.type = "button";
     btn.dataset.page = String(i + 1);
-    var thumb = page.src
-      ? '<span class="toc-thumb"><img src="' + page.src + '" alt="" loading="lazy" draggable="false"></span>'
-      : '<span class="toc-thumb"></span>';
-    btn.innerHTML =
-      thumb +
-      '<span class="toc-text">' +
-        '<span class="toc-title">' + page.title + "</span>" +
-      "</span>";
+
+    var thumb = document.createElement("span");
+    thumb.className = "toc-thumb";
+    var img = document.createElement("img");
+    img.src = page.src;
+    img.alt = "";
+    img.loading = "lazy";
+    img.draggable = false;
+    thumb.appendChild(img);
+
+    var title = document.createElement("span");
+    title.className = "toc-title";
+    title.textContent = page.title;
+
+    btn.appendChild(thumb);
+    btn.appendChild(title);
     btn.addEventListener("click", function () {
-      pageFlip.flip(i);
+      goTo(i);
       closeToc();
     });
     li.appendChild(btn);
     tocList.appendChild(li);
   });
+
+  function isTocOpen() { return !tocPanel.hidden; }
 
   function openToc() {
     tocPanel.hidden = false;
@@ -240,8 +349,11 @@
       tocBackdrop.classList.add("open");
     });
     tocButton.setAttribute("aria-expanded", "true");
+    var current = tocList.querySelector('button[aria-current="true"]') || tocList.querySelector("button");
+    if (current) current.focus({ preventScroll: false });
   }
   function closeToc() {
+    if (!isTocOpen()) return;
     tocPanel.classList.remove("open");
     tocBackdrop.classList.remove("open");
     tocButton.setAttribute("aria-expanded", "false");
@@ -251,47 +363,47 @@
         tocBackdrop.hidden = true;
       }
     }, 260);
+    tocButton.focus();
   }
 
-  tocButton.addEventListener("click", function () {
-    tocPanel.hidden ? openToc() : closeToc();
-  });
+  tocButton.addEventListener("click", function () { isTocOpen() ? closeToc() : openToc(); });
   tocClose.addEventListener("click", closeToc);
   tocBackdrop.addEventListener("click", closeToc);
 
+  // Keep keyboard focus inside the open panel.
+  tocPanel.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var focusables = tocPanel.querySelectorAll("button");
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
   /* ============================================================
-     NAVIGATION (Page-by-page)
+     KEYBOARD
+     ← → turn · Home/End first/last · + − zoom · F fullscreen ·
+     T contents · Esc closes contents
      ============================================================ */
-  var nextBtn = document.getElementById("nextButton");
-  var prevBtn = document.getElementById("prevButton");
-
-  if (nextBtn) {
-    nextBtn.addEventListener("click", function () {
-      pageFlip.flipNext("top");
-      hideHint();
-    });
-  }
-  if (prevBtn) {
-    prevBtn.addEventListener("click", function () {
-      pageFlip.flipPrev("bottom");
-      hideHint();
-    });
-  }
-
-  function hideHint() {
-    if (hint) hint.classList.add("gone");
-  }
-
   window.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowRight") { pageFlip.flipNext("top"); hideHint(); }
-    else if (e.key === "ArrowLeft") { pageFlip.flipPrev("bottom"); hideHint(); }
-    else if (e.key === "+" || e.key === "=") setZoom(zoomLevel * 1.2);
-    else if (e.key === "-") setZoom(zoomLevel / 1.2);
-    else if (e.key.toLowerCase() === "f") {
-      var fsBtn = document.getElementById("fullscreenButton");
-      if (fsBtn) fsBtn.click();
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Escape") { closeToc(); return; }
+    if (isTocOpen()) return;
+    // The scrubber handles its own arrow/Home/End keys.
+    if (e.target === scrubber) return;
+
+    switch (e.key) {
+      case "ArrowRight": next(); break;
+      case "ArrowLeft": prev(); break;
+      case "Home": goTo(0); break;
+      case "End": goTo(total - 1); break;
+      case "+": case "=": setZoom(zoomLevel * 1.2); break;
+      case "-": setZoom(zoomLevel / 1.2); break;
+      case "f": case "F": fsBtn.click(); break;
+      case "t": case "T": openToc(); break;
+      default: return;
     }
-    else if (e.key === "Escape") closeToc();
+    e.preventDefault();
   });
 
   /* ============================================================
@@ -302,51 +414,63 @@
   var zoomInButton = document.getElementById("zoomIn");
 
   function setZoom(z) {
-    zoomLevel = Math.max(0.9, Math.min(1.6, z));
-    if (zoomReadout) zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
-    if (zoomOutButton) zoomOutButton.disabled = zoomLevel <= 0.91;
-    if (zoomInButton) zoomInButton.disabled = zoomLevel >= 1.59;
+    zoomLevel = clamp(z, 0.9, 1.6);
+    zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
+    zoomOutButton.disabled = zoomLevel <= 0.91;
+    zoomInButton.disabled = zoomLevel >= 1.59;
     applyBookTransform();
   }
-
-  if (zoomInButton) zoomInButton.addEventListener("click", function () { setZoom(zoomLevel * 1.2); });
-  if (zoomOutButton) zoomOutButton.addEventListener("click", function () { setZoom(zoomLevel / 1.2); });
+  zoomInButton.addEventListener("click", function () { setZoom(zoomLevel * 1.2); });
+  zoomOutButton.addEventListener("click", function () { setZoom(zoomLevel / 1.2); });
 
   /* ============================================================
      FULLSCREEN
      ============================================================ */
   var fsBtn = document.getElementById("fullscreenButton");
   var bookWrap = document.getElementById("bookWrap");
+  var canFullscreen = !!(bookWrap.requestFullscreen || bookWrap.webkitRequestFullscreen);
+  if (!canFullscreen) fsBtn.hidden = true;
 
-  if (fsBtn && bookWrap) {
-    fsBtn.addEventListener("click", function () {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (bookWrap.requestFullscreen) bookWrap.requestFullscreen();
-        else if (bookWrap.webkitRequestFullscreen) bookWrap.webkitRequestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      }
-    });
+  fsBtn.addEventListener("click", function () {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      var req = bookWrap.requestFullscreen ? bookWrap.requestFullscreen() : bookWrap.webkitRequestFullscreen();
+      if (req && req.catch) req.catch(function () { /* refused: stay inline */ });
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  });
 
-    var onFsChange = function () {
-      var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-      fsBtn.setAttribute("aria-pressed", String(isFs));
-      setTimeout(function () {
-        var s = computePageSize();
-        var is = pageFlip.getSettings();
-        is.width = is.minWidth = is.maxWidth = s.width;
-        is.height = is.minHeight = is.maxHeight = s.height;
-        syncPageFrameSize(s);
-        pageFlip.update();
-        applyBookTransform();
-      }, 100);
-    };
-
-    document.addEventListener("fullscreenchange", onFsChange);
-    document.addEventListener("webkitfullscreenchange", onFsChange);
+  function onFsChange() {
+    var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    fsBtn.setAttribute("aria-pressed", String(isFs));
+    setTimeout(resizeBook, 100);
   }
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
 
-  // Initial metadata update
+  /* ============================================================
+     AUTO-HIDE TOOLBAR (desktop only)
+     Hidden after a few idle seconds; any pointer move, key press or
+     focus brings it back. Never hides while the contents are open.
+     ============================================================ */
+  var IDLE_MS = 2800;
+  var idleTimer = null;
+  var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  function wake() {
+    document.body.classList.remove("controls-idle");
+    clearTimeout(idleTimer);
+    if (!canHover) return;
+    idleTimer = setTimeout(function () {
+      if (!isTocOpen() && !controls.matches(":hover")) document.body.classList.add("controls-idle");
+    }, IDLE_MS);
+  }
+  ["pointermove", "pointerdown", "keydown", "focusin", "wheel"].forEach(function (type) {
+    window.addEventListener(type, wake, { passive: true });
+  });
+  wake();
+
   updateMeta();
 })();

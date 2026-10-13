@@ -2,110 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- CONTENT REPLACEMENT: BRAND TOKEN — verified P2630 primary navy. -->
-    <meta name="theme-color" content="#172983" />
-    <meta
-      name="description"
-      content="MCMC Plan 2026–2030 (MCMC P2630) — explore the Action Plan interactively."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#102B88" />
+    <meta name="description" content="MCMC Plan 2026–2030 (MCMC P2630): explore the Action Plan." />
     <title>Action Plan — MCMC P2630</title>
-    <!-- CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. -->
-    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- TODO: self-host Host Grotesk once the approved font files are supplied. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600;800&display=swap" />
     <link rel="stylesheet" href="css/tokens.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/reader.css" />
   </head>
-  <body data-book="action-plan">
+  <!-- Generated from one template for every book: keep strategy.html and action-plan.html in sync. -->
+  <body class="reader" data-book="action-plan">
     <noscript>
-      <div class="script-warning">
-        Interactive mode requires JavaScript. Please enable it to browse the Action Plan.
-      </div>
+      <p class="reader-notice">This flipbook needs JavaScript. Please turn it on to read Action Plan.</p>
     </noscript>
-    <div class="wash" aria-hidden="true"></div>
 
-    <header class="masthead">
-      <!-- CONTENT REPLACEMENT: BRAND — MCMC P2630 wordmark. -->
-      <!-- CONTENT REPLACEMENT: LOGO — replace fallback wordmark when approved logo asset is supplied. -->
-      <a class="back-home" href="landing-3d.html"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Homepage</a>
-      <nav aria-label="Primary navigation">
-        <a href="strategy.html">Strategy Plan</a>
-        <a href="action-plan.html" aria-current="page">Action Plan</a>
-      </nav>
+    <header class="reader-top">
+      <a class="reader-back" href="landing-3d.html"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Homepage</a>
+      <div class="reader-title">
+        <span class="reader-title__eyebrow">MCMC Plan 2026–2030</span>
+        <h1 class="reader-title__name">Action Plan</h1>
+      </div>
+      <div class="reader-top__actions">
+        <nav class="reader-switch" aria-label="Books">
+          <a href="strategy.html">Strategy Plan</a>
+          <a href="action-plan.html" aria-current="page">Action Plan</a>
+        </nav>
+        <!-- PLACEHOLDER: PDF link pending. Set href and remove aria-disabled when the file is ready. -->
+        <a class="reader-pdf" aria-disabled="true" title="PDF coming soon" aria-label="Action Plan PDF, coming soon">PDF</a>
+      </div>
     </header>
 
-    <main>
-      <section class="hero" id="flipbook" aria-labelledby="report-title">
-        <div class="hero-copy">
-          <!-- CONTENT REPLACEMENT: COPYWRITING — MCMC PLAN 2026–2030 eyebrow. -->
-          <p class="eyebrow">MCMC PLAN 2026–2030</p>
-          <!-- CONTENT REPLACEMENT: COPYWRITING — Action Plan headline. -->
-          <h1 id="report-title">Action <i>Plan</i></h1>
+    <main class="reader-main" id="main">
+      <p class="reader-notice empty-state">The pages for this book are being prepared. Please check back soon.</p>
+
+      <div class="book-wrap" id="bookWrap">
+        <div class="stage" id="stage">
+          <button type="button" class="page-arrow" id="prevButton" aria-label="Previous page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg></button>
+          <div class="book-frame" id="bookFrame">
+            <div class="book-skeleton" id="bookSkeleton" aria-hidden="true"></div>
+            <div id="book"></div>
+          </div>
+          <button type="button" class="page-arrow" id="nextButton" aria-label="Next page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button>
         </div>
 
-        <p class="empty-state">The pages for this book are being prepared. Please check back soon.</p>
-
-        <div class="book-wrap" id="bookWrap">
-          <div class="stage" id="stage">
-            <button class="page-arrow left" id="prevButton" aria-label="Previous page">
-              <svg viewBox="0 0 20 54" aria-hidden="true"><path d="M16 3 4 27l12 24" /></svg>
-            </button>
-
-            <div class="book-frame" id="bookFrame">
-              <div id="book" aria-live="polite"></div>
+        <div class="reader-controls" id="controls" role="toolbar" aria-label="Book controls">
+          <button type="button" class="control" id="tocButton" aria-label="Contents" aria-haspopup="dialog" aria-expanded="false" aria-controls="tocPanel"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></button>
+          <span class="control-sep" aria-hidden="true"></span>
+          <button type="button" class="control" id="prevControl" aria-label="Previous page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg></button>
+          <div class="scrubber">
+            <label class="sr-only" for="pageScrubber">Page</label>
+            <input type="range" id="pageScrubber" min="1" max="1" value="1" step="1" />
+            <output class="page-readout" id="pageReadout" for="pageScrubber" aria-live="polite"></output>
+            <div class="scrub-preview" id="scrubPreview" hidden>
+              <img alt="" id="scrubPreviewImg" />
+              <span id="scrubPreviewLabel"></span>
             </div>
-
-            <button class="page-arrow right" id="nextButton" aria-label="Next page">
-              <svg viewBox="0 0 20 54" aria-hidden="true"><path d="m4 3 12 24L4 51" /></svg>
-            </button>
           </div>
-
-          <div class="book-meta">
-            <p class="page-readout" id="pageReadout"></p>
+          <button type="button" class="control" id="nextControl" aria-label="Next page"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></button>
+          <span class="control-sep control-sep--wide" aria-hidden="true"></span>
+          <div class="zoom-group">
+            <button type="button" class="control" id="zoomOut" aria-label="Zoom out"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+            <output class="zoom-readout" id="zoomReadout" aria-label="Current zoom">100%</output>
+            <button type="button" class="control" id="zoomIn" aria-label="Zoom in"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 12h12M12 6v12"/></svg></button>
           </div>
-
-          <div class="toolbar" role="group" aria-label="Book controls">
-            <button id="tocButton" aria-label="Open table of contents" aria-haspopup="dialog" aria-expanded="false" aria-controls="tocPanel">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 6h16M4 12h16M4 18h10"></path>
-              </svg>
-            </button>
-            <span class="toolbar-separator" aria-hidden="true"></span>
-            <button id="zoomOut" aria-label="Zoom out">−</button>
-            <output id="zoomReadout" aria-label="Current zoom">100%</output>
-            <button id="zoomIn" aria-label="Zoom in">+</button>
-            <span class="toolbar-separator" aria-hidden="true"></span>
-            <button id="fullscreenButton" aria-label="Enter fullscreen" aria-pressed="false">
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-expand">
-                <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"></path>
-              </svg>
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-collapse">
-                <path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"></path>
-              </svg>
-            </button>
-          </div>
-
-          <p class="hint" id="hint">Drag a page corner to turn · use ← → keys · +/− zoom · F fullscreen</p>
+          <button type="button" class="control" id="fullscreenButton" aria-label="Fullscreen" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24" class="icon-expand"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg aria-hidden="true" viewBox="0 0 24 24" class="icon-collapse"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></svg></button>
         </div>
+      </div>
 
-        <div class="toc-backdrop" id="tocBackdrop" hidden></div>
-        <div class="toc-panel" id="tocPanel" role="dialog" aria-modal="true" aria-labelledby="tocPanelTitle" hidden>
-          <div class="toc-panel-header">
-            <h3 id="tocPanelTitle">Table of contents</h3>
-            <button type="button" class="toc-close" id="tocClose" aria-label="Close table of contents">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
-            </button>
-          </div>
-          <ol class="toc-list" id="tocList"></ol>
+      <div class="toc-backdrop" id="tocBackdrop" hidden></div>
+      <div class="toc-panel" id="tocPanel" role="dialog" aria-modal="true" aria-labelledby="tocPanelTitle" hidden>
+        <div class="toc-panel__header">
+          <h2 id="tocPanelTitle">Contents</h2>
+          <button type="button" class="control" id="tocClose" aria-label="Close contents"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         </div>
-      </section>
+        <ol class="toc-list" id="tocList"></ol>
+      </div>
     </main>
-
-    <footer>
-      <!-- CONTENT REPLACEMENT: BRAND — MCMC publisher. -->
-      <span>Malaysian Communications and Multimedia Commission</span>
-      <!-- CONTENT REPLACEMENT: BRAND — MCMC Plan 2026–2030 edition. -->
-      <span>MCMC Plan 2026–2030 · MCMC P2630</span>
-    </footer>
 
     <script src="js/vendor/page-flip.browser.js"></script>
     <script src="js/pages.js"></script>

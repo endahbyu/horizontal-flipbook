@@ -1,0 +1,276 @@
+/* ============================================================
+   LANDING PAGE — Figma "Flipbook-P2630" node 47:341
+   Uses semantic tokens only (see css/tokens.css). Each section
+   gets its colours from its [data-book] theme.
+   ============================================================ */
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  min-width: 320px;
+  background: var(--color-page-bg);
+  color: var(--color-body);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+a{ color: inherit; }
+
+.skip-link{
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  left: 12px;
+  padding: 10px 14px;
+  background: var(--color-brand);
+  color: var(--color-text-on-accent);
+  text-decoration: none;
+  transform: translateY(-180%);
+  transition: transform var(--duration-fast) ease-out;
+}
+.skip-link:focus-visible{ transform: translateY(0); }
+
+/* ---------- Navbar ---------- */
+.site-header{
+  position: absolute;
+  z-index: 10;
+  inset: 0 0 auto;
+  padding: 26px clamp(16px, 8vw, 132px);
+}
+.site-header__inner{
+  max-width: 1360px;
+  margin: 0 auto;
+}
+.site-header__logo{
+  display: block;
+  width: 72px;
+  height: 72px;
+}
+.site-header__logo img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Book section ---------- */
+.book-section{
+  background: var(--color-section-bg);
+  color: var(--color-body);
+  padding: 200px clamp(16px, 8vw, 130px) 250px;
+}
+.book-section__inner{
+  display: grid;
+  grid-template-columns: minmax(0, 705fr) minmax(0, 539fr);
+  gap: clamp(40px, 7.4vw, 120px);
+  align-items: start;
+  max-width: 1364px;
+  margin: 0 auto;
+}
+
+.book-section__cover{
+  display: block;
+  margin: 0;
+}
+.book-section__cover img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.book-section__body{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.book-title{
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.32px;
+}
+.book-title__eyebrow{
+  color: var(--color-eyebrow);
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.book-title__name{
+  color: var(--color-heading);
+  font-size: clamp(36px, 4.2vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.book-title__publisher{
+  color: var(--color-subheading);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: 0;
+}
+
+/* ---------- Buttons ---------- */
+.button-primary{
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 16px;
+  border: var(--border-thin) var(--color-button-bg);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 25.5px;
+  letter-spacing: 0.32px;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) ease-out, border-color var(--duration-fast) ease-out;
+}
+.button-primary:hover,
+.pdf-button:hover{
+  background: var(--color-button-bg-hover);
+  border-color: var(--color-button-bg-hover);
+}
+.button-primary:focus-visible,
+.pdf-button:focus-visible{
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 4px;
+}
+
+.book-section__description{
+  margin: 0;
+  padding: 14px 0 20px;
+  max-width: 538px;
+  color: var(--color-body);
+  font-size: 16px;
+  line-height: 28px;
+}
+
+/* ---------- PDF card ---------- */
+.pdf-card{
+  position: relative;
+  width: 100%;
+  max-width: 539px;
+  aspect-ratio: 539 / 283;
+  border: var(--border-thin) var(--color-card-border);
+  background: var(--color-card-bg);
+}
+.pdf-card__title{
+  position: absolute;
+  left: 11%;
+  top: 37.6%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  right: 6%;
+  line-height: normal;
+  letter-spacing: 0.18px;
+}
+.pdf-card__title .book-title__eyebrow{ font-size: 13.52px; }
+.pdf-card__title .book-title__name{ font-size: 27px; }
+.pdf-card__title .book-title__publisher{ font-size: 11.27px; line-height: 16px; }
+
+.pdf-button{
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 15px 6px;
+  border: var(--border-thin) var(--color-button-bg);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.32px;
+  text-decoration: none;
+}
+.pdf-button[aria-disabled="true"]{ cursor: not-allowed; }
+.pdf-button__icon{
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("../assets/landing/icon-download.png") center / contain no-repeat;
+  mask: url("../assets/landing/icon-download.png") center / contain no-repeat;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px){
+  .book-section{ padding-top: 140px; padding-bottom: 120px; }
+  .book-section__inner{ grid-template-columns: 1fr; gap: 40px; }
+  .book-title__eyebrow{ font-size: 18px; }
+  .book-title__publisher{ font-size: 16px; }
+}
+@media (max-width: 520px){
+  .pdf-card__title .book-title__eyebrow{ font-size: 10px; }
+  .pdf-card__title .book-title__name{ font-size: 20px; }
+  .pdf-card__title .book-title__publisher{ font-size: 8.5px; }
+  .pdf-button{ top: 10px; right: 10px; padding: 6px 10px 4px; font-size: 15px; gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .skip-link, .button-primary{ transition: none; }
+}
+
+/* ---------- 3D book (landing-3d.html) ---------- */
+.book-stage{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 705 / 440;
+}
+.book-webgl{
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+  outline: 0;
+}
+.book-webgl:active{ cursor: grabbing; }
+.book-webgl:focus-visible{
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 4px;
+}
+.book-fallback{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------- 1c. Motion ---------- */
+/* Text reveal: only active once js/landing-motion.js adds .motion-ready. */
+.motion-ready .book-section__body > *{
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-reveal) var(--ease-out),
+    transform var(--duration-reveal) var(--ease-out);
+}
+.motion-ready .book-section.is-revealed .book-section__body > *{
+  opacity: 1;
+  transform: none;
+}
+.motion-ready .book-section__body > :nth-child(2){ transition-delay: 80ms; }
+.motion-ready .book-section__body > :nth-child(3){ transition-delay: 160ms; }
+.motion-ready .book-section__body > :nth-child(4){ transition-delay: 240ms; }
+
+/* PDF placeholder: visibly unavailable until the file exists. */
+.pdf-button[aria-disabled="true"]{
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.pdf-button[aria-disabled="true"]:hover{
+  background: var(--color-button-bg);
+  border-color: var(--color-button-bg);
+}

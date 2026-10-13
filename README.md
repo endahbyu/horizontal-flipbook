@@ -9,7 +9,7 @@ Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built wi
 - One report asset represents exactly one complete page.
 - Desktop, tablet, and mobile display **one page at a time**.
 - Page navigation advances **one individual page at a time**.
-- The **P2630 Action Plan** book is not included in this phase.
+- The **P2630 Action Plan** has its own reader (`action-plan.html`); its pages are pending.
 - Current validated sample contains **12 reader pages** (1 front cover, 10 content pages, 1 back cover).
 - The final Strategy Plan page count (~64 pages) is pending the remaining approved assets.
 
@@ -19,15 +19,19 @@ Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built wi
 - Page ratio: verified 16:9 widescreen (1920 × 1080 px).
 - Reading format: verified single-page view across all viewports.
 - Current sample: 12 validated individual reader pages.
-- Action Plan: excluded from this phase.
+- Action Plan: reader ready, assets pending (shows an empty state).
 
 ## Project structure
 ```
 mcmc-flipbook/
-├── index.html                 # landing page (3D book hero)
-├── reader.html                # flipbook reader (single-page 16:9 format)
+├── landing-3d.html            # DEFAULT landing page (3D book, Figma layout)
+├── index.html                 # redirect stub → landing-3d.html (for static hosts)
+├── draft.html                 # static layout draft (not linked)
+├── strategy.html              # Strategy Plan reader  (<body data-book="strategy">)
+├── action-plan.html           # Action Plan reader    (<body data-book="action-plan">)
 ├── css/
-│   ├── style.css              # all styles (P2630 verified palette & 16:9 geometry)
+│   ├── tokens.css             # design tokens: primitive → semantic → per-book theme
+│   ├── style.css              # components (uses semantic tokens only)
 │   └── fonts.css              # self-hosted fonts
 ├── js/
 │   ├── pages.js               # AUTO-GENERATED page manifest (run tools/scan-pages.js)
@@ -35,19 +39,21 @@ mcmc-flipbook/
 │   └── vendor/
 │       └── page-flip.browser.js   # StPageFlip library (v2.0.7, MIT)
 ├── tools/
-│   └── scan-pages.js          # scans assets/img/ and regenerates js/pages.js
+│   └── scan-pages.js          # scans assets/books/*/ and regenerates js/pages.js
 └── assets/
-    └── img/                   # Strategy Plan covers, spine + content pages
+    └── books/
+        ├── strategy/          # Strategy Plan covers, spine + content pages
+        └── action-plan/       # Action Plan pages (empty until assets arrive)
 ```
 
 ## Page naming convention
 ```
-assets/img/cover-front.webp    # front cover (fixed name, 16:9)
-assets/img/cover-back.webp     # back cover  (fixed name, 16:9)
-assets/img/page-01.webp        # content pages, strictly 2-digit zero-padded (16:9)
-assets/img/page-02.webp
+assets/books/<book>/cover-front.webp    # front cover (fixed name, 16:9)
+assets/books/<book>/cover-back.webp     # back cover  (fixed name, 16:9)
+assets/books/<book>/page-01.webp        # content pages, strictly 2-digit zero-padded (16:9)
+assets/books/<book>/page-02.webp
 ...
-assets/img/page-10.webp        # up to page-NN.webp (2 digits, not 3 digits)
+assets/books/<book>/page-10.webp        # up to page-NN.webp (2 digits, not 3 digits)
 ```
 
 The page count is **derived from the images themselves** — no hardcoded list.
@@ -55,7 +61,7 @@ Every cover and content page uses a consistent **16:9 widescreen canvas** (1920 
 Page filenames must strictly use the **2-digit zero-padded format** (`page-01.webp`, `page-02.webp`, etc.).
 
 ## How to add / replace pages
-1. Drop 16:9 page images into `assets/img/`, named sequentially with 2 digits (`page-01.webp`,
+1. Drop 16:9 page images into `assets/books/<book>/` (`strategy` or `action-plan`), named sequentially with 2 digits (`page-01.webp`,
    `page-02.webp`, …).
 2. Regenerate the manifest:
    ```bash
@@ -63,6 +69,15 @@ Page filenames must strictly use the **2-digit zero-padded format** (`page-01.we
    ```
    (or automatically when running `npm run dev` or `npm run build`).
 3. Done. The manifest and reader will update automatically.
+
+## Design tokens
+All colours, shadows, fonts, radii and motion live in `css/tokens.css`, in three layers:
+
+1. **Primitive**: raw brand values (`--navy-900`, `--blue-500` …). Never used directly in components.
+2. **Semantic**: what a value is *for* (`--color-bg`, `--color-text`, `--color-accent`, `--shadow-md` …). `style.css` uses only these.
+3. **Book theme**: `[data-book="strategy"]` / `[data-book="action-plan"]` override semantic tokens per book.
+
+To change a colour everywhere, edit the token, not the component.
 
 ## Features
 - Single-page 16:9 widescreen reading format across desktop, tablet, and mobile
@@ -76,8 +91,9 @@ Page filenames must strictly use the **2-digit zero-padded format** (`page-01.we
 ## Run locally
 ```bash
 npm run dev
-# landing page:  http://localhost:3000/index.html
-# flipbook:      http://localhost:3000/reader.html
+# landing page:  http://localhost:3000/  (landing-3d.html)
+# strategy plan: http://localhost:3000/strategy.html
+# action plan:   http://localhost:3000/action-plan.html
 ```
 
 ## Deploy
@@ -85,11 +101,11 @@ npm run dev
 - **MCMC server**: place this entire folder in the P2630 Strategy Plan subdirectory.
 
 ## QA
-Before release, work through [`QA-CHECKLIST.md`](QA-CHECKLIST.md) once every page
+Before release, work through [`plan.md`](plan.md) (Phase 4 QA checklist) once every page
 has been uploaded.
 
 ## Embed into another page (optional)
 ```html
-<iframe src="/p2630/strategy-plan/reader.html" width="100%" height="800" style="border:0"></iframe>
+<iframe src="/p2630/strategy.html" width="100%" height="800" style="border:0"></iframe>
 ```
 The iframe isolates the flipbook's CSS/JS from the parent page — no conflicts.

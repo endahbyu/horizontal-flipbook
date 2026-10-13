@@ -7,17 +7,18 @@
     <meta name="theme-color" content="#172983" />
     <meta
       name="description"
-      content="MCMC Plan 2026–2030 (MCMC P2630) — explore the Strategy Plan interactively."
+      content="MCMC Plan 2026–2030 (MCMC P2630) — explore the Action Plan interactively."
     />
-    <title>MCMC Plan 2026–2030 — MCMC P2630</title>
+    <title>Action Plan — MCMC P2630</title>
     <!-- CONTENT REPLACEMENT: TYPOGRAPHY — Host Grotesk / Inter font asset requirement. -->
     <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/tokens.css" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
+  <body data-book="action-plan">
     <noscript>
       <div class="script-warning">
-        Interactive mode requires JavaScript. Please enable it to browse the Strategy Plan.
+        Interactive mode requires JavaScript. Please enable it to browse the Action Plan.
       </div>
     </noscript>
     <div class="wash" aria-hidden="true"></div>
@@ -25,9 +26,10 @@
     <header class="masthead">
       <!-- CONTENT REPLACEMENT: BRAND — MCMC P2630 wordmark. -->
       <!-- CONTENT REPLACEMENT: LOGO — replace fallback wordmark when approved logo asset is supplied. -->
-      <a class="back-home" href="index.html"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Homepage</a>
+      <a class="back-home" href="landing-3d.html"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>Homepage</a>
       <nav aria-label="Primary navigation">
-        <a href="#flipbook" aria-current="page">Strategy Plan</a>
+        <a href="strategy.html">Strategy Plan</a>
+        <a href="action-plan.html" aria-current="page">Action Plan</a>
       </nav>
     </header>
 
@@ -36,9 +38,11 @@
         <div class="hero-copy">
           <!-- CONTENT REPLACEMENT: COPYWRITING — MCMC PLAN 2026–2030 eyebrow. -->
           <p class="eyebrow">MCMC PLAN 2026–2030</p>
-          <!-- CONTENT REPLACEMENT: COPYWRITING — Advancing Inclusivity headline. -->
-          <h1 id="report-title">Advancing <i>Inclusivity</i></h1>
+          <!-- CONTENT REPLACEMENT: COPYWRITING — Action Plan headline. -->
+          <h1 id="report-title">Action <i>Plan</i></h1>
         </div>
+
+        <p class="empty-state">The pages for this book are being prepared. Please check back soon.</p>
 
         <div class="book-wrap" id="bookWrap">
           <div class="stage" id="stage">
@@ -56,7 +60,7 @@
           </div>
 
           <div class="book-meta">
-            <p class="page-readout" id="pageReadout">01 / 12</p>
+            <p class="page-readout" id="pageReadout"></p>
           </div>
 
           <div class="toolbar" role="group" aria-label="Book controls">

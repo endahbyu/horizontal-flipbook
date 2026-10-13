@@ -2,40 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="MCMC Plan 2026–2030 (MCMC P2630)">
+  <!-- Redirect stub so static hosts serve the real landing page at "/". Edit landing-3d.html, not this file. -->
+  <meta http-equiv="refresh" content="0; url=landing-3d.html">
+  <link rel="canonical" href="landing-3d.html">
   <title>MCMC Plan 2026–2030 — MCMC P2630</title>
-  <style>
-    :root{color-scheme:light;--navy:#172983;--blue:#4159d5;--light-blue:#d0ddf4;--neutral:#e5e7ed;--muted:#4a5b8c;--rule:rgba(159,166,201,.45);--gradient:linear-gradient(110deg,#f6b400 0%,#f04a32 28%,#d41478 52%,#6b20b8 74%,#245bda 100%)}
-    *{box-sizing:border-box}html,body{min-height:100%}body{min-width:320px;margin:0;overflow-x:hidden;background:var(--neutral);color:var(--navy);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button,a{font:inherit}a{color:inherit}
-    .skip-link{position:fixed;z-index:20;top:12px;left:12px;padding:10px 14px;border-radius:8px;background:var(--navy);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transform:translateY(-180%);transition:transform 160ms ease-out}.skip-link:focus-visible{transform:translateY(0)}
-    .page{min-height:100svh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(420px,.95fr);position:relative}.brand{position:fixed;z-index:10;top:32px;left:42px;display:grid;gap:3px;pointer-events:none}.brand strong{font:700 clamp(22px,2.1vw,32px)/1 "Host Grotesk",Inter,sans-serif;letter-spacing:-.02em}.brand span,.edition,.eyebrow,dt{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.19em;text-transform:uppercase}.edition{position:fixed;z-index:10;top:38px;right:42px;padding:4px 12px;border-radius:999px;background:var(--light-blue);color:var(--navy);font-weight:700;letter-spacing:.12em}
-    .visual-column{min-height:100svh;display:grid;place-items:center;padding:110px 5vw 70px;perspective:1500px;overflow:hidden}.book-stage{position:relative;width:min(50vw,620px);height:clamp(360px,60svh,520px);display:grid;place-items:center;transform-style:preserve-3d}.book-webgl{position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;cursor:grab;touch-action:none;outline:0}.book-webgl:active{cursor:grabbing}.book-webgl:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}.book-toggle{display:none;position:absolute;z-index:4;left:12px;top:50%;place-items:center;width:38px;height:38px;padding:0;border:1px solid var(--rule);border-radius:999px;background:rgba(229,231,237,.78);color:var(--navy);cursor:pointer;transform:translateY(-50%);backdrop-filter:blur(8px)}.book-toggle:hover{background:var(--light-blue)}.book-toggle:focus-visible,.button:focus-visible{outline:2px solid var(--navy);outline-offset:4px}
-    .content-column{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:120px clamp(42px,6vw,100px) 72px clamp(36px,5vw,82px);border-left:1px solid var(--rule)}.eyebrow{display:inline-flex;align-items:center;gap:10px;margin:0 0 20px}.eyebrow::before{content:"";width:16px;height:3px;border-radius:2px;background:var(--gradient)}h1{max-width:780px;margin:0;color:var(--navy);font:700 clamp(48px,5.8vw,92px)/.95 "Host Grotesk",Inter,sans-serif;letter-spacing:-.04em;text-wrap:balance}.deck{max-width:38ch;margin:32px 0 0;color:#3b4b75;font:400 clamp(18px,1.8vw,25px)/1.45 Inter,sans-serif;text-wrap:pretty}.meta{max-width:760px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 52px;margin:40px 0 0;padding:28px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}.meta div{display:grid;gap:8px}.meta dd{margin:0;color:var(--navy);font-size:15px;font-weight:500;line-height:1.5}.actions{display:flex;align-items:center;gap:24px;margin-top:36px}.button{display:inline-block;padding:10px 24px;border:1px solid #6a7dde;border-radius:50px;background:#3f58d3;box-shadow:0 6px 0 var(--navy);color:#ecf0f1;font-size:17px;text-decoration:none;transition:box-shadow 100ms ease-out,background-color 100ms ease-out}.button:hover{background:#334bc1}.button:active{box-shadow:0 2px 0 var(--navy);transform:translateY(2px)}.hint{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
-    @media(max-width:900px){.page{grid-template-columns:1fr}.brand{position:absolute;top:22px;left:22px}.edition{position:absolute;top:28px;right:22px}.visual-column{min-height:52svh;padding:100px 20px 24px}.book-stage{width:min(92vw,500px);height:clamp(330px,52svh,440px)}.content-column{min-height:auto;padding:54px 24px 70px;border-top:1px solid var(--rule);border-left:0}h1{font-size:clamp(40px,12vw,68px)}.deck{margin-top:24px;font-size:18px}}
-    @media(max-width:520px){.edition{display:none}.meta{grid-template-columns:1fr;gap:20px}.actions{align-items:flex-start;flex-direction:column}.book-toggle{left:4px}}
-    @media(min-width:901px) and (max-height:820px){.content-column{padding-top:82px;padding-bottom:38px}h1{font-size:clamp(44px,4.8vw,72px)}.deck{margin-top:20px;font-size:clamp(16px,1.5vw,22px)}.meta{margin-top:22px;padding:18px 0;gap:16px 36px}.actions{margin-top:20px}.visual-column{padding-top:82px;padding-bottom:32px}}
-    @media(prefers-reduced-motion:reduce){.skip-link,.button{transition:none}}
-  .brand-logo{display:block;width:auto;height:clamp(22px,2.1vw,30px);margin-bottom:6px}
-  </style>
 </head>
 <body>
-  <a class="skip-link" href="#report-content">Skip to report content</a>
-  <header class="brand" aria-label="MCMC P2630"><img class="brand-logo" src="assets/img/logo-wordmark.png" alt="MCMC P2630" width="1382" height="147"><span>MCMC PLAN 2026–2030</span></header>
-  <div class="edition">MCMC P2630</div>
-  <main class="page">
-    <section class="visual-column" id="book-area" aria-label="Interactive 3D view of the report cover">
-      <div class="book-stage">
-        <button class="book-toggle" id="bookToggle" type="button" aria-label="Show back cover" aria-pressed="false"><span class="book-toggle__arrow" aria-hidden="true">↔</span></button>
-        <canvas class="book-webgl" id="bookCanvas" tabindex="0" role="img" aria-label="Landscape 3D book showing the front cover of MCMC Plan 2026–2030"></canvas>
-      </div>
-    </section>
-    <section class="content-column" id="report-content" aria-labelledby="report-title" tabindex="-1">
-      <p class="eyebrow">MCMC PLAN 2026–2030</p><h1 id="report-title">Executive Report</h1><p class="deck">MCMC Plan 2026–2030 provides a strategic framework for a future-ready regulator and strategic digital enabler.</p>
-      <dl class="meta"><div><dt>Format</dt><dd>Interactive Strategy Plan</dd></div><div><dt>Publisher</dt><dd>Malaysian Communications and Multimedia Commission</dd></div><div><dt>Theme</dt><dd>Advancing Inclusivity</dd></div><div><dt>Experience</dt><dd>Interactive page-turning Strategy Plan</dd></div></dl>
-      <div class="actions"><a class="button" href="reader.html">Open Flipbook</a><span class="hint">Explore MCMC P2630</span></div>
-    </section>
-  </main>
-  <script src="js/book-3d.js"></script>
+  <p><a href="landing-3d.html">Continue to MCMC P2630</a></p>
 </body>
 </html>

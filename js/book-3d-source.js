@@ -1,9 +1,15 @@
 import * as THREE from "three";
 
-const canvas = document.querySelector("#bookCanvas");
-const stage = document.querySelector(".book-stage");
+// How much of each printed surface's own colour (front, back, spine) is added
+// on top of the lighting, per book. Raise it if a book looks dull; 0 = lighting only.
+const COVER_GLOW = { strategy: 0.45, "action-plan": 0.45 };
 
-if (canvas && stage) {
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// One 3D book per <canvas class="book-webgl" data-book="<id>">; textures
+// come from assets/books/<id>/ (cover-front, cover-back, spine).
+const initBook = (canvas) => {
+  const bookId = canvas.dataset.book || "strategy";
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -22,17 +28,34 @@ if (canvas && stage) {
   rimLight.position.set(11, -4, -8);
   scene.add(rimLight);
 
+  // `pivot` carries the ambient motion (pointer tilt, scroll reveal)
+  // on top of the book's own drag/snap rotation, so the two never fight.
+  const pivot = new THREE.Group();
+  scene.add(pivot);
   const book = new THREE.Group();
-  scene.add(book);
+  pivot.add(book);
 
   const textureLoader = new THREE.TextureLoader();
-  const loadTexture = (url) => new Promise((resolve, reject) => {
-    textureLoader.load(url, (texture) => {
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
-      resolve(texture);
-    }, undefined, reject);
-  });
+  // Fetch the image first and load it from a same-origin blob: URL, so the
+  // texture never trips cross-origin rules on hosts that serve assets from
+  // another origin (e.g. sandboxed previews).
+  const loadTexture = (url) => fetch(url)
+    .then((response) => {
+      if (!response.ok) throw new Error(`Texture ${url}: HTTP ${response.status}`);
+      return response.blob();
+    })
+    .then((blob) => new Promise((resolve, reject) => {
+      const blobUrl = URL.createObjectURL(blob);
+      textureLoader.load(blobUrl, (texture) => {
+        URL.revokeObjectURL(blobUrl);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+        resolve(texture);
+      }, undefined, (error) => {
+        URL.revokeObjectURL(blobUrl);
+        reject(error);
+      });
+    }));
 
   const makePageTexture = () => {
     const paper = document.createElement("canvas");
@@ -172,21 +195,41 @@ if (canvas && stage) {
   };
 
   Promise.all([
-    loadTexture("assets/img/cover-front.webp"),
-    loadTexture("assets/img/cover-back.webp"),
-    loadTexture("assets/img/spine.webp"),
+    loadTexture(`assets/books/${bookId}/cover-front.webp`),
+    loadTexture(`assets/books/${bookId}/cover-back.webp`),
+    loadTexture(`assets/books/${bookId}/spine.webp`),
   ]).then(([frontTexture, backTexture, spineTexture]) => {
     spineTexture.wrapS = THREE.RepeatWrapping;
     spineTexture.repeat.x = -1;
     spineTexture.offset.x = 1;
-    const frontMaterial = new THREE.MeshStandardMaterial({ map: frontTexture, roughness: 0.58, metalness: 0.025 });
-    const backMaterial = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.62, metalness: 0.02 });
+    // Light covers turn greyish under the scene lights; let the cover art
+    // emit part of its own colour so it keeps its print vibrancy.
+    const coverGlow = COVER_GLOW[bookId] ?? 0;
+    const frontMaterial = new THREE.MeshStandardMaterial({
+      map: frontTexture,
+      roughness: 0.5,
+      metalness: 0.025,
+      emissive: 0xffffff,
+      emissiveMap: frontTexture,
+      emissiveIntensity: coverGlow,
+    });
+    const backMaterial = new THREE.MeshStandardMaterial({
+      map: backTexture,
+      roughness: 0.5,
+      metalness: 0.02,
+      emissive: 0xffffff,
+      emissiveMap: backTexture,
+      emissiveIntensity: coverGlow,
+    });
     const spineMaterial = new THREE.MeshStandardMaterial({
       map: spineTexture,
       roughness: 0.66,
       metalness: 0.02,
       bumpMap: clothBumpTexture,
       bumpScale: 0.018,
+      emissive: 0xffffff,
+      emissiveMap: spineTexture,
+      emissiveIntensity: coverGlow,
       side: THREE.DoubleSide,
     });
     const spineEdgeMaterial = new THREE.MeshStandardMaterial({
@@ -218,9 +261,8 @@ if (canvas && stage) {
     spine.position.x = -0.015;
     book.add(spine);
     addBindingSeam();
-  }).catch(() => {
-    canvas.setAttribute("aria-label", "The 3D book textures could not be loaded");
-  });
+    lastFrame = null; // textures arrived: force the next render
+  }).catch(() => showFlatCover(canvas));
 
   const frontRotation = { x: 0.09, y: 0.43, z: -0.025 };
   const backRotation = { x: 0.09, y: Math.PI + 0.43, z: 0.025 };
@@ -372,7 +414,51 @@ if (canvas && stage) {
   new ResizeObserver(resize).observe(canvas);
   resize();
 
+  // ---- Ambient motion (skipped entirely for reduced motion) ----
+  const stage = canvas.closest(".book-stage");
+  const hover = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  let revealStart = reduceMotion ? -Infinity : null; // null = not yet in view
+  let visible = false;
+
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    if (visible && revealStart === null) {
+      revealStart = performance.now();
+      stage?.classList.add("is-revealed");
+    }
+  }, { threshold: 0.25 }).observe(canvas);
+
+  if (!reduceMotion) {
+    // Tilt only while the pointer is over this book; at rest it stays still.
+    canvas.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const rect = canvas.getBoundingClientRect();
+      hover.targetX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      hover.targetY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    }, { passive: true });
+    canvas.addEventListener("pointerleave", () => {
+      hover.targetX = 0;
+      hover.targetY = 0;
+    });
+  }
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const applyAmbientMotion = (now) => {
+    if (reduceMotion) return;
+    const reveal = revealStart === null ? 0 : easeOutCubic(Math.min((now - revealStart) / 1400, 1));
+    hover.x = THREE.MathUtils.lerp(hover.x, dragging ? 0 : hover.targetX, 0.06);
+    hover.y = THREE.MathUtils.lerp(hover.y, dragging ? 0 : hover.targetY, 0.06);
+    pivot.rotation.y = hover.x * 0.12 + (1 - reveal) * 0.55;
+    pivot.rotation.x = hover.y * 0.07 - (1 - reveal) * 0.08;
+  };
+
+  let lastFrame = null;
   const animate = () => {
+    if (!visible && revealStart !== null) {
+      window.setTimeout(animate, 120);
+      return;
+    }
     if (!dragging && !snapping) {
       target.y += velocityY;
       target.x += velocityX;
@@ -396,13 +482,54 @@ if (canvas && stage) {
       book.rotation.y = target.y;
     }
     book.rotation.z = THREE.MathUtils.lerp(book.rotation.z, target.z, 0.12);
+    // Fit the camera to the book at rest, then add ambient motion, so the
+    // float and tilt don't make the camera zoom in and out.
+    pivot.rotation.set(0, 0, 0);
+    pivot.position.set(0, 0, 0);
     fitCameraToBook();
-    renderer.render(scene, camera);
+    applyAmbientMotion(performance.now());
+    // Render only when something actually moved, so a book at rest is
+    // pixel-still (no shimmer) and costs nothing.
+    const frame = [
+      book.rotation.x, book.rotation.y, book.rotation.z,
+      pivot.rotation.x, pivot.rotation.y,
+      camera.position.z, canvas.width, canvas.height,
+    ];
+    if (!lastFrame || frame.some((value, i) => Math.abs(value - lastFrame[i]) > 1e-4)) {
+      renderer.render(scene, camera);
+      lastFrame = frame;
+    }
     window.setTimeout(animate, 16);
   };
-  window.__book3D = {
+  if (!window.__book3D) window.__book3D = {
     getRotation: () => ({ x: book.rotation.x, y: book.rotation.y, targetY: target.y, dragging, snapping, velocityX, velocityY, dragVelocityX, dragVelocityY }),
     rotateTo: setSide,
   };
   animate();
+};
+
+// Fallback when WebGL or the textures are unavailable: show the flat front
+// cover in place of the canvas, so the section is never empty.
+function showFlatCover(canvas) {
+  const bookId = canvas.dataset.book || "strategy";
+  const img = document.createElement("img");
+  img.className = "book-fallback";
+  img.src = `assets/books/${bookId}/cover-front.webp`;
+  img.alt = canvas.getAttribute("aria-label") || "";
+  canvas.replaceWith(img);
 }
+
+// Start each book (renderer + textures) only when it comes near the viewport.
+const startObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    startObserver.unobserve(entry.target);
+    try {
+      initBook(entry.target);
+    } catch (error) {
+      showFlatCover(entry.target);
+    }
+  });
+}, { rootMargin: "300px 0px" });
+
+document.querySelectorAll(".book-stage .book-webgl").forEach((canvas) => startObserver.observe(canvas));

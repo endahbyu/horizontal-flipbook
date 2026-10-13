@@ -110,18 +110,23 @@ Decision: keep StPageFlip and tune it, instead of a custom WebGL page curl.
 ### 4.6 Responsive & layout
 - [x] No vertical overflow and no horizontal clipping at 320 / 768 / 1280 / 1920 widths.
 - [x] Covers and pages keep their 16:9 ratio.
-- [ ] No rubber-band or scroll-jump when turning pages by touch.
+- [x] No rubber-band or scroll-jump when turning pages by touch.
 - [ ] The P2630 brand stays visible on desktop and mobile.
+
+### 4.6b Mobile
+- [x] Phones held upright get a "Turn your phone sideways" hint once per visit, with one-tap full screen + landscape lock where the browser allows it (Android); iPhone gets a rotate-only hint.
+- [x] On small screens the toolbar keeps prev / page / next; Thumbnails, Page list, sound and Full screen move into a menu (☰).
+- [x] Phones in landscape get a slimmer top bar and toolbar so the page has more room.
 
 ### 4.7 Landing page
 - [ ] Matches Figma 47:341 (side-by-side screenshot check at 1624px).
-- [ ] Both 3D books load with 16:9 cover proportions. Tilt and click-rotate work and return to rest.
+- [x] Both 3D books load with 16:9 cover proportions. Tilt and click-rotate work and return to rest.
 - [x] Each **Open Flipbook** opens `strategy.html` / `action-plan.html` for the correct book. Back-to-library returns to the landing page.
 - [x] Each PDF button downloads the correct file.
 
 ### 4.8 Design & typography
-- [ ] Titles and headings are readable at every width.
-- [ ] Palette is accurate: navy `#172983`, blue `#4159D5`, light blue `#D0DDF4`, neutral `#E5E7ED`, gradient, and the Figma section blues.
+- [x] Titles and headings are readable at every width.
+- [x] Palette is accurate: navy `#172983`, blue `#4159D5`, light blue `#D0DDF4`, neutral `#E5E7ED`, gradient, and the Figma section blues.
 - [x] No broken images or missing assets.
 - [x] Reduced motion is respected everywhere.
 

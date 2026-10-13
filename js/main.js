@@ -805,10 +805,113 @@
   function onFsChange() {
     var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
     fsBtn.setAttribute("aria-pressed", String(isFs));
+    if (!isFs && screen.orientation && screen.orientation.unlock) {
+      try { screen.orientation.unlock(); } catch (e) { /* not locked */ }
+    }
     setTimeout(resizeBook, 100);
   }
   document.addEventListener("fullscreenchange", onFsChange);
   document.addEventListener("webkitfullscreenchange", onFsChange);
+
+  /* ============================================================
+     MOBILE MENU
+     On small screens the secondary controls (thumbnails, page list,
+     sound, fullscreen) move into a menu behind one button, so the bar
+     keeps only prev / page / next. On wider screens they move back.
+     ============================================================ */
+  var menuBtn = document.getElementById("menuButton");
+  var menu = document.getElementById("controlsMenu");
+  var compactQuery = window.matchMedia("(max-width: 640px), (max-height: 500px) and (pointer: coarse)");
+  var menuItems = ["tocButton", "tocListButton", "soundToggle", "fullscreenButton"].map(function (id) {
+    var el = document.getElementById(id);
+    // A marker remembers where the button lives in the desktop bar.
+    var marker = document.createComment(id);
+    el.parentNode.insertBefore(marker, el);
+    return { el: el, marker: marker };
+  });
+
+  function isMenuOpen() { return !menu.hidden; }
+  function openMenu() {
+    menu.hidden = false;
+    menuBtn.setAttribute("aria-expanded", "true");
+    var first = menu.querySelector("button:not([hidden])");
+    if (first) first.focus();
+  }
+  function closeMenu(returnFocus) {
+    if (!isMenuOpen()) return;
+    menu.hidden = true;
+    menuBtn.setAttribute("aria-expanded", "false");
+    if (returnFocus) menuBtn.focus();
+  }
+
+  function applyCompact() {
+    var compact = compactQuery.matches;
+    document.body.classList.toggle("controls-compact", compact);
+    menuItems.forEach(function (item) {
+      if (compact) menu.appendChild(item.el);
+      else item.marker.parentNode.insertBefore(item.el, item.marker.nextSibling);
+    });
+    if (!compact) closeMenu(false);
+  }
+  if (compactQuery.addEventListener) compactQuery.addEventListener("change", applyCompact);
+  else compactQuery.addListener(applyCompact);
+  applyCompact();
+
+  menuBtn.addEventListener("click", function () { isMenuOpen() ? closeMenu(true) : openMenu(); });
+  // Picking an item closes the menu (the sound toggle stays open so its state is visible).
+  menu.addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (btn && btn.id !== "soundToggle") closeMenu(false);
+  });
+  menu.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { e.stopPropagation(); closeMenu(true); }
+  });
+  document.addEventListener("pointerdown", function (e) {
+    if (isMenuOpen() && !menu.contains(e.target) && !menuBtn.contains(e.target)) closeMenu(false);
+  });
+
+  /* ============================================================
+     ROTATE HINT (phones held upright)
+     Pages are 16:9, so upright phones show them small. Suggest turning
+     the phone; where the browser allows it, go full screen and lock to
+     landscape in one tap. Dismissal is remembered for the visit.
+     ============================================================ */
+  var rotateHint = document.getElementById("rotateHint");
+  var rotateFs = document.getElementById("rotateFullscreen");
+  var rotateDismiss = document.getElementById("rotateDismiss");
+  var portraitPhone = window.matchMedia("(max-width: 640px) and (orientation: portrait) and (pointer: coarse)");
+  var HINT_KEY = "p2630:rotate-hint";
+
+  function hintDismissed() {
+    try { return sessionStorage.getItem(HINT_KEY) === "1"; } catch (e) { return false; }
+  }
+  function dismissHint() {
+    rotateHint.hidden = true;
+    try { sessionStorage.setItem(HINT_KEY, "1"); } catch (e) { /* private mode: hide for now only */ }
+  }
+  function updateHint() {
+    rotateHint.hidden = !(portraitPhone.matches && !hintDismissed());
+  }
+  if (!canFullscreen) {
+    // iPhone Safari can't full-screen a page element: just ask to rotate.
+    rotateFs.hidden = true;
+    rotateDismiss.textContent = "Got it";
+    rotateDismiss.className = "rotate-hint__primary";
+  }
+  rotateFs.addEventListener("click", function () {
+    dismissHint();
+    var req = bookWrap.requestFullscreen ? bookWrap.requestFullscreen() : bookWrap.webkitRequestFullscreen();
+    Promise.resolve(req).then(function () {
+      if (screen.orientation && screen.orientation.lock) return screen.orientation.lock("landscape");
+    }).catch(function () { /* refused or unsupported: the reader still works upright */ });
+  });
+  rotateDismiss.addEventListener("click", dismissHint);
+  // Turning the phone answers the hint by itself.
+  if (portraitPhone.addEventListener) portraitPhone.addEventListener("change", function () {
+    if (!portraitPhone.matches && !rotateHint.hidden) dismissHint();
+    else updateHint();
+  });
+  updateHint();
 
   /* ============================================================
      AUTO-HIDE TOOLBAR (desktop only)

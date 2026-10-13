@@ -605,6 +605,114 @@ a{ color: inherit; }
 .is-empty .empty-state{ display: block; }
 .is-empty .book-wrap{ display: none; }
 
+/* ---------- Mobile menu (secondary controls) ---------- */
+.control-label{ display: none; }
+.control-menu-toggle{ display: none; }
+.controls-compact .control-menu-toggle{ display: inline-grid; }
+.controls-menu{
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+  padding: 6px;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-md);
+  background: var(--color-page-bg);
+  box-shadow: var(--shadow-control);
+}
+.controls-menu[hidden]{ display: none; }
+.controls-menu .control{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-heading);
+  font: inherit;
+  font-size: var(--text-body);
+  line-height: 1.3;
+  text-align: start;
+}
+.controls-menu .control[hidden]{ display: none; }
+.controls-menu .control-label{ display: inline; white-space: nowrap; }
+.controls-menu .control svg{ flex: none; }
+/* Sound and fullscreen show their state as text in the menu. */
+.controls-menu .control[aria-pressed="true"]{ background: var(--color-control-hover); }
+
+/* ---------- Rotate hint (phone held upright) ---------- */
+.rotate-hint{
+  position: fixed;
+  inset-inline: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 140;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 24px 20px 20px;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-md);
+  background: var(--color-page-bg);
+  box-shadow: var(--shadow-control);
+  text-align: center;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+  @starting-style{ opacity: 0; transform: translateY(16px); }
+}
+.rotate-hint[hidden]{ display: none; }
+.rotate-hint__icon{
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: var(--color-track-fill);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rotate-hint__title{
+  margin: 4px 0 0;
+  color: var(--color-heading);
+  font-size: var(--text-heading);
+  font-weight: 800;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.rotate-hint__text{
+  margin: 0;
+  max-width: 32ch;
+  color: var(--color-body);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.rotate-hint__actions{
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+.rotate-hint__primary,
+.rotate-hint__secondary{
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out);
+}
+.rotate-hint__primary{ border: 0; background: var(--color-button-bg); color: var(--color-button-text); }
+.rotate-hint__secondary{ border: 1px solid var(--color-control-border); background: transparent; color: var(--color-heading); }
+.rotate-hint__primary:active,
+.rotate-hint__secondary:active{ transform: scale(0.97); }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 640px){
   .reader-top{
@@ -618,11 +726,26 @@ a{ color: inherit; }
   .reader-download__text{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .page-arrow{ display: none; }
   .zoom-group, .control-sep{ display: none; }
-  #fullscreenButton{ display: none; }
   .reader-controls{ width: calc(100% - 32px); gap: 0; }
   .scrubber{ flex: 1; min-width: 0; gap: 8px; padding: 0 4px; }
   #pageScrubber{ flex: 1; width: auto; min-width: 0; }
   .page-readout{ min-width: 52px; }
+}
+
+/* Phones in landscape: little height, so the top bar and toolbar slim
+   down and the page gets the room. */
+@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse){
+  .reader-top{ padding-block: calc(4px + env(safe-area-inset-top, 0px)) 4px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+  .reader-title__eyebrow{ display: none; }
+  .reader-title__name{ font-size: var(--text-heading); }
+  .reader-back__text, .reader-download__text{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .reader-back, .reader-download{ min-height: 40px; min-width: 40px; padding: 0; justify-content: center; }
+  .book-wrap{ gap: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px)); }
+  .page-arrow{ display: none; }
+  .zoom-group, .control-sep{ display: none; }
+  .reader-controls{ padding: 2px 6px; }
+  .reader-controls .control{ height: 40px; }
+  .controls-menu .control{ min-height: 40px; }
 }
 
 /* Very narrow phones: the scrubber can't fit usefully; the readout, arrows

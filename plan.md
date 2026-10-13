@@ -59,13 +59,14 @@ Both readers are generated from one template (same markup, different `data-book`
 - [ ] Physics: easing tuned for the "soft paper" turn. Velocity-based flick (fast swipe = full turn, slow drag = follow the finger, release under 50% = fall back).
 - [ ] Corner hint: on hover, the page corner peels slightly to suggest it can be dragged.
 - [ ] Cover open/close has a heavier, slower turn than inner pages (hard-cover feel).
-- [ ] Page-turn sound with [`cuelume`](https://www.npmjs.com/package/cuelume) (`npm install cuelume`).
-  - Cuelume has no paper/page-flip cue; use `navigate` (soft whoosh that rises going forward and falls going back) on each turn, and a heavier cue such as `open`/`close` for the covers.
-  - Play from the flip event in code (`play("navigate", { volume })`), not via data attributes; one sound per completed turn, none while dragging or on fast multi-page jumps (TOC).
-  - ESM-only: import it in the bundled reader script (esbuild), not via a plain `<script>`.
-  - Off by default with a sound on/off toggle in the reader toolbar; remember the choice per viewer (localStorage, wrapped in try/catch). Respect `prefers-reduced-motion` only as a hint, the toggle wins.
-  - Audio starts only after a user gesture (browser autoplay rules); first flip after enabling must play.
-  - Spike first: if the whoosh doesn't feel like paper, fall back to a short recorded page-flip sample (<20 KB) played through Web Audio.
+- [ ] Page-turn sound with [`uisfx`](https://www.npmjs.com/package/uisfx) (`npm install uisfx`, MIT; audio under its LICENSE-AUDIO).
+  - Use the `zen` pack ("paper folds, soft brush, warm wood"): `forward` for next page, `back` for previous (try `swipe` too), `open` / `close` for the covers.
+  - Play from the flip event in code: `ui.play('forward')`; one sound per completed turn, none while dragging or on multi-page jumps (TOC). Keep the default cooldown so fast flicks don't stack.
+  - Create one player with `createUISFX({ pack: 'zen', volume: 0.5, preferences: { key: 'p2630:sound' } })`; it remembers the viewer's on/off choice itself.
+  - Off by default, with a sound on/off toggle in the reader toolbar wired to `ui.setEnabled()`.
+  - Call `ui.unlock()` on the first click/tap/key (browser autoplay rules) so the first flip after enabling plays.
+  - Import it in the bundled reader script (esbuild); `preload(['forward','back','open','close'])` after unlock so the first turn has no delay.
+  - Spike first: listen to `forward`, `back` and `swipe` in `zen` (and `organic` / `soft`) on the real flip, then pick.
 - [ ] Zoomed state: pan with drag, and page turns disabled until zoom = 100%.
 - [ ] Performance: 60fps on a mid-range phone, GPU transforms only, and images decoded ahead (`img.decode()`).
 - [ ] Decide on the engine: keep StPageFlip and tune it, or move to a custom WebGL/three.js page curl that shares the landing renderer. Spike this first and pick based on quality vs effort.

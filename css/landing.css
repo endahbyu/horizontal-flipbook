@@ -9,8 +9,8 @@
 body{
   margin: 0;
   min-width: 320px;
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--color-page-bg);
+  color: var(--color-body);
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
 }
@@ -57,7 +57,7 @@ a{ color: inherit; }
 /* ---------- Book section ---------- */
 .book-section{
   background: var(--color-section-bg);
-  color: var(--color-section-text);
+  color: var(--color-body);
   padding: 200px clamp(16px, 8vw, 130px) 250px;
 }
 .book-section__inner{
@@ -97,39 +97,49 @@ a{ color: inherit; }
   letter-spacing: 0.32px;
 }
 .book-title__eyebrow{
+  color: var(--color-eyebrow);
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
 }
 .book-title__name{
-  font-size: clamp(36px, 4vw, 48px);
+  color: var(--color-heading);
+  font-size: clamp(36px, 4.2vw, 52px);
   font-weight: 800;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 .book-title__publisher{
+  color: var(--color-subheading);
   font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
   letter-spacing: 0;
 }
 
 /* ---------- Buttons ---------- */
-.button-outline{
+.button-primary{
   display: inline-flex;
   align-items: center;
   padding: 12px 16px;
-  border: var(--border-thin) var(--color-section-border);
-  color: var(--color-section-text);
+  border: var(--border-thin) var(--color-button-bg);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
   font-size: 18px;
+  font-weight: 600;
   line-height: 25.5px;
   letter-spacing: 0.32px;
   text-decoration: none;
-  transition: background-color var(--duration-fast) ease-out, color var(--duration-fast) ease-out;
+  transition: background-color var(--duration-fast) ease-out, border-color var(--duration-fast) ease-out;
 }
-.button-outline:hover{
-  background: var(--color-section-text);
-  color: var(--color-section-bg);
+.button-primary:hover,
+.pdf-button:hover{
+  background: var(--color-button-bg-hover);
+  border-color: var(--color-button-bg-hover);
 }
-.button-outline:focus-visible,
+.button-primary:focus-visible,
 .pdf-button:focus-visible{
-  outline: 2px solid var(--color-section-border);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 4px;
 }
 
@@ -137,8 +147,9 @@ a{ color: inherit; }
   margin: 0;
   padding: 14px 0 20px;
   max-width: 538px;
+  color: var(--color-body);
   font-size: 16px;
-  line-height: 25.5px;
+  line-height: 28px;
 }
 
 /* ---------- PDF card ---------- */
@@ -147,7 +158,8 @@ a{ color: inherit; }
   width: 100%;
   max-width: 539px;
   aspect-ratio: 539 / 283;
-  border: var(--border-thin) var(--color-section-border);
+  border: var(--border-thin) var(--color-card-border);
+  background: var(--color-card-bg);
 }
 .pdf-card__title{
   position: absolute;
@@ -156,13 +168,13 @@ a{ color: inherit; }
   margin: 0;
   display: flex;
   flex-direction: column;
-  width: 56%;
+  right: 6%;
   line-height: normal;
   letter-spacing: 0.18px;
 }
 .pdf-card__title .book-title__eyebrow{ font-size: 13.52px; }
 .pdf-card__title .book-title__name{ font-size: 27px; }
-.pdf-card__title .book-title__publisher{ font-size: 11.27px; white-space: nowrap; }
+.pdf-card__title .book-title__publisher{ font-size: 11.27px; line-height: 16px; }
 
 .pdf-button{
   position: absolute;
@@ -172,9 +184,10 @@ a{ color: inherit; }
   align-items: center;
   gap: 12px;
   padding: 8px 15px 6px;
-  border: var(--border-thin) var(--color-chip-border);
-  background: var(--color-chip-bg);
-  color: var(--color-section-text);
+  border: var(--border-thin) var(--color-button-bg);
+  background: var(--color-button-bg);
+  color: var(--color-button-text);
+  font-weight: 600;
   font-size: 18px;
   letter-spacing: 0.32px;
   text-decoration: none;
@@ -203,7 +216,7 @@ a{ color: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .skip-link, .button-outline{ transition: none; }
+  .skip-link, .button-primary{ transition: none; }
 }
 
 /* ---------- 3D book (landing-3d.html) ---------- */
@@ -224,7 +237,7 @@ a{ color: inherit; }
 }
 .book-webgl:active{ cursor: grabbing; }
 .book-webgl:focus-visible{
-  outline: 2px solid var(--color-section-border);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 4px;
 }
 .book-fallback{

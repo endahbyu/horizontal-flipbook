@@ -17,10 +17,14 @@
   --gray-200: #E5E7ED;
   --gray-100: #F2F4F8;
   --white: #FFFFFF;
-  --black: #000000;
-  --indigo-950: #18185E;
-  --blue-250: #C1CCF4;
-  --blue-50: #EBEEFB;
+  /* Landing palette (Figma 56:361) */
+  --navy-800: #102B88;
+  --navy-950: #0B1F66;
+  --navy-500: #4055A0;
+  --indigo-100: #E0E7FF;
+  --slate-900: #0F172A;
+  --slate-50: #F8FAFC;
+  --mist-50: #F5F6FA;
 
   --font-host-grotesk: "Host Grotesk", "Instrument Serif", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-inter: "Inter", "Newsreader", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -50,12 +54,19 @@
   --color-focus: var(--blue-500);
   --gradient-brand: linear-gradient(110deg, #F6B400 0%, #F04A32 28%, #D41478 52%, #6B20B8 74%, #245BDA 100%);
 
-  /* Landing book section (overridden per book below) */
-  --color-section-bg: var(--color-bg);
-  --color-section-text: var(--color-text);
-  --color-section-border: var(--color-text);
-  --color-chip-bg: var(--blue-250);
-  --color-chip-border: var(--color-section-border);
+  /* Landing page (overridden per book below) */
+  --color-page-bg: var(--slate-50);
+  --color-section-bg: var(--color-page-bg);
+  --color-eyebrow: var(--navy-500);
+  --color-heading: var(--navy-800);
+  --color-subheading: var(--navy-500);
+  --color-body: var(--slate-900);
+  --color-button-bg: var(--navy-800);
+  --color-button-bg-hover: var(--navy-950);
+  --color-button-text: var(--white);
+  --color-card-bg: var(--white);
+  --color-card-border: var(--navy-500);
+  --color-focus-ring: var(--navy-800);
 
   /* Decorative wash */
   --wash-highlight: rgb(255 255 255 / 0.85);
@@ -83,25 +94,18 @@
 }
 
 /* ---------- 3. Book themes ---------- */
-/* Strategy Plan (Advancing Inclusivity) — Figma section: light blue, black text. */
+/* Strategy Plan (Advancing Inclusivity) — Figma 56:361: indigo-100 section. */
 [data-book="strategy"]{
   --color-accent: var(--blue-600);
-  --color-section-bg: var(--blue-50);
-  --color-section-text: var(--black);
-  --color-section-border: var(--black);
-  --color-chip-bg: var(--blue-250);
-  --color-chip-border: var(--white);
+  --color-section-bg: var(--indigo-100);
 }
 
-/* Action Plan — Figma section: periwinkle, indigo text. */
+/* Action Plan — Figma 56:361: mist section, navy eyebrow. */
 [data-book="action-plan"]{
   --color-bg: var(--blue-100);
   --color-header-fade: rgb(234 238 250 / 0.94);
   --color-header-fade-soft: rgb(234 238 250 / 0.63);
   --color-accent: var(--navy-900);
-  --color-section-bg: var(--blue-250);
-  --color-section-text: var(--indigo-950);
-  --color-section-border: var(--indigo-950);
-  --color-chip-bg: var(--blue-50);
-  --color-chip-border: var(--indigo-950);
+  --color-section-bg: var(--mist-50);
+  --color-eyebrow: var(--navy-800);
 }

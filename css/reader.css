@@ -607,6 +607,9 @@ a{ color: inherit; }
 
 #offlineButton[hidden]{ display: none !important; }
 
+/* Filled icons (e.g. Thumbnails) use fill instead of the default stroke. */
+svg.icon-fill{ fill: currentColor; stroke: none; }
+
 /* ---------- Rotate tip (phone held upright, shown once) ---------- */
 .rotate-hint{
   position: fixed;

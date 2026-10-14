@@ -716,16 +716,81 @@ a{ color: inherit; }
   -webkit-backdrop-filter: none;
 }
 .controls-immersive .reader-controls > :not(#menuButton):not(#controlsMenu){ display: none; }
+/* Floating action menu: a translucent round "+" that turns into "×",
+   and the options fan out above it as pills, staggered. */
 .controls-immersive .control-menu-toggle{
   width: 48px;
   height: 48px;
-  border: 1px solid var(--color-control-border);
-  background: var(--color-control-bg);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  box-shadow: var(--shadow-control);
+  border: 0;
+  background: rgb(var(--navy-900-rgb) / 0.86);
+  color: var(--color-button-text);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgb(0 0 0 / 0.2);
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
 }
-.controls-immersive .control-menu-toggle[aria-expanded="true"]{ background: var(--color-page-bg); }
+.controls-immersive .control-menu-toggle:active{ transform: scale(0.95); }
+.controls-immersive .control-menu-toggle svg{
+  width: 24px;
+  height: 24px;
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.controls-immersive .control-menu-toggle[aria-expanded="true"]{ background: var(--color-button-bg); }
+.controls-immersive .control-menu-toggle[aria-expanded="true"] svg{ transform: rotate(45deg); }
+
+.controls-immersive .controls-menu{
+  bottom: calc(100% + 12px);
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translate(10px, 10px);
+  transition:
+    opacity 220ms ease-out,
+    filter 220ms ease-out,
+    transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.controls-immersive .controls-menu.is-open{ opacity: 1; filter: none; transform: none; }
+.controls-immersive .controls-menu > .control,
+.controls-immersive .controls-menu > .reader-download{
+  width: auto;
+  min-height: 44px;
+  gap: 8px;
+  padding: 0 16px 0 14px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: rgb(var(--navy-900-rgb) / 0.86);
+  color: var(--color-button-text);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 20px rgb(0 0 0 / 0.2);
+  font-size: var(--text-label);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(20px);
+  transition:
+    opacity 200ms ease-out calc(var(--i, 0) * 50ms),
+    transform 260ms var(--ease-out) calc(var(--i, 0) * 50ms),
+    background-color 160ms ease;
+}
+.controls-immersive .controls-menu.is-open > *{ opacity: 1; transform: none; }
+.controls-immersive .controls-menu > * svg,
+.controls-immersive .controls-menu > .reader-download svg.reader-download__book{ width: 16px; height: 16px; }
+.controls-immersive .controls-menu > [aria-pressed="true"]{ background: var(--color-button-bg-hover); }
+@media (hover: hover){
+  .controls-immersive .controls-menu > :hover{ background: var(--color-button-bg-hover); }
+}
+@media (prefers-reduced-motion: reduce){
+  .controls-immersive .controls-menu,
+  .controls-immersive .controls-menu > *{ filter: none; transform: none; transition: opacity 150ms ease; }
+  .controls-immersive .control-menu-toggle svg{ transition: none; }
+}
+
 .controls-menu .reader-download{
   display: flex;
   align-items: center;

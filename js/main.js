@@ -845,17 +845,26 @@
     menuItems[sel] = { el: el, marker: marker };
   });
 
-  function isMenuOpen() { return !menu.hidden; }
+  // Open/close in two steps so CSS can animate both ways: unhide, then
+  // add .is-open next frame; on close, drop .is-open and hide after the
+  // exit transition.
+  var MENU_EXIT_MS = 220;
+  var menuHideTimer = null;
+  function isMenuOpen() { return menu.classList.contains("is-open"); }
   function openMenu() {
+    clearTimeout(menuHideTimer);
+    Array.prototype.forEach.call(menu.children, function (el, i) { el.style.setProperty("--i", i); });
     menu.hidden = false;
     menuBtn.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(function () { menu.classList.add("is-open"); });
     var first = menu.querySelector("button:not([hidden]), a");
-    if (first) first.focus();
+    if (first) first.focus({ preventScroll: true });
   }
   function closeMenu(returnFocus) {
     if (!isMenuOpen()) return;
-    menu.hidden = true;
+    menu.classList.remove("is-open");
     menuBtn.setAttribute("aria-expanded", "false");
+    menuHideTimer = setTimeout(function () { menu.hidden = true; }, MENU_EXIT_MS);
     if (returnFocus) menuBtn.focus();
   }
 

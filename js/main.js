@@ -153,10 +153,10 @@
     var compact = window.matchMedia(COMPACT_MQ).matches;
     var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
     var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
-    var chromeH = immersive ? controls.offsetHeight + 24
+    var chromeH = immersive ? 0
       : (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
-    var maxW = immersive ? vw - 32 : clamp(vw - arrows - 32, 240, 1600);
+    var maxW = immersive ? vw : clamp(vw - arrows - 32, 240, 1600);
     var maxH = immersive ? vh - chromeH : clamp(vh - chromeH, 135, 900);
 
     var pageW = maxW;
@@ -305,12 +305,20 @@
   var soundToggle = document.getElementById("soundToggle");
   var lastIndex = startIndex;
 
+  // The button names its action ("Mute" / "Unmute"), so the label and the
+  // accessible name always say what a tap will do.
+  var soundLabel = soundToggle.querySelector(".control-label");
+  function syncSoundToggle(on) {
+    soundToggle.dataset.on = String(on);
+    soundToggle.setAttribute("aria-label", on ? "Mute page-turn sound" : "Unmute page-turn sound");
+    if (soundLabel) soundLabel.textContent = on ? "Mute" : "Unmute";
+  }
   if (sound) {
-    soundToggle.setAttribute("aria-pressed", String(sound.isEnabled()));
+    syncSoundToggle(sound.isEnabled());
     soundToggle.addEventListener("click", function () {
       var on = !sound.isEnabled();
       sound.setEnabled(on);
-      soundToggle.setAttribute("aria-pressed", String(on));
+      syncSoundToggle(on);
     });
   } else {
     soundToggle.hidden = true;
@@ -833,7 +841,7 @@
   var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
   // Upright phones keep the toolbar and tuck fullscreen into the menu;
   // landscape phones hide the toolbar and offer the download instead.
-  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", "#fullscreenButton", ".reader-download"];
+  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"];
   var MENU_IMMERSIVE = MENU_COMPACT;
   var menuItems = {};
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {

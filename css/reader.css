@@ -358,8 +358,8 @@ a{ color: inherit; }
   stroke-linejoin: round;
 }
 .reader-sound .icon-sound-on,
-.reader-sound[aria-pressed="true"] .icon-sound-off{ display: none; }
-.reader-sound[aria-pressed="true"] .icon-sound-on{ display: block; }
+.reader-sound[data-on="true"] .icon-sound-off{ display: none; }
+.reader-sound[data-on="true"] .icon-sound-on{ display: block; }
 
 #fullscreenButton .icon-collapse,
 #fullscreenButton[aria-pressed="true"] .icon-expand{ display: none; }
@@ -796,6 +796,7 @@ a{ color: inherit; }
   overflow: visible;
   clip-path: none;
 }
+.controls-compact .controls-menu .reader-download__more{ display: none; }
 .controls-compact .controls-menu > * svg{ flex: none; width: 16px; height: 16px; color: #243a9d; }
 .controls-compact .controls-menu > [aria-pressed="true"]{ background: #e9edfa; }
 .controls-compact .controls-menu > :active{ background: #eef1fa; }
@@ -827,9 +828,27 @@ a{ color: inherit; }
 @media (max-height: 500px) and (orientation: landscape) and (pointer: coarse){
   body.reader{ height: 100dvh; }
   .reader-top{ display: none; }
-  .book-wrap{ gap: 8px; padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)); }
+  .book-wrap{ gap: 0; padding: 0; }
   .page-arrow{ display: none; }
 }
+
+/* Phones in landscape: the page takes the whole screen. The toolbar
+   hides (swipe turns pages) and only the menu button stays, floating in
+   the bottom-left corner: clear of the forward page-turn corner on the
+   right, inside the safe area, and within thumb reach. Its menu opens
+   upward from the same edge. */
+.controls-immersive .reader-controls{
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  width: var(--mobile-bar-h);
+  height: var(--mobile-bar-h);
+  padding: 0;
+}
+.controls-immersive .reader-controls::before{ display: none; }
+.controls-immersive .reader-controls > :not(#menuButton):not(#controlsMenu){ display: none; }
+.controls-immersive .control-menu-toggle{ left: 0; right: auto; }
+.controls-immersive .controls-menu{ left: 0; right: auto; align-items: flex-start; }
 
 /* Very narrow phones: the scrubber can't fit usefully; the readout, arrows
    and contents still navigate. */

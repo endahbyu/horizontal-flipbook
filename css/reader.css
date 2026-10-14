@@ -610,6 +610,53 @@ a{ color: inherit; }
 /* Filled icons (e.g. Thumbnails) use fill instead of the default stroke. */
 svg.icon-fill{ fill: currentColor; stroke: none; }
 
+/* Zoom page: only offered on phones (inside the menu). */
+#zoomPageButton{ display: none; }
+.controls-compact .controls-menu #zoomPageButton{ display: flex; }
+
+.page-viewer{
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  background: var(--color-reader-bg);
+}
+.page-viewer[hidden]{ display: none; }
+.page-viewer__scroll{
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  place-items: center;
+}
+.page-viewer.is-zoomed .page-viewer__scroll{ display: block; }
+.page-viewer__img{
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.page-viewer__close{
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #d7ddf0;
+  border-radius: 50%;
+  background: #fff;
+  color: #243a9d;
+  box-shadow: 0 5px 18px rgb(83 99 152 / 0.18);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.page-viewer__close svg{ width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
 /* ---------- Rotate tip (phone held upright, shown once) ---------- */
 .rotate-hint{
   position: fixed;
@@ -822,6 +869,7 @@ svg.icon-fill{ fill: currentColor; stroke: none; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 640px){
+  .toc-list{ grid-template-columns: 1fr; }
   .reader-top{
     grid-template-columns: auto 1fr auto;
     gap: 8px;
@@ -845,6 +893,7 @@ svg.icon-fill{ fill: currentColor; stroke: none; }
   body.reader{ height: 100dvh; }
   .reader-top{ display: none; }
   .book-wrap{ gap: 0; padding: 12px 0; } /* keep in sync with IMMERSIVE_PAD in main.js */
+  .toc-list{ grid-template-columns: 1fr; }
   /* Prev / next arrows beside the page, as on desktop (52px each, see main.js). */
   .page-arrow{ display: grid; place-items: center; flex: 0 0 52px; height: 88px; opacity: 0.7; }
 }

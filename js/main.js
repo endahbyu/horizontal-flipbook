@@ -844,7 +844,7 @@
   var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
   // Upright phones keep the toolbar and tuck fullscreen into the menu;
   // landscape phones hide the toolbar and offer the download instead.
-  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download", "#offlineButton"];
+  var MENU_COMPACT = ["#zoomPageButton", "#tocButton", "#tocListButton", "#soundToggle", ".reader-download", "#offlineButton"];
   var MENU_IMMERSIVE = MENU_COMPACT;
   var menuItems = {};
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
@@ -949,6 +949,77 @@
       if (!portraitPhone.matches) closeHint();
     });
   }
+
+  /* ============================================================
+     PAGE ZOOM (phones)
+     A 16:9 page is small on a phone. "Zoom" opens the current page on its
+     own, as a plain image drawn at 2.5x the screen width and scrolled with
+     the finger. Being a real large image (not a CSS-scaled one), the text
+     stays sharp. Double-tap switches between fit and zoomed.
+     ============================================================ */
+  var viewer = document.createElement("div");
+  viewer.className = "page-viewer";
+  viewer.hidden = true;
+  viewer.setAttribute("role", "dialog");
+  viewer.setAttribute("aria-modal", "true");
+  viewer.setAttribute("aria-label", "Zoomed page");
+  viewer.innerHTML =
+    '<div class="page-viewer__scroll"><img class="page-viewer__img" alt=""></div>' +
+    '<button type="button" class="page-viewer__close" aria-label="Close zoom">' +
+    '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>';
+  document.body.appendChild(viewer);
+  var viewerScroll = viewer.querySelector(".page-viewer__scroll");
+  var viewerImg = viewer.querySelector(".page-viewer__img");
+  var VIEWER_ZOOM = 2.5; // at 3x screens the 2880px copy keeps text crisp
+  var viewerZoomed = false;
+
+  function setViewerZoom(zoomed, focusX, focusY) {
+    var rect = viewerScroll.getBoundingClientRect();
+    var fx = focusX == null ? 0.5 : (focusX + viewerScroll.scrollLeft) / viewerScroll.scrollWidth;
+    var fy = focusY == null ? 0.5 : (focusY + viewerScroll.scrollTop) / viewerScroll.scrollHeight;
+    viewerZoomed = zoomed;
+    viewer.classList.toggle("is-zoomed", zoomed);
+    viewerImg.style.width = zoomed ? (rect.width * VIEWER_ZOOM) + "px" : "";
+    if (zoomed) {
+      viewerScroll.scrollLeft = fx * viewerScroll.scrollWidth - rect.width / 2;
+      viewerScroll.scrollTop = fy * viewerScroll.scrollHeight - rect.height / 2;
+    }
+  }
+  function openViewer() {
+    var idx = pageFlip.getCurrentPageIndex();
+    if (!PAGES[idx] || !PAGES[idx].src) return;
+    // Sharper 2880px copy for zooming (assets/books/<book>/hd/); falls back
+    // to the regular page if there is none (e.g. the standalone download).
+    var src = PAGES[idx].src;
+    var hd = /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)$/, "/hd/$1");
+    viewerImg.onerror = function () { viewerImg.onerror = null; viewerImg.src = src; };
+    viewerImg.src = hd;
+    viewerImg.alt = PAGES[idx].title;
+    viewer.hidden = false;
+    setViewerZoom(true);
+    viewer.querySelector(".page-viewer__close").focus({ preventScroll: true });
+  }
+  function closeViewer() {
+    if (viewer.hidden) return;
+    viewer.hidden = true;
+    setViewerZoom(false);
+    if (lastInputKeyboard) menuBtn.focus();
+  }
+  viewer.querySelector(".page-viewer__close").addEventListener("click", closeViewer);
+  viewer.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { e.stopPropagation(); closeViewer(); }
+  });
+  var lastTap = 0;
+  viewerScroll.addEventListener("pointerup", function (e) {
+    var now = Date.now();
+    if (now - lastTap < 300) {
+      var r = viewerScroll.getBoundingClientRect();
+      setViewerZoom(!viewerZoomed, e.clientX - r.left, e.clientY - r.top);
+      lastTap = 0;
+    } else lastTap = now;
+  });
+  var zoomPageBtn = document.getElementById("zoomPageButton");
+  if (zoomPageBtn) zoomPageBtn.addEventListener("click", openViewer);
 
   /* ============================================================
      IPHONE / IPAD

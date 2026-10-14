@@ -93,6 +93,9 @@ async function buildBook(bookId, { html, file }) {
   // Reader only: no way back to the landing page, no download-of-itself.
   page = page.replace(/\s*<a class="reader-back"[\s\S]*?<\/a>/, '');
   page = page.replace(/\s*<a class="reader-download"[\s\S]*?<\/a>/, '');
+  // Site-only: offline service worker, web-app manifest and home-screen icon.
+  page = page.replace(/\s*<script src="js\/offline\.js" defer><\/script>/, '');
+  page = page.replace(/\s*<link rel="(manifest|apple-touch-icon)"[^>]*>/g, '');
   // Font preloads point at files that no longer exist.
   page = page.replace(/\s*<link rel="preload"[^>]*>/g, '');
   page = page.replace(/<link rel="icon" type="image\/png" href="([^"]+)">/, (_, href) =>

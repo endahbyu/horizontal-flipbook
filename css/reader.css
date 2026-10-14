@@ -605,6 +605,8 @@ a{ color: inherit; }
 .is-empty .empty-state{ display: block; }
 .is-empty .book-wrap{ display: none; }
 
+#offlineButton[hidden]{ display: none !important; }
+
 /* ---------- Rotate tip (phone held upright, shown once) ---------- */
 .rotate-hint{
   position: fixed;
@@ -829,7 +831,8 @@ a{ color: inherit; }
   body.reader{ height: 100dvh; }
   .reader-top{ display: none; }
   .book-wrap{ gap: 0; padding: 12px 0; } /* keep in sync with IMMERSIVE_PAD in main.js */
-  .page-arrow{ display: none; }
+  /* Prev / next arrows beside the page, as on desktop (52px each, see main.js). */
+  .page-arrow{ display: grid; place-items: center; flex: 0 0 52px; height: 88px; opacity: 0.7; }
 }
 
 /* Phones in landscape: the page takes the whole screen. The toolbar

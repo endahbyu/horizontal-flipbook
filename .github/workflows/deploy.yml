@@ -47,7 +47,9 @@ jobs:
       - name: Stage static site
         run: |
           mkdir -p _site
-          cp -r assets css js downloads *.html _site/
+          cp -r assets css js downloads *.html sw.js manifest.webmanifest _site/
+          # New cache name per deploy, so readers pick up updates.
+          sed -i "s/__BUILD__/${GITHUB_SHA::8}/" _site/sw.js
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages

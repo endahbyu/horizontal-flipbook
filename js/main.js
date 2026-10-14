@@ -155,11 +155,11 @@
     // landscape the top bar goes too, so the page fills the screen.
     var compact = window.matchMedia(COMPACT_MQ).matches;
     var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
-    var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
+    var arrows = immersive ? 2 * 52 : compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
     var chromeH = immersive ? 2 * IMMERSIVE_PAD
       : (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
-    var maxW = immersive ? vw - 2 * IMMERSIVE_PAD : clamp(vw - arrows - 32, 240, 1600);
+    var maxW = immersive ? vw - arrows - 2 * IMMERSIVE_PAD : clamp(vw - arrows - 32, 240, 1600);
     var maxH = immersive ? vh - chromeH : clamp(vh - chromeH, 135, 900);
 
     var pageW = maxW;
@@ -844,7 +844,7 @@
   var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
   // Upright phones keep the toolbar and tuck fullscreen into the menu;
   // landscape phones hide the toolbar and offer the download instead.
-  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"];
+  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download", "#offlineButton"];
   var MENU_IMMERSIVE = MENU_COMPACT;
   var menuItems = {};
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
@@ -941,6 +941,39 @@
     if (portraitPhone.addEventListener) portraitPhone.addEventListener("change", function () {
       if (!portraitPhone.matches) closeHint();
     });
+  }
+
+  /* ============================================================
+     IPHONE / IPAD
+     iOS can't run a downloaded HTML file (Files only previews it), so:
+     - the Download link hands over the PDF instead;
+     - "Save offline" explains Add to Home Screen, which keeps the whole
+       book on the device through the service worker (sw.js).
+     ============================================================ */
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var isInstalled = window.navigator.standalone === true ||
+    window.matchMedia("(display-mode: standalone)").matches;
+  var downloadLink = document.querySelector(".reader-download");
+  if (isIOS && downloadLink) {
+    downloadLink.href = "assets/books/" + bookId + "/" + bookId + ".pdf";
+    downloadLink.setAttribute("download", "MCMC-P2630-" + bookId + ".pdf");
+    downloadLink.removeAttribute("title");
+  }
+  var offlineBtn = document.getElementById("offlineButton");
+  var offlineHint = document.getElementById("offlineHint");
+  if (offlineBtn && offlineHint && isIOS && !isInstalled && location.protocol !== "file:") {
+    offlineBtn.hidden = false;
+    offlineBtn.addEventListener("click", function () { offlineHint.hidden = false; });
+    document.getElementById("offlineHintClose").addEventListener("click", function () { offlineHint.hidden = true; });
+  }
+
+  // Keep this whole book on the device for offline reading.
+  if (navigator.serviceWorker && location.protocol !== "file:") {
+    navigator.serviceWorker.ready.then(function (reg) {
+      var urls = PAGES.map(function (p) { return p.src; }).filter(Boolean);
+      if (reg.active) reg.active.postMessage({ type: "cache-book", urls: urls });
+    }).catch(function () {});
   }
 
   /* ============================================================

@@ -12,27 +12,37 @@
   var buffer = null;
   var lastPlay = 0;
 
+  // On by default; only an explicit "Mute" (stored as enabled:false) turns it off.
   function readEnabled() {
-    try { return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}").enabled === true; }
-    catch (e) { return false; } // off unless the viewer turned it on
+    try { return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}").enabled !== false; }
+    catch (e) { return true; }
   }
   var enabled = readEnabled();
 
-  // Browsers only start audio after a user gesture.
+  // Download the sample right away; it is decoded once audio is unlocked.
+  var data = fetch(SRC)
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .catch(function () { return null; }); // no sound file: stay silent
+
+  // Browsers (iOS Safari above all) only start audio inside a user gesture.
   function unlock() {
     if (!ctx) {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
       ctx = new AC();
-      fetch(SRC)
-        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-        .then(function (data) { return ctx.decodeAudioData(data); })
-        .then(function (decoded) { buffer = decoded; })
-        .catch(function () { /* no sound file: stay silent */ });
+      data.then(function (bytes) {
+        if (!bytes) return;
+        // Callback form: older iOS Safari has no promise-based decodeAudioData.
+        ctx.decodeAudioData(bytes.slice(0), function (decoded) { buffer = decoded; }, function () {});
+      });
     }
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state === "suspended" || ctx.state === "interrupted") ctx.resume();
   }
-  ["pointerdown", "keydown"].forEach(function (type) {
+  // Decode ahead of time (a suspended context can decode); the first
+  // gesture then only has to resume it, so the very first turn is heard.
+  if (enabled) unlock();
+
+  ["pointerdown", "touchend", "keydown"].forEach(function (type) {
     window.addEventListener(type, function () { if (enabled) unlock(); }, { capture: true });
   });
 
@@ -40,7 +50,9 @@
     // `cue` (forward / back / open / close) only varies the pitch slightly,
     // so covers sound a touch heavier than paper.
     play: function (cue) {
-      if (!enabled || !buffer) return;
+      if (!enabled) return;
+      unlock();
+      if (!buffer) return;
       var now = Date.now();
       if (now - lastPlay < COOLDOWN_MS) return;
       lastPlay = now;

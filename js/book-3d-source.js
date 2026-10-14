@@ -5,8 +5,8 @@ import * as THREE from "three";
 // Cover tint per book. Strategy's cover art is near-white, so its front and
 // spine are multiplied by the section background (--indigo-100) and glow in
 // it too: the paper-white then lands on the page colour instead of #fff.
-const COVER_TINT = { strategy: 0xe0e7ff, "action-plan": 0xffffff };
-const COVER_GLOW = { strategy: 0.65, "action-plan": 0.45 };
+const COVER_TINT = { strategy: 0xebefff, "action-plan": 0xffffff };
+const COVER_GLOW = { strategy: 0.7, "action-plan": 0.45 };
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

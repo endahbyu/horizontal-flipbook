@@ -141,7 +141,7 @@
   }
 
   // Fit the page into the space left between the top bar and the toolbar.
-  var COMPACT_MQ = "(max-height: 500px) and (orientation: landscape) and (pointer: coarse)";
+  var COMPACT_MQ = "(max-width: 640px), (max-height: 500px) and (pointer: coarse)";
   var IMMERSIVE_MQ = "(max-height: 500px) and (orientation: landscape) and (pointer: coarse)";
 
   function computePageSize() {

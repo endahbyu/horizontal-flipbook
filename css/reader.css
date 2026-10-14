@@ -759,23 +759,8 @@ a{ color: inherit; }
   .reader-download{ min-height: 44px; min-width: 44px; padding: 0; justify-content: center; }
   .reader-download__text{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .page-arrow{ display: none; }
-  /* Same controls as desktop, in DOM order, wrapped onto two rows:
-     contents + page navigation, then zoom, sound and fullscreen. */
-  .reader-controls{
-    width: calc(100% - 32px);
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0;
-    border-radius: 28px;
-  }
-  .control-sep{ display: none; }
-  .control-sep--wide{
-    display: block;
-    flex-basis: 100%;
-    width: auto;
-    height: 1px;
-    margin: 2px 12px;
-  }
+  .zoom-group, .control-sep{ display: none; }
+  .reader-controls{ width: calc(100% - 32px); gap: 0; }
   .scrubber{ flex: 1; min-width: 0; gap: 8px; padding: 0 4px; }
   #pageScrubber{ flex: 1; width: auto; min-width: 0; }
   .page-readout{ min-width: 52px; }

@@ -625,6 +625,11 @@ a{ color: inherit; }
   @starting-style{ opacity: 0; transform: translateY(-8px); }
 }
 .rotate-hint[hidden]{ display: none; }
+/* Keep the tip a compact card (2–3 lines) on wide screens such as phones in landscape. */
+@media (min-width: 480px){
+  .rotate-hint{ max-width: 380px; margin-inline: auto; }
+  .controls-immersive .rotate-hint{ top: calc(16px + env(safe-area-inset-top, 0px)); }
+}
 .rotate-hint__icon{
   flex: none;
   width: 28px;
@@ -699,6 +704,12 @@ a{ color: inherit; }
   background: var(--mobile-surface);
   box-shadow: 0 5px 18px rgb(83 99 152 / 0.09);
 }
+/* No fullscreen button on phones. */
+.controls-compact #fullscreenButton{ display: none; }
+/* Touch: no grey tap flash, and focus rings only for keyboard focus. */
+.controls-compact .reader-controls,
+.controls-compact .reader-controls *{ -webkit-tap-highlight-color: transparent; }
+.controls-compact .reader-controls :focus:not(:focus-visible){ outline: none; }
 .controls-compact .reader-controls > .control-sep,
 .controls-compact .reader-controls > .zoom-group{ display: none; }
 .controls-compact .scrubber{ flex: 1; min-width: 0; gap: 11px; padding: 0 4px; }

@@ -834,12 +834,11 @@ a{ color: inherit; }
 
 /* Phones in landscape: the page takes the whole screen. The toolbar
    hides (swipe turns pages) and only the menu button stays, floating in
-   the bottom-left corner: clear of the forward page-turn corner on the
-   right, inside the safe area, and within thumb reach. Its menu opens
-   upward from the same edge. */
+   the bottom-right corner inside the safe area. Its menu opens upward,
+   right-aligned. */
 .controls-immersive .reader-controls{
   position: fixed;
-  left: max(16px, env(safe-area-inset-left, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
   bottom: max(16px, env(safe-area-inset-bottom, 0px));
   width: var(--mobile-bar-h);
   height: var(--mobile-bar-h);
@@ -847,8 +846,8 @@ a{ color: inherit; }
 }
 .controls-immersive .reader-controls::before{ display: none; }
 .controls-immersive .reader-controls > :not(#menuButton):not(#controlsMenu){ display: none; }
-.controls-immersive .control-menu-toggle{ left: 0; right: auto; }
-.controls-immersive .controls-menu{ left: 0; right: auto; align-items: flex-start; }
+.controls-immersive .control-menu-toggle{ right: 0; }
+.controls-immersive .controls-menu{ right: 0; align-items: flex-end; }
 
 /* Very narrow phones: the scrubber can't fit usefully; the readout, arrows
    and contents still navigate. */

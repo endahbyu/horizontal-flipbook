@@ -153,11 +153,11 @@
     var compact = window.matchMedia(COMPACT_MQ).matches;
     var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
     var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
-    var chromeH = immersive ? 0
+    var chromeH = immersive ? controls.offsetHeight + 24
       : (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
-    var maxW = immersive ? vw : clamp(vw - arrows - 32, 240, 1600);
-    var maxH = immersive ? vh : clamp(vh - chromeH, 135, 900);
+    var maxW = immersive ? vw - 32 : clamp(vw - arrows - 32, 240, 1600);
+    var maxH = immersive ? vh - chromeH : clamp(vh - chromeH, 135, 900);
 
     var pageW = maxW;
     var pageH = pageW / PAGE_RATIO;
@@ -833,8 +833,8 @@
   var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
   // Upright phones keep the toolbar and tuck fullscreen into the menu;
   // landscape phones hide the toolbar and offer the download instead.
-  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", "#fullscreenButton"];
-  var MENU_IMMERSIVE = ["#tocButton", "#tocListButton", "#soundToggle", ".reader-download"];
+  var MENU_COMPACT = ["#tocButton", "#tocListButton", "#soundToggle", "#fullscreenButton", ".reader-download"];
+  var MENU_IMMERSIVE = MENU_COMPACT;
   var menuItems = {};
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
     if (menuItems[sel]) return;
@@ -853,7 +853,11 @@
   function isMenuOpen() { return menu.classList.contains("is-open"); }
   function openMenu() {
     clearTimeout(menuHideTimer);
-    Array.prototype.forEach.call(menu.children, function (el, i) { el.style.setProperty("--i", i); });
+    var n = menu.children.length;
+    Array.prototype.forEach.call(menu.children, function (el, i) {
+      el.style.setProperty("--i", i);
+      el.style.setProperty("--n", n);
+    });
     menu.hidden = false;
     menuBtn.setAttribute("aria-expanded", "true");
     requestAnimationFrame(function () { menu.classList.add("is-open"); });

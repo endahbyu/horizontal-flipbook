@@ -48,15 +48,38 @@ function loadManifest(bookId) {
   return manifest;
 }
 
-async function inlineManifest(bookId) {
+// Every page is written once, as a plain <img>. Without JavaScript (iPhone
+// Files / Quick Look previews never run scripts) the reader still sees the
+// whole book as a scrolling column of pages. With JavaScript, the manifest
+// below reads those same images back, so nothing is embedded twice.
+async function staticPages(bookId) {
   const m = loadManifest(bookId);
-  const inline = {
-    coverFront: m.coverFront && (await imageDataUri(m.coverFront)),
-    coverBack: m.coverBack && (await imageDataUri(m.coverBack)),
-    pages: await Promise.all(m.pages.map(imageDataUri)),
-  };
-  return `window.FLIPBOOK_MANIFESTS = ${JSON.stringify({ [bookId]: inline })};`;
+  const entries = [
+    m.coverFront && ['front', m.coverFront, 'Front cover'],
+    ...m.pages.map((rel, i) => [`p${i}`, rel, `Page ${String(i + 2).padStart(2, '0')}`]),
+    m.coverBack && ['back', m.coverBack, 'Back cover'],
+  ].filter(Boolean);
+  const imgs = await Promise.all(entries.map(async ([id, rel, alt]) =>
+    `<img id="sp-${id}" src="${await imageDataUri(rel)}" alt="${alt}" width="1600" height="900" decoding="async">`));
+  const html = `<div class="static-pages" id="staticPages">\n${imgs.join('\n')}\n</div>`;
+  const manifest = `(function () {
+  var q = function (id) { var el = document.getElementById("sp-" + id); return el ? el.getAttribute("src") : null; };
+  var pages = [];
+  for (var i = 0; i < ${m.pages.length}; i++) pages.push(q("p" + i));
+  window.FLIPBOOK_MANIFESTS = { ${JSON.stringify(bookId)}: { coverFront: q("front"), coverBack: q("back"), pages: pages } };
+  document.documentElement.classList.remove("no-js");
+})();`;
+  return { html, manifest };
 }
+
+// Shown only when scripts don't run: the pages as a simple scrolling column.
+const NO_JS_CSS = `<style>
+.static-pages{ display: none; }
+.no-js .static-pages{ display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+.no-js .static-pages img{ display: block; width: 100%; height: auto; box-shadow: 0 2px 10px rgb(0 0 0 / 0.12); }
+.no-js .book-wrap, .no-js .reader-notice{ display: none !important; }
+.no-js body.reader{ height: auto; overflow: auto; }
+</style>`;
 
 function inlineStylesheet(rel) {
   // Rewrite url(../assets/...) references (fonts) to data URIs.
@@ -76,8 +99,13 @@ async function buildBook(bookId, { html, file }) {
     `<link rel="icon" type="image/png" href="data:image/png;base64,${read(href).toString('base64')}">`);
 
   page = page.replace(/<link rel="stylesheet" href="([^"]+)"\s*\/?>/g, (_, href) => inlineStylesheet(href));
+  page = page.replace('</head>', `${NO_JS_CSS}\n  </head>`);
+  page = page.replace('<html lang="en">', '<html lang="en" class="no-js">');
+  // The "needs JavaScript" notice is replaced by the static pages.
+  page = page.replace(/\s*<noscript>[\s\S]*?<\/noscript>/, '');
 
-  const manifest = await inlineManifest(bookId);
+  const { html: pagesHtml, manifest } = await staticPages(bookId);
+  page = page.replace('    <script src="js/vendor/', `    ${pagesHtml}\n    <script src="js/vendor/`);
   page = page.replace(/<script src="([^"]+)"><\/script>/g, (_, src) => {
     let code = src === 'js/pages.js' ? manifest : read(src).toString();
     if (src === 'js/reader-sound.js') {

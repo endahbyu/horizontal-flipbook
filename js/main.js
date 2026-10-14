@@ -144,6 +144,9 @@
   var COMPACT_MQ = "(max-width: 640px), (max-height: 500px) and (pointer: coarse)";
   var IMMERSIVE_MQ = "(max-height: 500px) and (orientation: landscape) and (pointer: coarse)";
 
+  // Breathing room above and below the page in landscape (matches CSS).
+  var IMMERSIVE_PAD = 12;
+
   function computePageSize() {
     var vw = document.documentElement.clientWidth;
     var vh = window.innerHeight;
@@ -153,10 +156,10 @@
     var compact = window.matchMedia(COMPACT_MQ).matches;
     var immersive = window.matchMedia(IMMERSIVE_MQ).matches;
     var arrows = compact ? 0 : 2 * clamp(vw * 0.06, 44, 80);
-    var chromeH = immersive ? 0
+    var chromeH = immersive ? 2 * IMMERSIVE_PAD
       : (inFullscreen ? 0 : topBar.offsetHeight) + controls.offsetHeight + 20 + 20 + 24;
 
-    var maxW = immersive ? vw : clamp(vw - arrows - 32, 240, 1600);
+    var maxW = immersive ? vw - 2 * IMMERSIVE_PAD : clamp(vw - arrows - 32, 240, 1600);
     var maxH = immersive ? vh - chromeH : clamp(vh - chromeH, 135, 900);
 
     var pageW = maxW;
@@ -847,6 +850,7 @@
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
     if (menuItems[sel]) return;
     var el = document.querySelector(sel);
+    if (!el) return; // e.g. the standalone download has no download link
     // A marker remembers where the control lives in the desktop layout.
     var marker = document.createComment(sel);
     el.parentNode.insertBefore(marker, el);
@@ -890,7 +894,7 @@
       var item = menuItems[sel];
       item.marker.parentNode.insertBefore(item.el, item.marker.nextSibling);
     });
-    wanted.forEach(function (sel) { menu.appendChild(menuItems[sel].el); });
+    wanted.forEach(function (sel) { if (menuItems[sel]) menu.appendChild(menuItems[sel].el); });
     if (!wanted.length) closeMenu(false);
   }
   [compactQuery, immersiveQuery].forEach(function (q) {

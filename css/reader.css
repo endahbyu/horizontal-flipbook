@@ -828,7 +828,7 @@ a{ color: inherit; }
 @media (max-height: 500px) and (orientation: landscape) and (pointer: coarse){
   body.reader{ height: 100dvh; }
   .reader-top{ display: none; }
-  .book-wrap{ gap: 0; padding: 0; }
+  .book-wrap{ gap: 0; padding: 12px 0; } /* keep in sync with IMMERSIVE_PAD in main.js */
   .page-arrow{ display: none; }
 }
 

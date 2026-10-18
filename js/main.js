@@ -842,15 +842,13 @@
   var menu = document.getElementById("controlsMenu");
   var compactQuery = window.matchMedia(COMPACT_MQ);
   var immersiveQuery = window.matchMedia(IMMERSIVE_MQ);
-  // Upright phones keep the toolbar and tuck fullscreen into the menu;
-  // landscape phones hide the toolbar and offer the download instead.
-  var MENU_COMPACT = ["#zoomPageButton", "#tocButton", "#tocListButton", "#soundToggle", ".reader-download", "#offlineButton"];
+  var MENU_COMPACT = ["#zoomPageButton", "#tocButton", "#tocListButton", "#soundToggle"];
   var MENU_IMMERSIVE = MENU_COMPACT;
   var menuItems = {};
   MENU_COMPACT.concat(MENU_IMMERSIVE).forEach(function (sel) {
     if (menuItems[sel]) return;
     var el = document.querySelector(sel);
-    if (!el) return; // e.g. the standalone download has no download link
+    if (!el) return;
     // A marker remembers where the control lives in the desktop layout.
     var marker = document.createComment(sel);
     el.parentNode.insertBefore(marker, el);
@@ -989,7 +987,7 @@
     var idx = pageFlip.getCurrentPageIndex();
     if (!PAGES[idx] || !PAGES[idx].src) return;
     // Sharper 2880px copy for zooming (assets/books/<book>/hd/); falls back
-    // to the regular page if there is none (e.g. the standalone download).
+    // to the regular page if there is none.
     var src = PAGES[idx].src;
     var hd = /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)$/, "/hd/$1");
     viewerImg.onerror = function () { viewerImg.onerror = null; viewerImg.src = src; };
@@ -1020,31 +1018,6 @@
   });
   var zoomPageBtn = document.getElementById("zoomPageButton");
   if (zoomPageBtn) zoomPageBtn.addEventListener("click", openViewer);
-
-  /* ============================================================
-     IPHONE / IPAD
-     iOS can't run a downloaded HTML file (Files only previews it), so:
-     - the Download link hands over the PDF instead;
-     - "Save offline" explains Add to Home Screen, which keeps the whole
-       book on the device through the service worker (sw.js).
-     ============================================================ */
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  var isInstalled = window.navigator.standalone === true ||
-    window.matchMedia("(display-mode: standalone)").matches;
-  var downloadLink = document.querySelector(".reader-download");
-  if (isIOS && downloadLink) {
-    downloadLink.href = "assets/books/" + bookId + "/" + bookId + ".pdf";
-    downloadLink.setAttribute("download", "MCMC-P2630-" + bookId + ".pdf");
-    downloadLink.removeAttribute("title");
-  }
-  var offlineBtn = document.getElementById("offlineButton");
-  var offlineHint = document.getElementById("offlineHint");
-  if (offlineBtn && offlineHint && isIOS && !isInstalled && location.protocol !== "file:") {
-    offlineBtn.hidden = false;
-    offlineBtn.addEventListener("click", function () { offlineHint.hidden = false; });
-    document.getElementById("offlineHintClose").addEventListener("click", function () { offlineHint.hidden = true; });
-  }
 
   // Keep this whole book on the device for offline reading.
   if (navigator.serviceWorker && location.protocol !== "file:") {

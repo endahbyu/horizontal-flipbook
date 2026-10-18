@@ -32,7 +32,6 @@
         <h1 class="reader-title__name">Advancing Inclusivity</h1>
       </div>
       <div class="reader-top__actions">
-        <a class="reader-download" href="downloads/MCMC-P2630-Strategy-Plan.html" download title="Download this flipbook to read offline (single HTML file)"><svg class="reader-download__book" aria-hidden="true" viewBox="0 -960 960 960"><path d="M260-319.23q49.69 0 96.69 11.27T450-272.61v-393.24q-42.15-27.46-91.23-41.19-49.08-13.73-98.77-13.73-36 0-67.27 5.65-31.27 5.66-64.27 18.5-4.61 1.54-6.54 4.43-1.92 2.88-1.92 6.34v378.31q0 5.39 3.85 7.89 3.84 2.5 8.46.57 28.46-9.69 60.07-14.92 31.62-5.23 67.62-5.23Zm250 46.62q46.31-24.08 93.31-35.35 47-11.27 96.69-11.27 36 0 67.62 5.23 31.61 5.23 60.07 14.92 4.62 1.93 8.46-.57 3.85-2.5 3.85-7.89v-378.31q0-3.46-1.92-6.15-1.93-2.69-6.54-4.62-33-12.84-64.27-18.5-31.27-5.65-67.27-5.65-49.69 0-98.77 13.73T510-665.85v393.24Zm-30 87.99q-48.38-35.69-104.38-55.15-56-19.46-115.62-19.46-36.61 0-71.92 8.11Q152.77-243 120-227.23q-21.38 9.84-40.69-3.12T60-267.08v-434.3q0-12.93 6.66-24.27Q73.31-737 85.85-742q40.61-19.77 84.65-29.27 44.04-9.5 89.5-9.5 58.38 0 114.08 15.96 55.69 15.97 105.92 47.12 50.23-31.15 105.92-47.12 55.7-15.96 114.08-15.96 45.46 0 89.5 9.5T874.15-742q12.54 5 19.19 16.35 6.66 11.34 6.66 24.27v434.3q0 23.77-20.08 36.35-20.08 12.57-42.23 2.73-32.38-15.39-67.11-23.31-34.73-7.92-70.58-7.92-59.62 0-115.62 19.46-56 19.46-104.38 55.15ZM285-496.69Z"/></svg><span class="reader-download__text">Download<span class="reader-download__more"> flipbook</span></span></a>
       </div>
     </header>
 
@@ -76,7 +75,6 @@
             <svg aria-hidden="true" viewBox="0 0 24 24" class="icon-sound-on"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
             <svg aria-hidden="true" viewBox="0 0 24 24" class="icon-sound-off"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5m0-5-5 5"/></svg>
           <span class="control-label" aria-hidden="true">Mute</span></button>
-          <button type="button" class="control" id="offlineButton" aria-label="Save offline" aria-haspopup="dialog" hidden><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 4v10m0 0-4-4m4 4 4-4M5 19h14"/></svg><span class="control-label" aria-hidden="true">Save offline</span></button>
           <button type="button" class="control" id="fullscreenButton" aria-label="Fullscreen" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24" class="icon-expand"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg><svg aria-hidden="true" viewBox="0 0 24 24" class="icon-collapse"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></svg><span class="control-label" aria-hidden="true">Full screen</span></button>
 
           <button type="button" class="control control-menu-toggle" id="menuButton" aria-label="More options" aria-expanded="false" aria-controls="controlsMenu"><svg aria-hidden="true" viewBox="0 0 24 24"><line class="menu-icon__line menu-icon__line--1" x1="4" y1="6" x2="20" y2="6"/><line class="menu-icon__line menu-icon__line--2" x1="4" y1="12" x2="20" y2="12"/><line class="menu-icon__line menu-icon__line--3" x1="4" y1="18" x2="20" y2="18"/></svg></button>
@@ -88,12 +86,6 @@
         <svg class="rotate-hint__icon" aria-hidden="true" viewBox="0 0 48 48"><rect x="16" y="6" width="16" height="28" rx="3"/><path d="M22 30h4"/><path d="M8 30a16 16 0 0 0 14 13"/><path d="m19 40 3 3-3 3"/></svg>
         <p class="rotate-hint__text"><strong>Tip:</strong> turn your phone sideways to read pages full screen.</p>
         <button type="button" class="rotate-hint__close" id="rotateClose" aria-label="Close tip"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-      </div>
-
-      <div class="rotate-hint" id="offlineHint" role="dialog" aria-labelledby="offlineHintText" hidden>
-        <svg class="rotate-hint__icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M5 11v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/></svg>
-        <p class="rotate-hint__text" id="offlineHintText"><strong>Read offline:</strong> tap Share, then <strong>Add to Home Screen</strong>. The book then opens from your home screen, even without internet.</p>
-        <button type="button" class="rotate-hint__close" id="offlineHintClose" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
 
       <div class="toc-backdrop" id="tocBackdrop" hidden></div>

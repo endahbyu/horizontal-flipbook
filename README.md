@@ -105,9 +105,8 @@ The site is **fully static** and makes **no external requests**: fonts (Host Gro
    npm ci
    npm run build:book          # 3D landing bundle (js/book-3d.js)
    node tools/scan-pages.js    # page manifest (js/pages.js)
-   npm run build:standalone    # downloads/MCMC-P2630-*.html
    ```
-2. Copy these to the web root: `index.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`, `downloads/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
+2. Copy these to the web root: `index.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
 3. Serve them with any static web server. Nginx example:
    ```nginx
    server {
@@ -117,16 +116,11 @@ The site is **fully static** and makes **no external requests**: fonts (Host Gro
      index index.html;
      location / { try_files $uri $uri/ =404; }
      location ~* \.(webp|woff2|mp3|js|css)$ { expires 30d; add_header Cache-Control "public"; }
-     location /downloads/ { add_header Content-Disposition "attachment"; }
    }
    ```
    `woff2` and `webp` need their MIME types (`font/woff2`, `image/webp`); current Nginx and Apache include both.
 
 GitHub Pages runs the same steps in `.github/workflows/deploy.yml`.
-
-## Offline download ("Download flipbook")
-
-`tools/build-standalone.js` writes one self-contained HTML file per book to `downloads/` (reader only: every page image, font, script and the sound inlined). It opens by double-click with no server and no internet. Rebuild it whenever pages change; `npm run dev` and CI do this automatically. Page images in the download are re-encoded to 1600px wide, WebP quality 75 (the website keeps the originals), so a 35-page book is about 4–5 MB.
 
 ## QA
 Before release, work through [`plan.md`](plan.md) (Phase 4 QA checklist) once every page

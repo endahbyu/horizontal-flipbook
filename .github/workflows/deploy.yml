@@ -34,20 +34,12 @@ jobs:
       - name: Generate page manifest
         run: node tools/scan-pages.js
 
-      # Build-only tools (sharp compresses images for the downloads).
-      - name: Install build tools
-        run: npm ci
-
-      # One self-contained HTML per book, for the reader's "Download flipbook".
-      - name: Build standalone downloads
-        run: node tools/build-standalone.js
-
       # GitHub Pages serves this as a static site; the local Express server is
       # not needed in the deployed artifact.
       - name: Stage static site
         run: |
           mkdir -p _site
-          cp -r assets css js downloads *.html sw.js manifest.webmanifest _site/
+          cp -r assets css js *.html sw.js manifest.webmanifest _site/
           # New cache name per deploy, so readers pick up updates.
           sed -i "s/__BUILD__/${GITHUB_SHA::8}/" _site/sw.js
           touch _site/.nojekyll

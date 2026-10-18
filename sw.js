@@ -61,8 +61,8 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
-  // Large downloads (PDF, standalone HTML) go straight to the network.
-  if (/\/downloads\/|\.pdf$/.test(url.pathname)) return;
+  // PDFs go straight to the network.
+  if (/\.pdf$/.test(url.pathname)) return;
 
   // Pages, styles and scripts: network first, so a new deploy never mixes
   // fresh HTML with stale code; the cache is only the offline fallback.

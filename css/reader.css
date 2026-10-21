@@ -585,9 +585,11 @@ svg.icon-fill{ fill: currentColor; stroke: none; }
   position: fixed;
   inset: 0;
   z-index: 160;
+  contain: strict; /* the large zoomed image must never widen the page */
   background: var(--color-reader-bg);
 }
 .page-viewer[hidden]{ display: none; }
+html.is-viewing, html.is-viewing body{ overflow: hidden; }
 .page-viewer__scroll{
   position: absolute;
   inset: 0;
@@ -608,6 +610,7 @@ svg.icon-fill{ fill: currentColor; stroke: none; }
 }
 .page-viewer__close{
   position: fixed;
+  z-index: 1; /* above the scrolled page image */
   top: max(12px, env(safe-area-inset-top, 0px));
   right: max(12px, env(safe-area-inset-right, 0px));
   display: grid;

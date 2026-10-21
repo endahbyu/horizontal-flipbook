@@ -1003,12 +1003,14 @@
     setVariant(viewerImg, src, "hd");
     viewerImg.alt = PAGES[idx].title;
     viewer.hidden = false;
+    document.documentElement.classList.add("is-viewing");
     setViewerZoom(true);
     viewer.querySelector(".page-viewer__close").focus({ preventScroll: true });
   }
   function closeViewer() {
     if (viewer.hidden) return;
     viewer.hidden = true;
+    document.documentElement.classList.remove("is-viewing");
     setViewerZoom(false);
     if (lastInputKeyboard) menuBtn.focus();
   }

@@ -59,6 +59,17 @@
      Images get their src only when they are within two pages of
      the current one, so long books don't download every page up front.
      ============================================================ */
+  // Same page in another size folder (assets/books/<book>/thumbs|hd/).
+  // Inlined data: images (the standalone download) have no variants.
+  function variantSrc(src, folder) {
+    return /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)$/, "/" + folder + "/$1");
+  }
+  // Use the variant, falling back to the full page if it is missing.
+  function setVariant(img, src, folder) {
+    img.onerror = function () { img.onerror = null; img.src = src; };
+    img.src = variantSrc(src, folder);
+  }
+
   var PRELOAD_RADIUS = 2;
   var pageImages = [];
 
@@ -535,7 +546,7 @@
   function showPreview() {
     var i = Number(scrubber.value) - 1;
     previewImg.hidden = !PAGES[i].src;
-    if (PAGES[i].src) previewImg.src = PAGES[i].src;
+    if (PAGES[i].src) setVariant(previewImg, PAGES[i].src, "thumbs");
     previewLabel.textContent = pageLabel(i);
     var ratio = total > 1 ? i / (total - 1) : 0;
     preview.style.setProperty("--preview-x", (scrubber.offsetLeft + 8 + ratio * (scrubber.offsetWidth - 16)) + "px");
@@ -576,7 +587,7 @@
     var thumb = document.createElement("span");
     thumb.className = "toc-thumb";
     var img = document.createElement("img");
-    img.src = page.src;
+    setVariant(img, page.src, "thumbs");
     img.alt = "";
     img.loading = "lazy";
     img.draggable = false;
@@ -989,9 +1000,7 @@
     // Sharper 2880px copy for zooming (assets/books/<book>/hd/); falls back
     // to the regular page if there is none.
     var src = PAGES[idx].src;
-    var hd = /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)$/, "/hd/$1");
-    viewerImg.onerror = function () { viewerImg.onerror = null; viewerImg.src = src; };
-    viewerImg.src = hd;
+    setVariant(viewerImg, src, "hd");
     viewerImg.alt = PAGES[idx].title;
     viewer.hidden = false;
     setViewerZoom(true);
@@ -1022,7 +1031,8 @@
   // Keep this whole book on the device for offline reading.
   if (navigator.serviceWorker && location.protocol !== "file:") {
     navigator.serviceWorker.ready.then(function (reg) {
-      var urls = PAGES.map(function (p) { return p.src; }).filter(Boolean);
+      var urls = [];
+      PAGES.forEach(function (p) { if (p.src) urls.push(p.src, variantSrc(p.src, "thumbs")); });
       if (reg.active) reg.active.postMessage({ type: "cache-book", urls: urls });
     }).catch(function () {});
   }

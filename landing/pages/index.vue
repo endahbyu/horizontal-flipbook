@@ -32,7 +32,7 @@ const loaderGone = ref(introSeen), revealed = ref(introSeen); // revealed: the o
 const exploring = computed(() => phase.value === 'explore' && !menuOpen.value && !page.value && !focused.value);
 const points = computed(() => (focused.value && zone.value ? zone.value.pages.map((p) => ({ slug: p.slug, title: p.title, at: p.at, image: p.image, icon: p.icon, href: p.href, soon: p.soon })) : []));
 // a page with `href` leaves for that address (the flipbook); a `soon` page is not ready and does nothing yet
-function pickPage(slug: string) { const p = zone.value?.pages.find((q) => q.slug === slug); if (p?.href) { location.href = p.href; return; } if (p?.soon) return; openPage(slug); }
+function pickPage(slug: string) { const p = zone.value?.pages.find((q) => q.slug === slug); if (p?.href) { if (/\.pdf$/i.test(p.href)) window.open(p.href, '_blank', 'noopener'); else location.href = p.href; return; } if (p?.soon) return; openPage(slug); } // a PDF opens in a new tab, so the landing page stays where it is
 // inside a topic: on the globe the pages are points on its surface; on every other shape they are tokens below it (wide screens) or points on it (phones)
 const settled = ref(true);
 

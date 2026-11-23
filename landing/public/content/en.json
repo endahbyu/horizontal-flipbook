@@ -114,7 +114,7 @@
             }
           ],
           "icon": "pdf",
-          "soon": true
+          "href": "../assets/books/strategy/strategy.pdf"
         }
       ]
     }

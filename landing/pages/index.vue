@@ -111,9 +111,7 @@ useHead(() => {
           <footer class="foot">
             <p class="hint">{{ focused ? site.ui.hintFocus : site.ui.hintScroll }}<span v-if="!focused" class="extra"> · {{ site.ui.hintPointer }}</span></p>
                         <div v-if="wide" v-show="!page && !menuOpen" class="foot-end">
-              <nav v-if="site.extras?.length" class="legal" aria-label="Legal">
-                <button v-for="p in site.extras" :key="p.slug" type="button" @click="openPage(p.slug)">{{ p.title }}</button>
-              </nav>
+              <!-- Imprint / Privacy links hidden for now; their text stays in content/*.json under "extras" -->
               <LanguageSwitch v-if="locales.length > 1" class="lang-foot" :locales="locales" :current="locale" :label="site.ui.language" plain @pick="setLocale" />
               <button v-show="true" type="button" class="glass square" :aria-label="soundOff ? site.ui.soundOn : site.ui.soundOff" :aria-pressed="!soundOff" @click="toggleSound">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z" /><path v-if="soundOff" d="M16 9.5l5 5M21 9.5l-5 5" /><path v-else d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" /></svg>

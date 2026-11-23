@@ -44,6 +44,9 @@ const picture = (src?: string) => (src ? (/^(https?:)?\/\//.test(src) ? src : ba
 
 // stage
 const SCALE = 1.2, FOV = 50, INTRO = 3.2;
+const FLUID = 1.2;          // shape scale per unit of aspect ratio (width / height), capped at 1
+const OPTICAL_LIFT = 0.05;  // on tall screens, raise the picture by this share of the height
+let liftPx = 0, centreNow = 0; const centreProbe = new THREE.Vector3();
 // The journey runs round a ring. The shapes stand on it, a fifth of a turn apart; the camera travels along the same
 // ring, so it flies straight through each shape on its way to the next, and rests a tenth of a turn before one.
 const RING = 9.31, STEP = Math.PI * 0.4;
@@ -298,7 +301,11 @@ function resize() {
   renderer.setSize(width, height, false);
   framePx = parseFloat(getComputedStyle(host.value).getPropertyValue('--frame')) * parseFloat(getComputedStyle(document.documentElement).fontSize) || 20;
   camera.aspect = width / height;
-  mount.scale.setScalar(width <= 800 ? 0.85 : 1); // smaller shapes on phones, so wide ones fit
+  // fluid size: the screen's visible width grows with its aspect ratio, so the shape scales with it and keeps the
+  // same share of the width on every narrow screen (about 84% for the book), and full size from a little wider than square
+  mount.scale.setScalar(Math.min(1, FLUID * camera.aspect));
+  // optical centre: on tall screens the picture sits a little above the middle, which reads as centred
+  liftPx = camera.aspect < 1 ? OPTICAL_LIFT * height : 0;
 }
 
 // ---- pointer physics ----
@@ -489,7 +496,24 @@ onMounted(() => {
     camera.position.copy(at).addScaledVector(side, -pointer.x * lean).addScaledVector(up, pointer.y * lean);
     camera.lookAt(aim);
     shiftNow += (props.shift - shiftNow) * follow(4);
-    if (Math.abs(shiftNow) > 0.0005) camera.setViewOffset(width, height, shiftNow * width, 0, width, height); else camera.clearViewOffset();
+    // on tall screens the camera's angle on the ring leaves the shape off to one side; find where its centre
+    // lands on screen and slide the view so it sits in the middle
+    let centreTarget = 0;
+    if (camera.aspect < 1) {
+      camera.clearViewOffset(); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+      if (balls && showing) { // the middle of the dots' on-screen extent, from a sample of them (the shape's own centre is not enough: an angled shape looks lopsided in perspective)
+        balls.updateWorldMatrix(true, false);
+        let lo = Infinity, hi = -Infinity;
+        for (let i = 0, step = Math.max(1, Math.ceil(showing.count / 300)); i < showing.count; i += step) {
+          const x = centreProbe.set(current[i * 3], current[i * 3 + 1], current[i * 3 + 2]).applyMatrix4(balls.matrixWorld).project(camera).x;
+          if (x < lo) lo = x; if (x > hi) hi = x;
+        }
+        if (hi > lo) centreTarget = (lo + hi) / 2;
+      }
+    }
+    centreNow += (centreTarget - centreNow) * follow(4);
+    const offsetX = shiftNow * width + centreNow * width / 2;
+    if (Math.abs(offsetX) > 0.5 || liftPx) camera.setViewOffset(width, height, offsetX, liftPx, width, height); else camera.clearViewOffset();
     camera.updateProjectionMatrix(); camera.updateMatrixWorld();
 
     turn(df, dt, still, time);

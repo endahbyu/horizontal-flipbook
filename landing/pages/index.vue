@@ -70,7 +70,7 @@ onMounted(() => { const q = window.matchMedia('(min-width: 801px)'); wide.value 
 const tokenHover = ref(false), tileHover = ref(-1);
 // only the book topic has 3D tokens, and only for its pages (a row of tokens inside the topic); no topic has a floating token of its own
 const hasToken = computed(() => zone.value?.shape === 'chain');
-const asTokens = computed(() => wide.value && hasToken.value);
+const asTokens = computed(() => hasToken.value); // the 3D page tokens show on phones too
 const shift = computed(() => (!wide.value ? 0 : page.value ? 0.37 : menuOpen.value ? 0.25 : 0)); // slide the picture aside while a page or the menu is open (with a page, into the strip left of the sheet)
 const count = computed(() => (wide.value ? 42000 : 15000));
 const shapes = computed(() => (zones.value.length ? zones.value.map((z) => z.shape) : (['globe'] as const).slice()));
@@ -103,7 +103,7 @@ useHead(() => {
         <div v-if="phase === 'explore'" class="explore">
           <Transition name="fade"><RiseText v-if="focused && !menuOpen" :key="zone.title" tag="p" class="focus-title" :text="zone.title" :delay="300" /></Transition>
           <Transition name="fade"><PageTokens v-if="focused && asTokens && !page && !menuOpen" :pages="points" :soon-label="site.ui.soon" @pick="pickPage" @hover="(i) => { tileHover = i; }" /></Transition>
-          <LevelSlider v-if="focused && !page && !menuOpen && !wide" :pages="points" @pick="pickPage" />
+          <LevelSlider v-if="focused && !page && !menuOpen && !wide && !asTokens" :pages="points" @pick="pickPage" />
           <Transition name="title" mode="out-in">
             <div :key="zoneIndex" class="headline" :class="{ aside: !!page || menuOpen || focused }">
               <p class="index">{{ String(zoneIndex + 1).padStart(2, '0') }} / {{ String(zones.length).padStart(2, '0') }}</p>

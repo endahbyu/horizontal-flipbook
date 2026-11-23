@@ -46,7 +46,7 @@ const picture = (src?: string) => (src ? (/^(https?:)?\/\//.test(src) ? src : ba
 const SCALE = 1.2, FOV = 50, INTRO = 3.2;
 const FLUID = 1.2;          // shape scale per unit of aspect ratio (width / height), capped at 1
 const OPTICAL_LIFT = 0.05;  // on tall screens, raise the picture by this share of the height
-let liftPx = 0, centreNow = 0; const centreProbe = new THREE.Vector3();
+let liftPx = 0, centreNow = 0, viewOffX = 0, viewOffY = 0; const centreProbe = new THREE.Vector3();
 // The journey runs round a ring. The shapes stand on it, a fifth of a turn apart; the camera travels along the same
 // ring, so it flies straight through each shape on its way to the next, and rests a tenth of a turn before one.
 const RING = 9.31, STEP = Math.PI * 0.4;
@@ -121,11 +121,12 @@ function tokenSpot(name: ShapeName): [number, number, number] {
 /** Where page token i of n stands — the same row as PageTokens.vue lays out. */
 function slot(i: number, n: number): [number, number] {
   const middle = (n - 1) / 2, gap = Math.max(40, Math.min(89.6, width * 0.075));
-  return [width / 2 + (i - middle) * (TILE_PX + gap), height * 0.69 + (1 - Math.min(1, Math.abs(i - middle))) * 9];
+  return [width / 2 + (i - middle) * (TILE_PX + gap), height * (width <= 800 ? 0.74 : 0.69) + (1 - Math.min(1, Math.abs(i - middle))) * 9];
 }
 function setTile(t: Token, x: number, y: number, size: number) { // centre in CSS pixels, width in CSS pixels
   const unit = (2 * TOKEN_DEPTH * Math.tan(THREE.MathUtils.degToRad(FOV) / 2)) / height; // scene units per CSS pixel at the tokens' depth
-  t.group.position.set((x - width / 2) * unit, -(y - height / 2) * unit, -TOKEN_DEPTH); t.group.scale.setScalar(size * unit);
+  // the tokens ride with the camera, so a view offset (the centring on tall screens) would carry them along: add it back so they stay on their buttons
+  t.group.position.set((x + viewOffX - width / 2) * unit, -(y + viewOffY - height / 2) * unit, -TOKEN_DEPTH); t.group.scale.setScalar(size * unit);
 }
 const easeOut = (x: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
 function placeTokens(dt: number, time: number, f: number, still: boolean) { // f: how far the journey is from one topic's resting place to the next (0 … 1)
@@ -445,7 +446,7 @@ onMounted(() => {
   }); // shows at once with a plain sphere for the globe…
   if (props.landUrl) loadLandTest(props.landUrl).then((test) => { if (test && !disposed) { isLand = test; build(); } }); // …and swaps in the continents when they arrive
   // the numeral shape and the token's numeral are drawn from Host Grotesk: redraw them once the font has arrived
-  document.fonts?.load('600 200px "Host Grotesk"', '2').then(() => { if (disposed) return; for (const k of Object.keys(NUMERALS)) icons.delete(k as ShapeName); tokenShape = undefined; build(); }).catch(() => {});
+  document.fonts?.load('600 200px "Host Grotesk"', 'P2630').then(() => { if (disposed) return; for (const k of Object.keys(NUMERALS)) icons.delete(k as ShapeName); tokenShape = undefined; build(); }).catch(() => {});
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const at = new THREE.Vector3(), aim = new THREE.Vector3(), face = new THREE.Vector3(), side = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
@@ -513,7 +514,7 @@ onMounted(() => {
     }
     centreNow += (centreTarget - centreNow) * follow(4);
     const offsetX = shiftNow * width + centreNow * width / 2;
-    if (Math.abs(offsetX) > 0.5 || liftPx) camera.setViewOffset(width, height, offsetX, liftPx, width, height); else camera.clearViewOffset();
+    if (Math.abs(offsetX) > 0.5 || liftPx) { camera.setViewOffset(width, height, offsetX, liftPx, width, height); viewOffX = offsetX; viewOffY = liftPx; } else { camera.clearViewOffset(); viewOffX = viewOffY = 0; }
     camera.updateProjectionMatrix(); camera.updateMatrixWorld();
 
     turn(df, dt, still, time);

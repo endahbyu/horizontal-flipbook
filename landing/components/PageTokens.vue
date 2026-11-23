@@ -25,5 +25,6 @@ button.soon { cursor: default; }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .name { flex: none; width: 11rem; text-align: center; font-size: var(--button-font-size); font-weight: var(--button-font-weight); line-height: var(--leading-ui); color: var(--on-dark); text-wrap: balance; animation: show .5s var(--ease) both; animation-delay: calc(.7s + var(--i) * 110ms); }
 @keyframes show { from { opacity: 0; } }
+@media (max-width: 800px) { .row { gap: 2.5rem; top: calc(74% - 42px); } .name { width: 8rem; } } /* phones: two names side by side must not overlap */
 @media (prefers-reduced-motion: reduce) { .name { animation: none; } }
 </style>

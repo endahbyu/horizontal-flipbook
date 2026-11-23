@@ -119,6 +119,15 @@ export function book(count: number): Cloud {
   const parts: [string, number][] = [['front', coverW * H], ['back', coverW * H], ['spine', Math.PI * r * H],
     ['top', 2.2 * pageD * (R - inset - x0)], ['bottom', 2.2 * pageD * (R - inset - x0)], ['fore', 2.2 * pageD * (H - 2 * inset)]];
   const total = parts.reduce((t, [, a]) => t + a, 0);
+  // the title on the front cover: "P2630" set in Host Grotesk, its dots packed densely and standing just proud of the board
+  const title = textMask('P2630');
+  if (title.length) {
+    const tw = coverW * 0.68, th = tw * TEXT_RATIO, cx = x0 + coverW * 0.55, cy = 0;
+    for (let i = 0; i < Math.round(count * 0.2) && !out.full; i++) {
+      const k = Math.floor(rand() * (title.length / 2)) * 2;
+      put(cx + (title[k] + rand() - TEXT_W / 2) / TEXT_W * tw, cy + (TEXT_H / 2 - title[k + 1] - rand()) / TEXT_H * th, D / 2 + 0.018, 0, 0, 1);
+    }
+  }
   // outlines: the covers' edges, the spine's top and bottom curves and the hinge lines get extra dots, so the form reads clearly
   for (let i = 0; i < Math.round(count * 0.26) && !out.full; i++) {
     const side = rand() < 0.7 ? 1 : -1, z = side * D / 2, k = rand(), j = () => (rand() - 0.5) * 0.015;
@@ -146,6 +155,20 @@ export function book(count: number): Cloud {
     }
   }
   return out.done();
+}
+
+/** Pixels inside a line of text (x, y pairs on a TEXT_W x TEXT_H canvas), in Host Grotesk once it has loaded. */
+const TEXT_W = 400, TEXT_H = 100, TEXT_RATIO = TEXT_H / TEXT_W;
+function textMask(text: string): number[] {
+  const canvas = document.createElement('canvas'); canvas.width = TEXT_W; canvas.height = TEXT_H;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  ctx.fillStyle = '#000'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  let size = TEXT_H * 0.9; ctx.font = `600 ${size}px "Host Grotesk", sans-serif`;
+  const wide = ctx.measureText(text).width; if (wide > TEXT_W * 0.96) { size *= (TEXT_W * 0.96) / wide; ctx.font = `600 ${size}px "Host Grotesk", sans-serif`; }
+  ctx.fillText(text, TEXT_W / 2, TEXT_H / 2 + size * 0.04);
+  const a = ctx.getImageData(0, 0, TEXT_W, TEXT_H).data, px: number[] = [];
+  for (let y = 0; y < TEXT_H; y++) for (let x = 0; x < TEXT_W; x++) if (a[(y * TEXT_W + x) * 4 + 3] > 127) px.push(x, y);
+  return px;
 }
 
 /** Target: one broad ring. */

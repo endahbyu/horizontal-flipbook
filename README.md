@@ -24,7 +24,8 @@ Interactive digital flipbook for the MCMC Plan 2026–2030 (MCMC P2630) built wi
 ## Project structure
 ```
 mcmc-flipbook/
-├── index.html                 # landing page (3D books, Figma layout)
+├── index.html                 # forwards to read/ (the landing page, built from landing/)
+├── draft-3d-books.html        # DRAFT: earlier 3D-books landing page (not linked)
 ├── draft.html                 # static layout draft (not linked)
 ├── strategy.html              # Strategy Plan reader  (<body data-book="strategy">)
 ├── action-plan.html           # Action Plan reader    (<body data-book="action-plan">)
@@ -98,7 +99,8 @@ To change a colour everywhere, edit the token, not the component.
 ## Run locally
 ```bash
 npm run dev
-# landing page:  http://localhost:3000/  (index.html)
+# old 3D-books landing (draft): http://localhost:3000/draft-3d-books.html
+# (the particle landing page runs separately: cd landing && npm run dev)
 # strategy plan: http://localhost:3000/strategy.html
 # action plan:   http://localhost:3000/action-plan.html
 ```
@@ -113,7 +115,7 @@ The site is **fully static** and makes **no external requests**: fonts (Host Gro
    npm run build:book          # 3D landing bundle (js/book-3d.js)
    node tools/scan-pages.js    # page manifest (js/pages.js)
    ```
-2. Copy these to the web root: `index.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`. (`draft.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
+2. Copy these to the web root: `index.html`, `strategy.html`, `action-plan.html`, `css/`, `js/`, `assets/`, and the built landing page as `read/` (see above). (`draft.html`, `draft-3d-books.html`, `server.js`, `tools/`, `node_modules/` are not needed.)
 3. Serve them with any static web server. Nginx example:
    ```nginx
    server {

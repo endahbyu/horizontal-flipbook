@@ -2,7 +2,7 @@
   "name": "MCMC P2630 Flipbook",
   "short_name": "MCMC P2630",
   "description": "MCMC Plan 2026–2030: the Strategy Plan and the Action Plan, readable offline.",
-  "start_url": "./index.html",
+  "start_url": "./read/",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F8FAFC",

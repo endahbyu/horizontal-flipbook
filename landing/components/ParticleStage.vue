@@ -118,10 +118,12 @@ function tokenSpot(name: ShapeName): [number, number, number] {
   if (width <= 800) { const size = TILE_PX * 0.75; return [Math.max(framePx + 56 + size / 2, width * 0.27), height * 0.67, 0.75]; } // phones: smaller, at the lower left of the shape, clear of the rail and fully on screen
   return [width / 2 + SPOT[name][0] * Math.min(width, height * 1.5) + TILE_PX / 2, height / 2 + SPOT[name][1] * height + TILE_PX / 2, 1];
 }
+const PHONE_TILE_PX = 60; // page tokens on phones (keep in step with PageTokens.vue)
+const tilePx = () => (width <= 800 ? PHONE_TILE_PX : TILE_PX);
 /** Where page token i of n stands — the same row as PageTokens.vue lays out. */
 function slot(i: number, n: number): [number, number] {
   const middle = (n - 1) / 2, gap = Math.max(40, Math.min(89.6, width * 0.075));
-  return [width / 2 + (i - middle) * (TILE_PX + gap), height * (width <= 800 ? 0.74 : 0.69) + (1 - Math.min(1, Math.abs(i - middle))) * 9];
+  return [width / 2 + (i - middle) * (tilePx() + gap), height * (width <= 800 ? 0.74 : 0.69) + (1 - Math.min(1, Math.abs(i - middle))) * 9];
 }
 function setTile(t: Token, x: number, y: number, size: number) { // centre in CSS pixels, width in CSS pixels
   const unit = (2 * TOKEN_DEPTH * Math.tan(THREE.MathUtils.degToRad(FOV) / 2)) / height; // scene units per CSS pixel at the tokens' depth
@@ -165,7 +167,7 @@ function placeTokens(dt: number, time: number, f: number, still: boolean) { // f
     const x = sx + (tx - sx) * k, y = sy + (ty - sy) * k;
     if (on) { t.group.userData.x = tx; t.group.userData.y = ty; }
     t.turnX += ((hot ? 0 : -8) - t.turnX) * follow(8); t.turnY += ((hot ? 0 : -16 - (i - middle) * 7) - t.turnY) * follow(8);
-    setTile(t, x, y - (hot ? 6 : 0) + bob * 0.4 * Math.cos(i * 1.7), TILE_PX * (0.55 + 0.45 * k));
+    setTile(t, x, y - (hot ? 6 : 0) + bob * 0.4 * Math.cos(i * 1.7), tilePx() * (0.55 + 0.45 * k));
     poseToken(t, on ? Math.min(1, t.seen * 3) : t.seen, t.turnX + (1 - k) * 30, t.turnY - (1 - k) * 50);
   }
 }
@@ -386,7 +388,7 @@ function onMove(e: PointerEvent) {
 }
 function onLeave() { pointer.inside = false; pointer.target = 0; }
 function onDown(e: PointerEvent) {
-  if (e.pointerType !== 'mouse' || e.button !== 0) return; // touch swipes travel between topics instead
+  if (e.pointerType === 'mouse' && e.button !== 0) return; // mouse: left button only; a finger turns the shape too (the landing has one topic, so a swipe has nowhere to travel)
   spin.dragging = true; spin.moved = 0; spin.vx = spin.vy = 0; spin.lastX = e.clientX; spin.lastY = e.clientY; spin.lastT = performance.now();
   renderer!.domElement.setPointerCapture(e.pointerId);
 }

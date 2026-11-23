@@ -25,6 +25,6 @@ button.soon { cursor: default; }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .name { flex: none; width: 11rem; text-align: center; font-size: var(--button-font-size); font-weight: var(--button-font-weight); line-height: var(--leading-ui); color: var(--on-dark); text-wrap: balance; animation: show .5s var(--ease) both; animation-delay: calc(.7s + var(--i) * 110ms); }
 @keyframes show { from { opacity: 0; } }
-@media (max-width: 800px) { .row { gap: 2.5rem; top: calc(74% - 42px); } .name { width: 8rem; } } /* phones: two names side by side must not overlap */
+@media (max-width: 800px) { .row { gap: 2.5rem; top: calc(74% - 30px); } li { width: 60px; gap: 1.1rem; } button { width: 60px; height: 60px; border-radius: 6px 23px 6px 23px; } .name { width: 7rem; font-size: .9375rem; } } /* phones: 60 px tokens (PHONE_TILE_PX in ParticleStage.vue); names side by side must not overlap */ /* phones: two names side by side must not overlap */
 @media (prefers-reduced-motion: reduce) { .name { animation: none; } }
 </style>

@@ -1,0 +1,13 @@
+[
+  {
+    "code": "en",
+    "label": "English",
+    "short": "EN"
+  },
+  {
+    "code": "ms",
+    "label": "Bahasa Melayu",
+    "short": "BM",
+    "param": "bm"
+  }
+]

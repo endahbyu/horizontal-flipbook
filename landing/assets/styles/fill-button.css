@@ -1,0 +1,34 @@
+/* Pill buttons with a round icon: on hover (or while pressed on a touch screen) the circle grows to fill the button,
+   leaving a thin light edge (--ring) showing all round, the label turns light, and the arrow slides out to the right while a new one slides in from the left.
+   Markup: <button class="fill-btn"> <span class="fill"/> <span class="knob">[arrows]</span> <span class="label">…</span> </button>
+   Each button sets --pad (space around the circle) and --knob (the circle's size); .end puts the circle on the right. */
+.fill-btn { --ring: 2px; /* the light edge left showing around the fill */ --ease-fill: cubic-bezier(.785, .135, .15, .86); position: relative; overflow: hidden; isolation: isolate; }
+.fill-btn .fill { position: absolute; z-index: -1; left: var(--pad); top: var(--pad); width: var(--knob); height: var(--knob); border-radius: 999px; background: var(--accent-deep); pointer-events: none;
+  transition: left .45s var(--ease-fill), top .45s var(--ease-fill), width .45s var(--ease-fill), height .45s var(--ease-fill); }
+.fill-btn.end .fill { left: auto; right: var(--pad); transition: right .45s var(--ease-fill), top .45s var(--ease-fill), width .45s var(--ease-fill), height .45s var(--ease-fill); }
+.fill-btn .label { position: relative; transition: color .45s var(--ease-fill); }
+.fill-btn .knob { position: relative; overflow: hidden; }
+.fill-btn .arrow { position: absolute; left: 50%; top: 50%; translate: -50% -50%; transition: translate .45s var(--ease-fill), scale .45s var(--ease-fill); }
+.fill-btn .arrow.in { translate: -170% -50%; scale: 0; }
+@media (hover: hover) {
+  .fill-btn:hover .fill { left: var(--ring); top: var(--ring); width: calc(100% - 2 * var(--ring)); height: calc(100% - 2 * var(--ring)); }
+  .fill-btn.end:hover .fill { left: auto; right: var(--ring); }
+  .fill-btn:hover .label { color: var(--on-dark); }
+  .fill-btn:hover .arrow.in { translate: -50% -50%; scale: 1; }
+  .fill-btn:hover .arrow.out { translate: 70% -50%; scale: 0; }
+}
+.fill-btn:active .fill { left: var(--ring); top: var(--ring); width: calc(100% - 2 * var(--ring)); height: calc(100% - 2 * var(--ring)); }
+.fill-btn.end:active .fill { left: auto; right: var(--ring); }
+.fill-btn:active .label { color: var(--on-dark); }
+@media (prefers-reduced-motion: reduce) { .fill-btn .fill, .fill-btn .label, .fill-btn .arrow { transition: none; } }
+
+/* sizes: .btn-sm, .btn-md (default), .btn-lg — height, circle, icon, label and padding all come from tokens.css */
+.fill-btn { --h: var(--button-md-height); --knob: var(--button-md-knob); --icon: var(--button-md-icon); --pad-x: var(--button-md-pad);
+  --pad: calc((var(--h) - var(--knob)) / 2); height: var(--h); max-width: 100%; padding-block: var(--pad); font-size: var(--button-md-font); font-weight: var(--button-font-weight); gap: calc(var(--pad-x) * .6); }
+.fill-btn.btn-sm { --h: var(--button-sm-height); --knob: var(--button-sm-knob); --icon: var(--button-sm-icon); --pad-x: var(--button-sm-pad); font-size: var(--button-sm-font); }
+.fill-btn.btn-lg { --h: var(--button-lg-height); --knob: var(--button-lg-knob); --icon: var(--button-lg-icon); --pad-x: var(--button-lg-pad); font-size: var(--button-lg-font); }
+.fill-btn:not(.end) { padding-inline: var(--pad) var(--pad-x); } /* the width follows the label */
+.fill-btn.end { padding-inline: var(--pad-x) var(--pad); }
+.fill-btn .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fill-btn .knob { width: var(--knob); height: var(--knob); flex: none; }
+.fill-btn .knob svg { width: var(--icon); height: var(--icon); display: block; fill: none; stroke: var(--surface); stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }

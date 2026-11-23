@@ -1,0 +1,4 @@
+Host Grotesk
+Copyright The Host Grotesk Project Authors.
+Licensed under the SIL Open Font License, Version 1.1.
+The font files in this folder were downloaded from Google Fonts and are unmodified.

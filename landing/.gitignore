@@ -1,0 +1,7 @@
+node_modules
+.nuxt
+.output
+dist
+.DS_Store
+# Local-only rules for scripts/check-brand.mjs (kept out of the repository on purpose)
+.brand-rules.json

@@ -1,0 +1,146 @@
+{
+  "ui": {
+    "brand": "MCMC P2630",
+    "loading": "Loading",
+    "tutorial": [
+      {
+        "title": "Welcome",
+        "text": "Demo introduction. One or two sentences that say what this experience is about.",
+        "button": "Next"
+      },
+      {
+        "title": "How to explore",
+        "text": "Scroll to move between the six topics. Each one has its own shape. Open a topic to read more.",
+        "button": "Enter"
+      }
+    ],
+    "menu": "All topics",
+    "close": "Close",
+    "open": "Open topic",
+    "hintScroll": "Scroll to explore",
+    "hintPointer": "Drag to turn · click to scatter",
+    "hintFocus": "Drag to turn · choose a point",
+    "cursorExplore": "Scroll to\nexplore",
+    "cursorFocus": "Drag &\nchoose a point",
+    "description": "Demo site description. One sentence that says what this experience is about.",
+    "menuShort": "Menu",
+    "soundOn": "Turn sound on",
+    "soundOff": "Turn sound off",
+    "language": "Language",
+    "soon": "coming soon"
+  },
+  "zones": [
+    {
+      "id": "topic-6",
+      "title": "Read full book",
+      "summary": "Demo summary: what all of this is aiming at.",
+      "shape": "chain",
+      "pages": [
+        {
+          "slug": "topic-6-page-1",
+          "title": "Open flipbook",
+          "lead": "Demo lead paragraph. One or two sentences that introduce this page.",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Demo body text. This block holds a normal paragraph; the real copy will replace it."
+            },
+            {
+              "type": "figure",
+              "caption": "Demo image — a real photo will go here"
+            },
+            {
+              "type": "heading",
+              "text": "Demo section heading"
+            },
+            {
+              "type": "columns",
+              "left": "Left column demo text. Two columns suit short, related points.",
+              "right": "Right column demo text. Both sides should be about the same length."
+            },
+            {
+              "type": "carousel",
+              "slides": [
+                {
+                  "caption": "Demo slide 1 — a real photo will go here"
+                },
+                {
+                  "caption": "Demo slide 2 — a real photo will go here"
+                },
+                {
+                  "caption": "Demo slide 3 — a real photo will go here"
+                }
+              ]
+            },
+            {
+              "type": "button",
+              "label": "Next page",
+              "to": "topic-6-page-2"
+            }
+          ],
+          "icon": "flipbook",
+          "href": "../strategy.html"
+        },
+        {
+          "slug": "topic-6-page-2",
+          "title": "Open PDF",
+          "lead": "Demo lead paragraph. One or two sentences that introduce this page.",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Demo body text. This block holds a normal paragraph; the real copy will replace it."
+            },
+            {
+              "type": "figure",
+              "caption": "Demo image — a real photo will go here"
+            },
+            {
+              "type": "heading",
+              "text": "Demo section heading"
+            },
+            {
+              "type": "columns",
+              "left": "Left column demo text. Two columns suit short, related points.",
+              "right": "Right column demo text. Both sides should be about the same length."
+            },
+            {
+              "type": "video",
+              "caption": "Demo video — add a video file to show it here"
+            },
+            {
+              "type": "button",
+              "label": "Next page",
+              "to": "topic-6-page-1"
+            }
+          ],
+          "icon": "pdf",
+          "soon": true
+        }
+      ]
+    }
+  ],
+  "extras": [
+    {
+      "slug": "imprint",
+      "title": "Imprint",
+      "lead": "Demo lead. Say who publishes this site.",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Demo text. The real legal copy goes here: company name, address, contact, responsible person."
+        }
+      ]
+    },
+    {
+      "slug": "privacy",
+      "title": "Privacy",
+      "lead": "Demo lead. Say who publishes this site.",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Demo text. The real legal copy goes here: company name, address, contact, responsible person."
+        }
+      ]
+    }
+  ]
+}

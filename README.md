@@ -46,6 +46,13 @@ mcmc-flipbook/
         └── action-plan/       # Action Plan pages (empty until assets arrive)
 ```
 
+## Particle landing page (`read/`)
+`landing/` holds the particle landing page for the Strategy Plan, taken unchanged from the P2630 proposal (Nuxt 3 + Three.js) and cut down to its "Read full book" topic. Its "Open flipbook" token opens `strategy.html`, and the reader's Back button returns to `read/`.
+
+- Text (EN / BM): `landing/public/content/en.json` and `ms.json`.
+- Run locally: `cd landing && npm ci && npm run dev`.
+- Build: `cd landing && npm ci && NUXT_APP_BASE_URL=/read/ npx nuxt generate`, then copy `landing/.output/public/` to `read/` in the web root. Set `NUXT_APP_BASE_URL` to the folder the page is served from (on GitHub Pages: `/horizontal-flipbook/read/`, which the deploy workflow sets).
+
 ## Page naming convention
 ```
 assets/books/<book>/cover-front.webp    # front cover (fixed name, 16:9)

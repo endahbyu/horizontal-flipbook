@@ -36,10 +36,21 @@ jobs:
 
       # GitHub Pages serves this as a static site; the local Express server is
       # not needed in the deployed artifact.
+      # The particle landing page (landing/, a Nuxt app) is built into read/,
+      # next to strategy.html. Its base path is the Pages project path + read/.
+      - name: Build particle landing page
+        working-directory: landing
+        run: |
+          npm ci
+          NUXT_APP_BASE_URL="/${GITHUB_REPOSITORY#*/}/read/" \
+          NUXT_PUBLIC_SITE_URL="https://${GITHUB_REPOSITORY_OWNER,,}.github.io" \
+          npx nuxt generate
+
       - name: Stage static site
         run: |
           mkdir -p _site
           cp -r assets css js *.html sw.js manifest.webmanifest _site/
+          cp -rL landing/.output/public _site/read
           # New cache name per deploy, so readers pick up updates.
           sed -i "s/__BUILD__/${GITHUB_SHA::8}/" _site/sw.js
           touch _site/.nojekyll

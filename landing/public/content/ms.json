@@ -1,0 +1,146 @@
+{
+  "ui": {
+    "brand": "MCMC P2630",
+    "loading": "Memuatkan",
+    "tutorial": [
+      {
+        "title": "Selamat datang",
+        "text": "Pengenalan demo. Satu atau dua ayat yang menerangkan pengalaman ini.",
+        "button": "Seterusnya"
+      },
+      {
+        "title": "Cara meneroka",
+        "text": "Tatal untuk bergerak antara enam topik. Setiap topik mempunyai bentuknya sendiri. Buka satu topik untuk membaca lebih lanjut.",
+        "button": "Masuk"
+      }
+    ],
+    "menu": "Semua topik",
+    "close": "Tutup",
+    "open": "Buka topik",
+    "hintScroll": "Tatal untuk meneroka",
+    "hintPointer": "Seret untuk memutar · klik untuk menyerak",
+    "hintFocus": "Seret untuk memutar · pilih satu titik",
+    "cursorExplore": "Tatal untuk\nmeneroka",
+    "cursorFocus": "Seret &\npilih satu titik",
+    "description": "Penerangan laman demo. Satu ayat yang menerangkan pengalaman ini.",
+    "menuShort": "Menu",
+    "soundOn": "Hidupkan bunyi",
+    "soundOff": "Matikan bunyi",
+    "language": "Bahasa",
+    "soon": "akan datang"
+  },
+  "zones": [
+    {
+      "id": "topic-6",
+      "title": "Baca buku penuh",
+      "summary": "Ringkasan demo: apa yang ingin dicapai.",
+      "shape": "chain",
+      "pages": [
+        {
+          "slug": "topic-6-page-1",
+          "title": "Buka flipbook",
+          "lead": "Perenggan pembuka demo. Satu atau dua ayat yang memperkenalkan halaman ini.",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Teks isi demo. Blok ini mengandungi satu perenggan biasa; teks sebenar akan menggantikannya."
+            },
+            {
+              "type": "figure",
+              "caption": "Imej demo — foto sebenar akan diletakkan di sini"
+            },
+            {
+              "type": "heading",
+              "text": "Tajuk bahagian demo"
+            },
+            {
+              "type": "columns",
+              "left": "Teks demo lajur kiri. Dua lajur sesuai untuk perkara ringkas yang berkaitan.",
+              "right": "Teks demo lajur kanan. Kedua-dua sisi sebaiknya hampir sama panjang."
+            },
+            {
+              "type": "carousel",
+              "slides": [
+                {
+                  "caption": "Slaid demo 1 — foto sebenar akan diletakkan di sini"
+                },
+                {
+                  "caption": "Slaid demo 2 — foto sebenar akan diletakkan di sini"
+                },
+                {
+                  "caption": "Slaid demo 3 — foto sebenar akan diletakkan di sini"
+                }
+              ]
+            },
+            {
+              "type": "button",
+              "label": "Halaman seterusnya",
+              "to": "topic-6-page-2"
+            }
+          ],
+          "icon": "flipbook",
+          "href": "../strategy.html"
+        },
+        {
+          "slug": "topic-6-page-2",
+          "title": "Buka PDF",
+          "lead": "Perenggan pembuka demo. Satu atau dua ayat yang memperkenalkan halaman ini.",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "Teks isi demo. Blok ini mengandungi satu perenggan biasa; teks sebenar akan menggantikannya."
+            },
+            {
+              "type": "figure",
+              "caption": "Imej demo — foto sebenar akan diletakkan di sini"
+            },
+            {
+              "type": "heading",
+              "text": "Tajuk bahagian demo"
+            },
+            {
+              "type": "columns",
+              "left": "Teks demo lajur kiri. Dua lajur sesuai untuk perkara ringkas yang berkaitan.",
+              "right": "Teks demo lajur kanan. Kedua-dua sisi sebaiknya hampir sama panjang."
+            },
+            {
+              "type": "video",
+              "caption": "Video demo — tambah fail video untuk memaparkannya di sini"
+            },
+            {
+              "type": "button",
+              "label": "Halaman seterusnya",
+              "to": "topic-6-page-1"
+            }
+          ],
+          "icon": "pdf",
+          "soon": true
+        }
+      ]
+    }
+  ],
+  "extras": [
+    {
+      "slug": "imprint",
+      "title": "Maklumat penerbit",
+      "lead": "Pembuka demo. Nyatakan siapa penerbit laman ini.",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Teks demo. Teks undang-undang sebenar diletakkan di sini: nama syarikat, alamat, hubungan, pihak yang bertanggungjawab."
+        }
+      ]
+    },
+    {
+      "slug": "privacy",
+      "title": "Privasi",
+      "lead": "Pembuka demo. Nyatakan siapa penerbit laman ini.",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Teks demo. Teks undang-undang sebenar diletakkan di sini: nama syarikat, alamat, hubungan, pihak yang bertanggungjawab."
+        }
+      ]
+    }
+  ]
+}

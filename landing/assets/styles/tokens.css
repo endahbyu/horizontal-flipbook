@@ -1,0 +1,110 @@
+/* Design tokens. Every colour, font and motion value in the UI comes from here.
+   Colour: one brand blue and tones derived from it. Type: Host Grotesk, served from this site. */
+@font-face { font-family: 'Host Grotesk'; font-style: normal; font-weight: 300 800; font-display: swap; src: url('/fonts/HostGrotesk-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Host Grotesk'; font-style: normal; font-weight: 300 800; font-display: swap; src: url('/fonts/HostGrotesk-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  /* brand blue and its tones (same hue, lighter or darker) */
+  --brand: #2440c9;
+  --brand-light: #8ea2ff;   /* the "light": glows, highlights, particles that catch it */
+  --brand-pale: #cdd6ff;
+  --brand-deep: #101c66;
+  --brand-night: #070c33;
+
+  /* roles */
+  --accent: var(--brand-light);       /* highlights on the dark stage: focus rings, accent particles, light beam */
+  --accent-deep: var(--brand);        /* brand colour on light surfaces: buttons, icons, loader ring */
+  --surface: #f2f4fb;
+  --text: #0f1638;
+  --text-muted: #5f6889;
+  --on-dark: #f6f8ff;
+  --on-dark-muted: color-mix(in srgb, var(--on-dark) 68%, transparent);
+  --glass: color-mix(in srgb, var(--on-dark) 10%, transparent);
+  --glass-line: color-mix(in srgb, var(--on-dark) 24%, transparent);
+  --stage-from: var(--brand);         /* the lit middle of the stage */
+  --stage-to: var(--brand-night);     /* its dark edges */
+
+  /* type */
+  --font-body: 'Host Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Host Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---- type: a fluid scale (each step grows smoothly from a 360 px to a 1440 px wide screen) ----
+     Change sizes here only. Components use the role tokens below, never these steps directly. */
+  --step-n2: clamp(0.75rem, 0.7292rem + 0.0926vw, 0.8125rem); /* 12→13px */
+  --step-n1: clamp(0.875rem, 0.8542rem + 0.0926vw, 0.9375rem); /* 14→15px */
+  --step-0: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem); /* 16→18px */
+  --step-1: clamp(1.125rem, 1.0625rem + 0.2778vw, 1.3125rem); /* 18→21px */
+  --step-2: clamp(1.25rem, 1.1458rem + 0.4630vw, 1.5625rem); /* 20→25px */
+  --step-3: clamp(1.5rem, 1.3333rem + 0.7407vw, 2rem); /* 24→32px */
+  --step-4: clamp(1.75rem, 1.4167rem + 1.4815vw, 2.75rem); /* 28→44px */
+  --step-5: clamp(2rem, 1.5rem + 2.2222vw, 3.5rem); /* 32→56px */
+
+  /* ---- type roles: the hierarchy, from largest to smallest ---- */
+  --type-display: var(--step-5);        /* page title in the content sheet */
+  --type-title: var(--step-4);          /* location titles, large figures */
+  --type-heading: var(--step-3);        /* section headings inside a page */
+  --type-callout: var(--step-3);        /* the call-to-action heading at the end of a page */
+  --type-lockup: var(--step-3);         /* the brand name beside the mark on the opening screen */
+  --type-subheading: var(--step-2);     /* small headings: the welcome card's title, the open topic's name */
+  --type-lead: var(--step-1);           /* lead paragraphs */
+  --type-body: var(--step-0);           /* running text */
+  --type-small: var(--step-n1);         /* secondary text: figure and slide captions, the welcome card's text */
+  --type-caption: var(--step-n2);       /* small print: hints, labels on pictures */
+  --leading-display: 1;                 /* line height for display and title sizes */
+  --leading-heading: 1.15;              /* headings */
+  --leading-ui: 1.25;                   /* buttons and labels */
+  --leading-body: 1.5;                  /* running text */
+  --tracking-display: -.01em;           /* large type sits slightly tighter */
+  /* weight per role: only the largest titles are semibold; everything else stays medium or regular, so the page never feels heavy */
+  --weight-display: var(--font-weight-strong);   /* 600: page titles, the brand name on the opening screen */
+  --weight-heading: var(--font-weight-medium);   /* 500: section and call-to-action headings */
+  --weight-subheading: var(--font-weight-medium);/* 500: welcome card title, open topic's name */
+  --weight-label: var(--font-weight-medium);     /* 500: labels on pictures */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-strong: 600;            /* emphasis, and the current item in a list of buttons */
+  --font-weight-bold: 700;              /* headings */
+
+  /* buttons: one size, weight and icon size for every button, so labels and icons line up across the UI */
+  --button-font-size: var(--step-0);   /* 16→18px, inside the 16–20 px range for buttons */
+  --button-font-weight: var(--font-weight-medium);
+  --button-line-height: var(--leading-ui);
+  --icon-size: 1.5rem;              /* 24px, the standard icon grid */
+  --icon-stroke: 1.5px;             /* stroke stays 1.5px whatever the icon's viewBox */
+  --icon-size-display: clamp(3rem, 6vw, 4.75rem); /* the large pictures on the topics menu's cards (illustration, not a control icon) */
+  --button-font-weight-current: var(--font-weight-strong); /* the current item among buttons: weight as well as colour, so it never relies on colour alone */
+
+  /* button sizes: height, the round icon's size inside it, its icon, label size and side padding.
+     sm for buttons inside small cards, md for buttons in content, lg for the one main action on the stage.
+     All three stay at least 40 px tall (WCAG 2.5.8 asks 24; 40–48 is comfortable to tap). */
+  --button-sm-height: 2.5rem;   --button-sm-knob: 2rem;     --button-sm-icon: 1rem;     --button-sm-font: var(--step-n1); --button-sm-pad: 1rem;
+  --button-md-height: 3rem;     --button-md-knob: 2.5rem;   --button-md-icon: 1.25rem;  --button-md-font: var(--step-0);  --button-md-pad: 1.25rem;
+  --button-lg-height: 3.5rem;   --button-lg-knob: 3rem;     --button-lg-icon: 1.5rem;   --button-lg-font: var(--step-0);  --button-lg-pad: 1.5rem;
+
+  /* focus */
+  --focus-ring-color: var(--accent);          /* on the dark stage */
+  --focus-ring-color-on-light: var(--accent-deep); /* on light surfaces */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+
+  /* motion */
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --duration: .6s;
+
+  /* brand */
+  --logo-width: clamp(9.5rem, 8.5rem + 2vw, 11rem);   /* the header badge: about 152→176 px wide (57→66 px tall, level with the 60 px header buttons) */
+  --logo-width-compact: clamp(5.5rem, 28vw, 7.5rem);   /* phones: 88 px at 320, 109 at 390, up to 120 — always clear of the language, sound and menu buttons */
+
+  /* layout */
+  --frame: 1.25rem;
+  --radius: 1.25rem;
+
+  /* stacking order, lowest to highest */
+  --z-ui: 1;
+  --z-menu: 2;
+  --z-bar: 3;
+  --z-panel: 4;
+  --z-tutorial: 5;
+  --z-loader: 6;
+}

@@ -1,0 +1,23 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #__nuxt { height: 100%; }
+html { overflow: hidden; overscroll-behavior: none; }
+
+body {
+  margin: 0;
+  background: var(--stage-to);
+  color: var(--on-dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; }
+
+/* every button shares the button type role and icon size (tokens.css) */
+button { font-size: var(--button-font-size); font-weight: var(--button-font-weight); line-height: var(--button-line-height); }
+button svg { width: var(--icon-size); height: var(--icon-size); flex: none; }
+/* icons drawn on a 12-unit grid keep a 1.5px stroke at 24px */
+.icon-12 path { vector-effect: non-scaling-stroke; }

@@ -118,11 +118,11 @@ function tokenSpot(name: ShapeName): [number, number, number] {
   if (width <= 800) { const size = TILE_PX * 0.75; return [Math.max(framePx + 56 + size / 2, width * 0.27), height * 0.67, 0.75]; } // phones: smaller, at the lower left of the shape, clear of the rail and fully on screen
   return [width / 2 + SPOT[name][0] * Math.min(width, height * 1.5) + TILE_PX / 2, height / 2 + SPOT[name][1] * height + TILE_PX / 2, 1];
 }
-const PHONE_TILE_PX = 60; // page tokens on phones (keep in step with PageTokens.vue)
+const PHONE_TILE_PX = 60, PHONE_TILE_GAP = 60; // page tokens on phones: size and the space between them (keep in step with PageTokens.vue)
 const tilePx = () => (width <= 800 ? PHONE_TILE_PX : TILE_PX);
 /** Where page token i of n stands — the same row as PageTokens.vue lays out. */
 function slot(i: number, n: number): [number, number] {
-  const middle = (n - 1) / 2, gap = Math.max(40, Math.min(89.6, width * 0.075));
+  const middle = (n - 1) / 2, gap = width <= 800 ? PHONE_TILE_GAP : Math.max(40, Math.min(89.6, width * 0.075));
   return [width / 2 + (i - middle) * (tilePx() + gap), height * (width <= 800 ? 0.74 : 0.69) + (1 - Math.min(1, Math.abs(i - middle))) * 9];
 }
 function setTile(t: Token, x: number, y: number, size: number) { // centre in CSS pixels, width in CSS pixels

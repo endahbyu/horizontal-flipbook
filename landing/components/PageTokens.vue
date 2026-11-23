@@ -25,6 +25,9 @@ button.soon { cursor: default; }
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .name { flex: none; width: 11rem; text-align: center; font-size: var(--button-font-size); font-weight: var(--button-font-weight); line-height: var(--leading-ui); color: var(--on-dark); text-wrap: balance; animation: show .5s var(--ease) both; animation-delay: calc(.7s + var(--i) * 110ms); }
 @keyframes show { from { opacity: 0; } }
-@media (max-width: 800px) { .row { gap: 2.5rem; top: calc(74% - 30px); } li { width: 60px; gap: 1.1rem; } button { width: 60px; height: 60px; border-radius: 6px 23px 6px 23px; } .name { width: 7rem; font-size: .9375rem; } } /* phones: 60 px tokens (PHONE_TILE_PX in ParticleStage.vue); names side by side must not overlap */ /* phones: two names side by side must not overlap */
+/* phones: 60 px tokens (PHONE_TILE_PX in ParticleStage.vue). Each name sits close to its own token (.75rem) and the two
+   token groups stand well apart (3.75rem between tokens, PHONE_TILE_GAP in ParticleStage.vue), so the pairs read as two
+   separate choices: about 40 px between the two names' letters, more than twice the token-to-name gap. */
+@media (max-width: 800px) { .row { gap: 3.75rem; top: calc(74% - 30px); } li { width: 60px; gap: .75rem; } button { width: 60px; height: 60px; border-radius: 6px 23px 6px 23px; } .name { width: 7rem; font-size: .9375rem; } }
 @media (prefers-reduced-motion: reduce) { .name { animation: none; } }
 </style>

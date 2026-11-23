@@ -79,7 +79,8 @@ self.addEventListener("fetch", (event) => {
           return (await cache.match(req, { ignoreSearch: true })) || Response.error();
         }
       }
-      const cached = await cache.match(req, { ignoreSearch: true });
+      // exact address: a page image's ?v= tag changes when the image is replaced
+      const cached = await cache.match(req);
       if (cached) return cached;
       const res = await fetch(req);
       if (res.ok) cache.put(req, res.clone());

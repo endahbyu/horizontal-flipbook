@@ -21,7 +21,7 @@
   // The title comes from the file name (page-02.webp → "Page 02"): the front
   // cover is page 01, so content pages are numbered from 02.
   contentFiles.forEach(function (file) {
-    var number = (/page-(\d+)\.webp$/.exec(file) || [])[1];
+    var number = (/page-(\d+)\.webp(?:\?|$)/.exec(file) || [])[1];
     PAGES.push({ type: "Content", title: "Page " + number, src: file });
   });
   // A blank soft-blue endpaper before the back cover, so closing the book
@@ -62,7 +62,8 @@
   // Same page in another size folder (assets/books/<book>/thumbs|hd/).
   // Inlined data: images (the standalone download) have no variants.
   function variantSrc(src, folder) {
-    return /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)$/, "/" + folder + "/$1");
+    // keeps the ?v= version tag, which the three sizes share
+    return /^data:/.test(src) ? src : src.replace(/\/([^\/]+\.webp)(\?[^\/]*)?$/, function (m, name, query) { return "/" + folder + "/" + name + (query || ""); });
   }
   // Use the variant, falling back to the full page if it is missing.
   function setVariant(img, src, folder) {
@@ -616,7 +617,7 @@
     if (n <= 1) return 0;
     var file = "page-" + pad2(n) + ".webp";
     for (var k = 0; k < PAGES.length; k++) {
-      if (PAGES[k].src && PAGES[k].src.slice(-file.length) === file) return k;
+      if (PAGES[k].src && PAGES[k].src.split("?")[0].slice(-file.length) === file) return k;
     }
     return -1;
   }

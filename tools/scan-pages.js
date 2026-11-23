@@ -1,4 +1,5 @@
 import fs from 'fs';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,16 +18,22 @@ function scanBook(bookId) {
   const dir = path.join(BOOKS_DIR, bookId);
   const files = fs.readdirSync(dir);
   const base = `assets/books/${bookId}`;
+  // ?v=<content hash>: a replaced image gets a new address, so browsers and the
+  // offline cache fetch it instead of showing the copy they already have.
+  const url = (name) => {
+    const hash = crypto.createHash('sha1').update(fs.readFileSync(path.join(dir, name))).digest('hex').slice(0, 8);
+    return `${base}/${name}?v=${hash}`;
+  };
   const pages = files
     .map((name) => [PAGE_RE.exec(name), name])
     .filter(([m]) => m)
     .map(([m, name]) => [parseInt(m[1], 10), name])
     .sort((a, b) => a[0] - b[0])
-    .map(([, name]) => `${base}/${name}`);
+    .map(([, name]) => url(name));
 
   return {
-    coverFront: files.includes(COVER_FRONT) ? `${base}/${COVER_FRONT}` : null,
-    coverBack: files.includes(COVER_BACK) ? `${base}/${COVER_BACK}` : null,
+    coverFront: files.includes(COVER_FRONT) ? url(COVER_FRONT) : null,
+    coverBack: files.includes(COVER_BACK) ? url(COVER_BACK) : null,
     pages,
   };
 }

@@ -14,7 +14,7 @@ defineEmits<{ pick: [slug: string] }>();
 </template>
 
 <style scoped>
-.slider { position: absolute; z-index: var(--z-ui); left: 0; right: 0; bottom: calc(var(--frame) + 4.25rem + 2.75rem); margin: 0; padding: .25rem var(--frame); list-style: none; display: flex; justify-content: safe center; gap: .6rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--frame); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.slider { pointer-events: auto; position: absolute; z-index: var(--z-ui); left: 0; right: 0; bottom: calc(var(--frame) + 4.25rem + 2.75rem); margin: 0; padding: .25rem var(--frame); list-style: none; display: flex; justify-content: safe center; gap: .6rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--frame); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .slider::-webkit-scrollbar { display: none; }
 li { flex: none; scroll-snap-align: start; animation: rise .5s var(--ease) both; animation-delay: calc(.35s + var(--i) * 80ms); }
 button { display: inline-flex; align-items: center; gap: .6rem; max-width: 72vw; padding: .7rem 1.1rem .7rem .8rem; border-radius: 999px; border: 1px solid var(--glass-line); background: var(--glass); backdrop-filter: blur(12px); color: var(--on-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }

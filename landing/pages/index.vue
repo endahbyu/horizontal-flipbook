@@ -126,7 +126,6 @@ useHead(() => {
       <ContentPanel :page="page" :topic="site.extras?.some((p) => p.slug === page?.slug) ? site.ui.brand : zone?.title" :close-label="site.ui.close" @close="closePage" @go="(slug) => openPage(slug, true, fromMenu)" />
     </template>
 
-    <AppCursor v-if="site" :hint="focused ? site.ui.cursorFocus : site.ui.cursorExplore" :enabled="phase === 'explore' && !menuOpen && (focused || (!scrolled && zoneIndex === 0))" />
     <AppLoader v-if="!loaderGone" :progress="progress" :label="site?.ui.loading ?? 'Loading'" :brand="site?.ui.brand ?? 'MCMC P2630'" :done="phase !== 'loading'" @ready="onLoaderReady" @reveal="revealed = true" @gone="loaderGone = true; revealed = true" />
   </main>
 </template>

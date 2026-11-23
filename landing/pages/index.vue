@@ -10,9 +10,13 @@ function goHome() { if (page.value) { fromMenu.value = false; closePage(); } men
 const base = useRuntimeConfig().app.baseURL;
 
 // ---- loading: real content load plus a short minimum, so the opening never flashes by ----
+// The opening screen plays once per visit (browser tab): coming back from a reader, or reloading, goes straight to the book.
+const INTRO_KEY = 'p2630-intro-seen';
+let introSeen = false; try { introSeen = sessionStorage.getItem(INTRO_KEY) === '1'; } catch { /* private window: always play it */ }
 const progress = ref(0);
 const loaded = ref(false);
 onMounted(async () => {
+  if (introSeen) { await load(); loaded.value = true; progress.value = 1; onLoaderReady(); return; }
   const started = performance.now(), MIN = 1400;
   const tick = setInterval(() => { progress.value = Math.min(loaded.value ? 1 : 0.9, (performance.now() - started) / MIN); }, 60); // the opening screen traces this
   await load();
@@ -20,10 +24,9 @@ onMounted(async () => {
   await new Promise((r) => setTimeout(r, Math.max(0, MIN - (performance.now() - started)) + 250));
   clearInterval(tick); progress.value = 1;
 });
-// the opening screen says when its opening has played; then the experience starts behind it while it opens up
-// no introduction and no topic travel: once the opening has played, the book topic is open with its page tokens
-function onLoaderReady() { phase.value = 'explore'; focused.value = true; }
-const loaderGone = ref(false), revealed = ref(false); // revealed: the opening has spread far enough for the welcome card to come in
+// the opening screen says when its opening has played; then the book topic is open with its page tokens (no introduction, no topic travel)
+function onLoaderReady() { phase.value = 'explore'; focused.value = true; try { sessionStorage.setItem(INTRO_KEY, '1'); } catch {} }
+const loaderGone = ref(introSeen), revealed = ref(introSeen); // revealed: the opening has spread far enough for the welcome card to come in
 
 // ---- moving between topics: scrolling adds speed, the journey settles on the nearest topic ----
 const exploring = computed(() => phase.value === 'explore' && !menuOpen.value && !page.value && !focused.value);

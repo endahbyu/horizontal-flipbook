@@ -195,6 +195,11 @@ a{ color: inherit; }
 }
 .zoom-pan.is-panning{ cursor: grabbing; }
 .zoom-pan[hidden]{ display: none; }
+/* Pinch-zoomed on a touch screen: the page may spill out of its frame and fill the reading area, which clips it;
+   the toolbar stays on top. */
+body.is-pinch-zoomed .reader-main{ overflow: hidden; }
+body.is-pinch-zoomed .book-frame.is-zoomed{ overflow: visible; z-index: 5; }
+body.is-pinch-zoomed .reader-controls{ position: relative; z-index: 20; }
 
 /* Loading: a shimmering 16:9 placeholder until the first page has decoded. */
 .book-skeleton{

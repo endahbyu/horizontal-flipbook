@@ -494,6 +494,34 @@
     };
   })();
 
+  /* ============================================================
+     PREVIOUS PAGE: THE SAME CURL AS NEXT, PLAYED BACKWARDS
+     In single-page mode StPageFlip turns back by sliding the previous
+     page in flat from the left, with no fold or shading. Going back is the
+     forward turn reversed, so: step back one page underneath, then run the
+     forward curl of that page from fully folded over to the left back to
+     flat. Every way of going back uses it (arrow buttons, keys, swipes).
+     ============================================================ */
+  (function curlBackwards() {
+    var flip = pageFlip.getFlipController();
+    flip.flipPrev = function (corner) {
+      var idx = pageFlip.getCurrentPageIndex();
+      if (idx <= 0 || this.getState() !== "read") return;
+      var rect = this.getBoundsRect();
+      pageFlip.turnToPage(idx - 1);
+      // the forward turn of page idx-1 starts at its right-hand corner
+      var at = { x: rect.left + 2 * rect.pageWidth - 10, y: corner === "bottom" ? rect.height - 2 : 1 };
+      if (!this.start(at)) { pageFlip.turnToPage(idx); return; }
+      this.setState("flipping");
+      var lift = rect.height / 10, bottom = this.calc.getCorner() === "bottom";
+      var folded = { x: -rect.pageWidth, y: bottom ? rect.height : 0 };
+      this.calc.calc(folded);
+      // reversed path; `false`: the page is already in place, so no turn at the end
+      this.animateFlippingTo(folded, { x: rect.pageWidth - lift, y: bottom ? rect.height - lift : lift }, false);
+      onTurned();
+    };
+  })();
+
   function turn(step) {
     if (boardBusy) return;
     var from = pageFlip.getCurrentPageIndex();
@@ -766,8 +794,9 @@
   var ZOOM_STEPS = [1, 1.25, 1.5, 2];
   var zoomPan = document.getElementById("zoomPan");
 
-  function setZoom(z) {
-    zoomLevel = clamp(z, 1, 2);
+  var MAX_ZOOM = 3; // pinch reaches further than the buttons' 200%
+  function setZoom(z, max) {
+    zoomLevel = clamp(z, 1, max || 2);
     if (zoomLevel === 1) pan.x = pan.y = 0;
     zoomReadout.textContent = Math.round(zoomLevel * 100) + "%";
     zoomOutButton.disabled = zoomLevel <= 1;
@@ -789,6 +818,7 @@
   (function enablePan() {
     var start = null;
     zoomPan.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "touch") return; // fingers: handled by the pinch module below
       start = { x: e.clientX - pan.x, y: e.clientY - pan.y };
       zoomPan.setPointerCapture(e.pointerId);
       zoomPan.classList.add("is-panning");
@@ -808,8 +838,177 @@
     zoomPan.addEventListener("pointerup", end);
     zoomPan.addEventListener("pointercancel", end);
     // Double-click / double-tap returns to 100%.
-    zoomPan.addEventListener("dblclick", function () { setZoom(1); });
+    zoomPan.addEventListener("dblclick", function () { if (Date.now() - lastTouch > 800) setZoom(1); });
   })();
+  var lastTouch = 0;
+  /* ============================================================
+     PINCH TO ZOOM (touch)
+     Two fingers zoom around the point between them and pan as they move,
+     like a photo: the spot under your fingers stays under your fingers.
+     Past the limits (fit, 300%) the page gives a little and springs back.
+     While zoomed, one finger pans, with momentum when flicked, and the
+     edges stretch and settle instead of stopping dead; a double tap
+     returns to fit. Page turns are off while zoomed. The sharper HD copy
+     of the page is swapped in once zoomed past 130%.
+     ============================================================ */
+  (function pinchZoom() {
+    var MIN = 1, MAX = MAX_ZOOM;
+    var gesture = null, anim = 0, lastTap = { t: 0, x: 0, y: 0 };
+    var flipUI = pageFlip.getUI ? pageFlip.getUI() : pageFlip.ui;
+
+    // the page's untransformed centre on screen (scaling keeps the centre, so it is the rect's centre minus the pan)
+    function centre() {
+      var r = bookEl.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - pan.x, y: r.top + r.height / 2 - pan.y };
+    }
+    // How far the page may move at zoom z: zoomed, it may fill the whole reading area (between the top bar and the
+    // toolbar), not just its own frame. Bigger than the area, its edges may not come inside it; smaller, it stays
+    // wholly inside. Returns [lo, hi] for x and for y.
+    var readerMain = document.getElementById("main");
+    function limits(z) {
+      var c = centre(), m = readerMain.getBoundingClientRect(), bar = controls.getBoundingClientRect();
+      var view = { left: m.left, right: m.right, top: m.top, bottom: Math.min(m.bottom, bar.top) };
+      var hw = bookEl.offsetWidth * z / 2, hh = bookEl.offsetHeight * z / 2;
+      var a = view.right - c.x - hw, b = view.left - c.x + hw, p = view.bottom - c.y - hh, q = view.top - c.y + hh;
+      return { x: [Math.min(a, b), Math.max(a, b)], y: [Math.min(p, q), Math.max(p, q)] };
+    }
+    // stretch past a limit: the further past, the harder it pulls back
+    function rubber(v, lo, hi, size) {
+      if (v < lo) return lo - rubberAmount(lo - v, size);
+      if (v > hi) return hi + rubberAmount(v - hi, size);
+      return v;
+    }
+    function rubberAmount(d, size) { return (1 - 1 / (d * 0.55 / size + 1)) * size; }
+
+    // show a zoom and pan directly (no clamping: the gesture handles its own limits)
+    function show(z, x, y) {
+      zoomLevel = z; pan.x = x; pan.y = y;
+      bookEl.style.transform = z !== 1 || x || y ? "translate(" + x + "px, " + y + "px) scale(" + z + ")" : "";
+      var zoomed = z > 1.001;
+      bookFrame.classList.toggle("is-zoomed", zoomed);
+      document.body.classList.toggle("is-pinch-zoomed", zoomed); // the page may spill out of its frame over the reading area
+      zoomPan.hidden = !zoomed;
+      zoomReadout.textContent = Math.round(z * 100) + "%";
+      zoomOutButton.disabled = z <= 1.001;
+      zoomInButton.disabled = z >= 2;
+      sharpen(z);
+    }
+    var sharp = -1;
+    function sharpen(z) {
+      var idx = pageFlip.getCurrentPageIndex(), img = pageImages[idx], page = PAGES[idx];
+      if (!img || !page || !page.src) return;
+      if (z > 1.3 && sharp !== idx) { sharp = idx; var hd = new Image(); hd.onload = function () { if (sharp === idx) img.src = hd.src; }; hd.src = variantSrc(page.src, "hd"); }
+      else if (z <= 1.001 && sharp === idx) { sharp = -1; img.src = page.src; }
+    }
+    // ease to a zoom and pan, kept inside the limits
+    function settle(z, x, y, ms) {
+      cancelAnimationFrame(anim);
+      z = clamp(z, MIN, MAX);
+      var l = limits(z); x = clamp(x, l.x[0], l.x[1]); y = clamp(y, l.y[0], l.y[1]);
+      if (z <= 1.001) x = y = 0;
+      var from = { z: zoomLevel, x: pan.x, y: pan.y }, t0 = performance.now(), dur = ms || 320;
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        show(from.z + (z - from.z) * e, from.x + (x - from.x) * e, from.y + (y - from.y) * e);
+        if (k < 1) anim = requestAnimationFrame(step);
+        else { if (z <= 1.001) show(1, 0, 0); bookEl.style.transition = ""; }
+      })(t0);
+    }
+    // a flick while zoomed keeps gliding, slowing down, and stretches then settles at the edges
+    function glide(vx, vy) {
+      cancelAnimationFrame(anim);
+      var last = performance.now();
+      (function step(now) {
+        var dt = Math.min(32, now - last); last = now;
+        var l = limits(zoomLevel), x = pan.x + vx * dt, y = pan.y + vy * dt;
+        var decay = Math.pow(0.995, dt);
+        if (x < l.x[0] || x > l.x[1]) decay *= 0.8; if (y < l.y[0] || y > l.y[1]) decay *= 0.8; // edges brake hard
+        vx *= decay; vy *= decay;
+        show(zoomLevel, x, y);
+        if (Math.abs(vx) + Math.abs(vy) > 0.02) anim = requestAnimationFrame(step);
+        else settle(zoomLevel, pan.x, pan.y, 260);
+      })(last);
+    }
+
+    function points(touches) { var a = touches[0], b = touches[1]; return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2, d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) }; }
+    function stopTurn() {
+      // a finger may already have started a page turn: cancel it before the pinch takes over
+      if (flipUI) flipUI.touchPoint = null;
+      pageFlip.isUserTouch = false; // its touchend never arrives (the pinch takes it), so end the touch here
+      var flip = pageFlip.getFlipController();
+      if (flip.getState() !== "read" && flip.getState() !== "flipping") flip.stopMove();
+    }
+    var stageEl = document.getElementById("bookWrap");
+    function onBook(e) { return bookFrame.contains(e.target) || (zoomLevel > 1.001 && stageEl.contains(e.target) && !controls.contains(e.target)); }
+
+    // capture on window, before StPageFlip's own touch handlers (on its element and on window)
+    window.addEventListener("touchstart", function (e) {
+      if (!onBook(e) && !gesture) return;
+      lastTouch = Date.now();
+      if (e.touches.length >= 2) {
+        stopTurn(); cancelAnimationFrame(anim); bookEl.style.transition = "none";
+        var p = points(e.touches), c = centre();
+        gesture = { type: "pinch", d0: p.d, z0: zoomLevel, // the page point under the fingers, in unzoomed page space
+          px: (p.x - c.x - pan.x) / zoomLevel, py: (p.y - c.y - pan.y) / zoomLevel, c: c };
+        e.stopPropagation(); e.preventDefault(); return;
+      }
+      if (zoomLevel > 1.001 && e.touches.length === 1) { // one finger on a zoomed page: pan
+        cancelAnimationFrame(anim); bookEl.style.transition = "none";
+        var t = e.touches[0];
+        gesture = { type: "pan", sx: t.clientX - pan.x, sy: t.clientY - pan.y, lx: t.clientX, ly: t.clientY, lt: performance.now(), vx: 0, vy: 0, moved: 0 };
+        e.stopPropagation(); e.preventDefault();
+      }
+    }, { capture: true, passive: false });
+
+    window.addEventListener("touchmove", function (e) {
+      if (!gesture) return;
+      e.stopPropagation(); e.preventDefault();
+      if (gesture.type === "pinch" && e.touches.length >= 2) {
+        var p = points(e.touches), raw = gesture.z0 * p.d / gesture.d0;
+        var z = raw < MIN ? MIN - rubberAmount(MIN - raw, 0.35) : raw > MAX ? MAX + rubberAmount(raw - MAX, 0.6) : raw;
+        show(z, p.x - gesture.c.x - z * gesture.px, p.y - gesture.c.y - z * gesture.py);
+      } else if (gesture.type === "pan" && e.touches.length === 1) {
+        var t = e.touches[0], now = performance.now(), dt = Math.max(1, now - gesture.lt);
+        gesture.vx = 0.8 * ((t.clientX - gesture.lx) / dt) + 0.2 * gesture.vx; gesture.vy = 0.8 * ((t.clientY - gesture.ly) / dt) + 0.2 * gesture.vy;
+        gesture.moved += Math.abs(t.clientX - gesture.lx) + Math.abs(t.clientY - gesture.ly);
+        gesture.lx = t.clientX; gesture.ly = t.clientY; gesture.lt = now;
+        var l = limits(zoomLevel);
+        show(zoomLevel, rubber(t.clientX - gesture.sx, l.x[0], l.x[1], 90), rubber(t.clientY - gesture.sy, l.y[0], l.y[1], 90));
+      }
+    }, { capture: true, passive: false });
+
+    function end(e) {
+      if (!gesture) return;
+      e.stopPropagation();
+      lastTouch = Date.now();
+      if (gesture.type === "pinch") {
+        if (e.touches.length === 1 && zoomLevel > 1.001) { // one finger stays down: carry on panning with it
+          var t = e.touches[0];
+          gesture = { type: "pan", sx: t.clientX - pan.x, sy: t.clientY - pan.y, lx: t.clientX, ly: t.clientY, lt: performance.now(), vx: 0, vy: 0, moved: 99 };
+          return;
+        }
+        if (e.touches.length) return;
+        gesture = null;
+        settle(zoomLevel < 1.05 ? 1 : zoomLevel, pan.x, pan.y, 300); // a little zoom is no zoom: back to fit
+        return;
+      }
+      if (e.touches.length) return;
+      var g = gesture; gesture = null;
+      if (g.moved < 8) { // a tap: two in quick succession return to fit
+        var now = Date.now();
+        if (now - lastTap.t < 320 && Math.abs(g.lx - lastTap.x) < 30 && Math.abs(g.ly - lastTap.y) < 30) { lastTap.t = 0; settle(1, 0, 0, 320); }
+        else lastTap = { t: now, x: g.lx, y: g.ly };
+        return;
+      }
+      if (performance.now() - g.lt < 80 && Math.hypot(g.vx, g.vy) > 0.15) glide(g.vx, g.vy); else settle(zoomLevel, pan.x, pan.y, 260);
+    }
+    window.addEventListener("touchend", end, { capture: true });
+    window.addEventListener("touchcancel", end, { capture: true });
+
+    // a new page always starts at fit
+    pageFlip.on("flip", function () { if (zoomLevel > 1.001 && !gesture) settle(1, 0, 0, 1); });
+  })();
+
   zoomInButton.addEventListener("click", function () { zoomStep(1); });
   zoomOutButton.addEventListener("click", function () { zoomStep(-1); });
   setZoom(1);

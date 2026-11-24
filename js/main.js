@@ -201,6 +201,7 @@
      quick flick, and spring back otherwise.
      ============================================================ */
   var FLICK_SPEED = 0.5; // px per ms
+  var reverseDrag = null; // a backward drag in progress, drawn as the previous page's forward curl (see curlBackwards)
   var dragTrack = [];
 
   bookEl.addEventListener("pointerdown", function (e) { dragTrack = [{ x: e.clientX, t: e.timeStamp }]; });
@@ -226,6 +227,12 @@
       var y = this.calc.getCorner() === "bottom" ? rect.height : 0;
       var forward = this.calc.getDirection() === 0;
       var v = releaseVelocity();
+      if (reverseDrag) { // going back: past halfway (or a flick to the right) lays the previous page flat; otherwise it folds away again
+        var keep = (pos.x > 0 || v > FLICK_SPEED) && !(v < -FLICK_SPEED);
+        if (keep) this.animateFlippingTo(pos, { x: rect.pageWidth, y: y }, false);
+        else this.animateFlippingTo(pos, { x: -rect.pageWidth, y: y }, true);
+        return;
+      }
       var turn = forward
         ? pos.x <= rect.pageWidth * 0.5 || v < -FLICK_SPEED
         : pos.x <= -rect.pageWidth * 0.5 || v > FLICK_SPEED;
@@ -519,6 +526,45 @@
       // reversed path; `false`: the page is already in place, so no turn at the end
       this.animateFlippingTo(folded, { x: rect.pageWidth - lift, y: bottom ? rect.height - lift : lift }, false);
       onTurned();
+    };
+
+    // Dragging back (mouse or finger, from the left of the page): step back underneath and drive the previous
+    // page's forward curl in reverse, with its fold line under the pointer (corner = 2 × pointer − page width).
+    var fold = flip.fold.bind(flip);
+    flip.fold = function (point) {
+      if (!reverseDrag && this.calc === null && this.getState() === "read") {
+        var book = this.render.convertToBook(point), idx = pageFlip.getCurrentPageIndex();
+        if (this.getDirectionByPoint(book) === 1) {
+          if (idx <= 0 || boardBusy || coverMove(idx, idx - 1)) return;
+          var rect = this.getBoundsRect();
+          pageFlip.turnToPage(idx - 1);
+          if (!this.start({ x: rect.left + 2 * rect.pageWidth - 10, y: book.y >= rect.height / 2 ? rect.height - 2 : 1 })) { pageFlip.turnToPage(idx); return; }
+          reverseDrag = { from: idx };
+        }
+      }
+      if (reverseDrag) {
+        this.setState("user_fold");
+        var p = this.render.convertToPage(point), w = this.getBoundsRect().pageWidth;
+        this.do({ x: Math.max(-w, Math.min(w - 1, 2 * p.x - w)), y: p.y });
+        return;
+      }
+      return fold(point);
+    };
+    // once the page has settled either way, update the readout, sound and zoom like any turn
+    pageFlip.on("changeState", function (e) { if (e.data === "read" && reverseDrag) { reverseDrag = null; onTurned(); } });
+
+    // A click or tap on the left of the page goes back with the same curl.
+    var click = flip.flip.bind(flip);
+    flip.flip = function (point) {
+      var book = this.render.convertToBook(point), rect = this.getBoundsRect();
+      if (this.getState() === "read" && this.getDirectionByPoint(book) === 1) return this.flipPrev(book.y >= rect.height / 2 ? "bottom" : "top");
+      return click(point);
+    };
+    // No flat corner peel on the left: the hover hint stays on the right-hand corners.
+    var corner = flip.showCorner.bind(flip);
+    flip.showCorner = function (point) {
+      if (this.getState() === "read" && this.getDirectionByPoint(this.render.convertToBook(point)) === 1) return;
+      return corner(point);
     };
   })();
 

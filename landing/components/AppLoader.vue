@@ -54,7 +54,7 @@ function draw(now: number) {
   if (c.width !== Math.round(W * ratio)) { c.width = Math.round(W * ratio); c.height = Math.round(H * ratio); }
   // the innermost outline takes 36% of the width (a little roomier than the reference, as a triangle narrows towards its top), never more than 58% of the height
   const small = W <= 800, inner = Math.min((small ? 0.66 : 0.36) * W, (0.58 * H) / RATIO) / MARK, // on phones the innermost outline takes two thirds of the width, so the titles never touch it
-    markSize = small ? 60 / 84 : 1, { p, w, h, length } = outline();
+    markPx = mark.value?.offsetWidth || (small ? 60 : MARK), markSize = markPx / MARK, { p, w, h, length } = outline(); // the mark's size comes from the CSS (fluid on phones)
   const css = getComputedStyle(el), surface = hex(css.getPropertyValue('--surface').trim() || '#f2f4fb'), brand = hex(css.getPropertyValue('--brand').trim() || '#2440c9');
   const mix = (a: number[], b: number[], f: number) => `rgb(${a.map((v, j) => Math.round(v * f + b[j] * (1 - f))).join(',')})`, faint = brand.map((v, j) => v * 0.12 + surface[j] * 0.88);
   const t = still ? 99 : ((now - opened) / 1000) * TEMPO, out = leaving < 0 ? -1 : still ? 99 : ((now - leaving) / 1000) * TEMPO;
@@ -88,7 +88,7 @@ function draw(now: number) {
     const grow = soft(span(t, 1.2, 1.2)), side = expo(span(t, 2.2, 1.2)), back = out >= 0 ? expo(span(out, 0, 1.2)) : 0;
     // the mark steps aside by half of what stands to its right (gap + titles), so the pair as a whole sits in the middle of the
     // outline, with equal room on both sides — rather than the mark alone sitting on the centre line
-    const titles = top.value?.closest('.title') as HTMLElement | null, room = titles ? titles.offsetWidth + (small ? 12 : 18) : (small ? 110 : 170);
+    const titles = top.value?.closest('.title') as HTMLElement | null, room = titles ? titles.offsetWidth + markPx * 0.2 : markPx * 2;
     const shift = (-room / 2) * side * (1 - back), lift = out >= 1.45 ? soft(span(out, 1.45, 1.2)) : 0;
     m.style.transform = `translateX(${shift}px) scale(${(0.6 + 0.4 * grow) * (1 + lift * 5)})`;
     m.style.opacity = String(grow * (1 - lift));
@@ -130,13 +130,14 @@ onBeforeUnmount(() => cancelAnimationFrame(frame));
 .loader { position: absolute; inset: 0; z-index: var(--z-loader); pointer-events: auto; }
 .loader.leaving { pointer-events: none; } /* the stage can be reached as soon as the hole starts to open */
 canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.mark { position: absolute; left: 50%; top: 50%; width: 84px; margin: -36.75px 0 0 -42px; opacity: 0; will-change: transform, opacity; }
+/* --mark: the logo's width. Fluid on phones (see the media query); the titles and the gap between them follow it */
+.mark { --mark: 84px; position: absolute; left: 50%; top: 50%; width: var(--mark); margin: calc(var(--mark) * -.4375) 0 0 calc(var(--mark) * -.5); opacity: 0; will-change: transform, opacity; }
 .mark img { display: block; width: 100%; height: auto; }
 /* the two title lines, to the right of the mark; each slides out from behind its own edge, left to right */
-.title { position: absolute; left: calc(100% + 18px); top: 50%; width: max-content; translate: 0 -50%; display: grid; gap: 1px; font-family: var(--font-display); font-weight: var(--weight-display); font-size: var(--type-lockup); line-height: var(--leading-display); color: var(--brand); white-space: nowrap; }
+.title { position: absolute; left: calc(100% + var(--mark) * .2); top: 50%; width: max-content; translate: 0 -50%; display: grid; gap: 1px; font-family: var(--font-display); font-weight: var(--weight-display); font-size: min(var(--type-lockup), calc(var(--mark) * .4)); line-height: var(--leading-display); color: var(--brand); white-space: nowrap; }
 .line { display: block; overflow: hidden; }
 .text { display: block; transform: translateX(-101%); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (max-width: 800px) { .mark { width: 60px; margin: -26.25px 0 0 -30px; } .title { left: calc(100% + 12px); } }
+@media (max-width: 800px) { .mark { --mark: clamp(40px, 13vw, 72px); } } /* phones: 42 px at 320, 51 px at 390, 72 px from 554 wide */
 @media (prefers-reduced-motion: reduce) { .mark { opacity: 1; } .text { transform: none; } }
 </style>
